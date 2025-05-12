@@ -5,9 +5,9 @@
       <widgets-container></widgets-container>
     </div>
     <devices-list></devices-list>
-    <div class="flex flex-col gap-2">
-      <tips-carousel></tips-carousel>
-      <alerts-list></alerts-list>
+    <div class="flex flex-col gap-2 h-full">
+      <tips-carousel class="flex-1"></tips-carousel>
+      <alerts-list class="flex-1"></alerts-list>
     </div>
   </div>
 </template>
