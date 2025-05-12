@@ -1,6 +1,41 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-:root {
-  --tw-bg-opacity: 1;
-  --tw-text-opacity: 1;
+@theme { 
+  --color-primary: #578257; /* Reemplazado con --color-green-dark */
+  --color-secondary: #a4d39a; /* Reemplazado con --color-green-light */
+  --color-accent: #99733c; /* Reemplazado con --color-brown */
+  --color-background: #faf5e7; /* Reemplazado con --color-beige */
+  --color-text: #3b2c17; /* Reemplazado con --color-brown-dark */
+  --color-light: #d6e899; /* Reemplazado con --color-green-pale */
+  --color-dark: #000000; /* Reemplazado con --color-dark */
+  --color-border: #e0e0e0; /* Sin cambios */
+  --color-border-light: #f0f0f0; /* Sin cambios */
+}
+
+/* Aplicar la fuente Inter al body */
+body {
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+/* for testing */
+.border {
+  border: 1px solid blue;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; /* Ancho del scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #d4d4d4; /* Un gris más oscuro que #ebebeb para contraste */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #80858d; /* Un gris oscuro para el thumb */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #4b5563; /* Un gris aún más oscuro al pasar el cursor */
 }
