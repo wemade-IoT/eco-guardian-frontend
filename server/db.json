@@ -1,0 +1,360 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "specialist@example.com",
+      "password": "password123",
+      "name": "John Specialist",
+      "address": "123 Specialist St.",
+      "role": "SPECIALIST",
+      "subscription_id": 101
+    },
+    {
+      "id": 2,
+      "email": "domestic@example.com",
+      "password": "password123",
+      "name": "Jane Domestic",
+      "address": "456 Domestic Ave.",
+      "role": "DOMESTIC",
+      "subscription_id": 102
+    },
+    {
+      "id": 3,
+      "email": "enterprise@example.com",
+      "password": "password123",
+      "name": "Alice Enterprise",
+      "address": "789 Enterprise Blvd.",
+      "role": "ENTERPRISE",
+      "subscription_id": 103
+    }
+  ],
+  "sensors": [
+    {
+      "id": 1,
+      "brand": "BrandX",
+      "voltage": "220V",
+      "power_capacity": 500,
+      "sensor_types_id": 1,
+      "installed_at": "2025-05-12T10:00:00",
+      "memory_capacity": 256,
+      "activated_at": "2025-05-12T10:00:00",
+      "last_updated": "2025-05-12T12:00:00",
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "brand": "BrandY",
+      "voltage": "110V",
+      "power_capacity": 300,
+      "sensor_types_id": 2,
+      "installed_at": "2025-05-11T09:30:00",
+      "memory_capacity": 128,
+      "activated_at": "2025-05-11T09:30:00",
+      "last_updated": "2025-05-12T12:30:00",
+      "status": "Inactive"
+    },
+    {
+      "id": 3,
+      "brand": "BrandZ",
+      "voltage": "220V",
+      "power_capacity": 800,
+      "sensor_types_id": 3,
+      "installed_at": "2025-05-10T08:00:00",
+      "memory_capacity": 512,
+      "activated_at": "2025-05-10T08:00:00",
+      "last_updated": "2025-05-12T13:00:00",
+      "status": "Lost Signal"
+    },
+    {
+      "id": 4,
+      "brand": "BrandA",
+      "voltage": "110V",
+      "power_capacity": 400,
+      "sensor_types_id": 1,
+      "installed_at": "2025-05-09T07:00:00",
+      "memory_capacity": 256,
+      "activated_at": "2025-05-09T07:00:00",
+      "last_updated": "2025-05-12T11:00:00",
+      "status": "Active"
+    },
+    {
+      "id": 5,
+      "brand": "BrandB",
+      "voltage": "220V",
+      "power_capacity": 600,
+      "sensor_types_id": 2,
+      "installed_at": "2025-05-08T06:30:00",
+      "memory_capacity": 512,
+      "activated_at": "2025-05-08T06:30:00",
+      "last_updated": "2025-05-12T10:30:00",
+      "status": "Inactive"
+    },
+    {
+      "id": 6,
+      "brand": "BrandC",
+      "voltage": "110V",
+      "power_capacity": 700,
+      "sensor_types_id": 3,
+      "installed_at": "2025-05-07T05:00:00",
+      "memory_capacity": 1024,
+      "activated_at": "2025-05-07T05:00:00",
+      "last_updated": "2025-05-12T09:00:00",
+      "status": "Lost Signal"
+    },
+    {
+      "id": 7,
+      "brand": "BrandD",
+      "voltage": "220V",
+      "power_capacity": 450,
+      "sensor_types_id": 1,
+      "installed_at": "2025-05-06T04:00:00",
+      "memory_capacity": 128,
+      "activated_at": "2025-05-06T04:00:00",
+      "last_updated": "2025-05-12T08:00:00",
+      "status": "Active"
+    },
+    {
+      "id": 8,
+      "brand": "BrandE",
+      "voltage": "110V",
+      "power_capacity": 350,
+      "sensor_types_id": 2,
+      "installed_at": "2025-05-05T03:30:00",
+      "memory_capacity": 256,
+      "activated_at": "2025-05-05T03:30:00",
+      "last_updated": "2025-05-12T07:30:00",
+      "status": "Inactive"
+    }
+  ],
+  "notifications": [
+    {
+      "id": 1,
+      "title": "Sensor Activated",
+      "content": "The BrandX sensor has been successfully activated.",
+      "created_at": "2025-05-12T10:05:00",
+      "user_id": 1
+    },
+    {
+      "id": 2,
+      "title": "Sensor Inactive",
+      "content": "The BrandY sensor has been inactive since 09:30 on May 11.",
+      "created_at": "2025-05-12T12:35:00",
+      "user_id": 2
+    },
+    {
+      "id": 3,
+      "title": "Signal Lost",
+      "content": "The BrandZ sensor has lost signal.",
+      "created_at": "2025-05-12T13:05:00",
+      "user_id": 3
+    },
+    {
+      "id": 4,
+      "title": "Subscription Updated",
+      "content": "Your subscription has been successfully updated.",
+      "created_at": "2025-05-10T15:00:00",
+      "user_id": 1
+    },
+    {
+      "id": 5,
+      "title": "Maintenance Required",
+      "content": "The BrandX sensor requires maintenance.",
+      "created_at": "2025-05-12T14:00:00",
+      "user_id": 1
+    }
+  ],
+  "plants": [
+    {
+      "id": 1,
+      "name": "Tomato",
+      "type": "Vegetable",
+      "user_id": 1,
+      "water_threshold": 0.75,
+      "created_at": "2025-05-01T08:00:00",
+      "updated_at": "2025-05-12T10:00:00",
+      "light_threshold": 0.85,
+      "temperature_threshold": 22.5,
+      "status": "Healthy",
+      "state": 1
+    },
+    {
+      "id": 2,
+      "name": "Lettuce",
+      "type": "Vegetable",
+      "user_id": 2,
+      "water_threshold": 0.6,
+      "created_at": "2025-05-02T09:00:00",
+      "updated_at": "2025-05-12T11:00:00",
+      "light_threshold": 0.7,
+      "temperature_threshold": 20.0,
+      "status": "Warning",
+      "state": 3
+    },
+    {
+      "id": 3,
+      "name": "Carrot",
+      "type": "Vegetable",
+      "user_id": 3,
+      "water_threshold": 0.65,
+      "created_at": "2025-05-03T10:00:00",
+      "updated_at": "2025-05-12T12:00:00",
+      "light_threshold": 0.75,
+      "temperature_threshold": 18.0,
+      "status": "Unhealthy",
+      "state": 2
+    },
+    {
+      "id": 4,
+      "name": "Cucumber",
+      "type": "Vegetable",
+      "user_id": 1,
+      "water_threshold": 0.8,
+      "created_at": "2025-05-04T08:30:00",
+      "updated_at": "2025-05-12T10:30:00",
+      "light_threshold": 0.9,
+      "temperature_threshold": 24.0,
+      "status": "Healthy",
+      "state": 1
+    },
+    {
+      "id": 5,
+      "name": "Spinach",
+      "type": "Vegetable",
+      "user_id": 2,
+      "water_threshold": 0.7,
+      "created_at": "2025-05-05T09:15:00",
+      "updated_at": "2025-05-12T11:15:00",
+      "light_threshold": 0.65,
+      "temperature_threshold": 19.0,
+      "status": "Warning",
+      "state": 3
+    },
+    {
+      "id": 6,
+      "name": "Pepper",
+      "type": "Vegetable",
+      "user_id": 3,
+      "water_threshold": 0.85,
+      "created_at": "2025-05-06T10:45:00",
+      "updated_at": "2025-05-12T12:45:00",
+      "light_threshold": 0.8,
+      "temperature_threshold": 23.0,
+      "status": "Healthy",
+      "state": 1
+    }
+  ],
+  "plantations": [
+    {
+      "id": 1,
+      "type": "Greenhouse",
+      "user_id": 1,
+      "water_threshold": 0.8,
+      "created_at": "2025-05-01T08:00:00",
+      "updated_at": "2025-05-12T10:00:00",
+      "light_threshold": 0.9,
+      "temperature_threshold": 25.0,
+      "area_coverage": 100.5,
+      "states_id": 1,
+      "plants": [1, 4]
+    },
+    {
+      "id": 2,
+      "type": "Outdoor",
+      "user_id": 2,
+      "water_threshold": 0.7,
+      "created_at": "2025-05-02T09:00:00",
+      "updated_at": "2025-05-12T11:00:00",
+      "light_threshold": 0.8,
+      "temperature_threshold": 23.0,
+      "area_coverage": 200.75,
+      "states_id": 2,
+      "plants": [2, 5]
+    },
+    {
+      "id": 3,
+      "type": "Field",
+      "user_id": 3,
+      "water_threshold": 0.75,
+      "created_at": "2025-05-03T10:00:00",
+      "updated_at": "2025-05-12T12:00:00",
+      "light_threshold": 0.85,
+      "temperature_threshold": 22.0,
+      "area_coverage": 300.0,
+      "states_id": 3,
+      "plants": [3, 6]
+    }
+  ],
+  "metrics": {
+    "labels": ["January", "February", "March", "April", "May", "June", "July"],
+    "datasets": [
+      {
+        "label": "Water Consumption (Liters)",
+        "data": [65, 59, 80, 81, 56, 55, 40],
+        "borderColor": "#4A90E2",
+        "backgroundColor": "rgba(74, 144, 226, 0.1)",
+        "fill": true,
+        "tension": 0.4
+      },
+      {
+        "label": "Energy Consumption (kWh)",
+        "data": [28, 48, 40, 19, 86, 27, 90],
+        "borderColor": "#78C679",
+        "backgroundColor": "rgba(120, 198, 121, 0.1)",
+        "fill": true,
+        "tension": 0.4
+      }
+    ],
+    "widgets": [
+      {
+        "title": "Water Consumption",
+        "value": "65,25 L",
+        "description": "Water Consumption in the last month"
+      },
+      {
+        "title": "Energy Consumption",
+        "value": "16 kW/h",
+        "description": "System energy consumption."
+      },
+      {
+        "title": "Humidity Threshold",
+        "value": "30%",
+        "description": "Humidity Threshold of the most recent monitored plantation."
+      },
+      {
+        "title": "Light Level",
+        "value": "15 kLux",
+        "description": "Light Levels of the most recent monitored plantation"
+      },
+      {
+        "title": "Temperature",
+        "value": "20°C",
+        "description": "Temperature of the most recent monitored plantation"
+      },
+      {
+        "title": "Humidity",
+        "value": "82%",
+        "description": "Humidity of the most recent monitored plantation"
+      }
+    ]
+  },
+  "queries": [
+    {
+      "id": 1,
+      "code": "8123",
+      "question": "How can I improve the growth of my indoor plants with limited sunlight?",
+      "status": "Resolved"
+    },
+    {
+      "id": 2,
+      "code": "4567",
+      "question": "What is the ideal temperature for growing tomatoes?",
+      "status": "Pending"
+    },
+    {
+      "id": 3,
+      "code": "2345",
+      "question": "How often should I water my spinach plants?",
+      "status": "Resolved"
+    }
+  ]
+}
