@@ -26,7 +26,7 @@
           <i class="pi pi-comment text-[20px] text-gray-500 group-hover:text-slate-50"></i>
         </li>
       </ul>
-      <figure class="w-13 h-13 mx-auto rounded-full overflow-hidden">
+      <figure class="cursor-pointer w-13 h-13 mx-auto rounded-full overflow-hidden" @click="authStore.logout()">
         <img src="https://avatars.githubusercontent.com/u/129230632?v=4" alt="hotman_photo" class="size-full" />
       </figure>
     </div>
@@ -34,7 +34,9 @@
 </template>
 
 <script setup lang="ts">
+import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 
+const authStore = useAuthStore();
 </script>
 
 <style scoped></style>
