@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { ConsultingService } from '../../../consulting/application/services/consulting.service';
+import { ConsultingService } from '../../../consulting/infrastructure/services/consulting.service';
 
 defineProps({
   sliceCount: {

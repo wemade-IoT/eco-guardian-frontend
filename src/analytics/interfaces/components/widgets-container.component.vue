@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { AnalyticsService } from '../../application/services/analytics.service';
+import { AnalyticsService } from '../../infrastructure/services/analytics.service';
 import WidgetCard from './widget-card.component.vue';
 
 const widgets = ref<any[]>([]);

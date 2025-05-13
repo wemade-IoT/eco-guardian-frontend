@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { ManagementService } from '../../../management/application/services/management.service';
+import { ManagementService } from '../../../management/infrastructure/services/management.service';
 import PlantCard from './plant-card.component.vue';
 import { ref } from 'vue';
 
