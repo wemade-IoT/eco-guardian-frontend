@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-gray-100 h-[439px] w-full">
-    <div class="grid grid-cols-3 gap-[30px]">
+  <div class="w-full">
+    <div class="grid grid-cols-3 gap-2 w-full">
       <widget-card
         v-for="(widget, index) in widgets"
         :key="index"
-        :icon="widget.icon"
+        :icon="getIcon(widget.title)"
         :title="widget.title"
         :value="widget.value"
         :description="widget.description"
@@ -14,16 +14,33 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { AnalyticsService } from '../../application/services/analytics.service';
 import WidgetCard from './widget-card.component.vue';
 
-const widgets = [
-  { icon: 'fa fa-solid fa-droplet', title: 'Water Consumption', value: '65,25 L', description: 'Water Consumption in the last month' },
-  { icon: 'fa fa-solid fa-bolt', title: 'Energy Consumption', value: '16 kW/h', description: 'System energy consumption.' },
-  { icon: 'fa fa-solid fa-droplet', title: 'Humidity Threshold', value: '30%', description: 'Humidity Threshold of the most recent monitored plantation.' },
-  { icon: 'fa fa-solid fa-lightbulb', title: 'Light Level', value: '15 kLux', description: 'Light Levels of the most recent monitored plantation' },
-  { icon: 'fa fa-solid fa-temperature-half', title: 'Temperature', value: '20°C', description: 'Temperature of the most recent monitored plantation' },
-  { icon: 'fa fa-solid fa-circle-info', title: 'Humidity', value: '82%', description: 'Humidity of the most recent monitored plantation' },
-];
+const widgets = ref<any[]>([]);
+const analyticsService = new AnalyticsService();
+
+const getIcon = (title: string): string => {
+  const iconsMap: Record<string, string> = {
+    'Water Consumption': 'fa fa-solid fa-droplet',
+    'Energy Consumption': 'fa fa-solid fa-bolt',
+    'Humidity Threshold': 'fa fa-solid fa-droplet',
+    'Light Level': 'fa fa-solid fa-lightbulb',
+    'Temperature': 'fa fa-solid fa-temperature-half',
+    'Humidity': 'fa fa-solid fa-circle-info',
+  };
+  return iconsMap[title] || 'fa fa-solid fa-circle';
+};
+
+onMounted(async () => {
+  try {
+    const data = await analyticsService.getWidgetAnalytics();
+    widgets.value = data;
+  } catch (error) {
+    console.error('Error fetching widget analytics:', error);
+  }
+});
 </script>
 
 <style scoped></style>
