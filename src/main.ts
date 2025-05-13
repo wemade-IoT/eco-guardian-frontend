@@ -21,7 +21,6 @@ app
         darkModeSelector: "manual",
       },
     },
-    unstyled: true,
   })
   .use(router);
 
