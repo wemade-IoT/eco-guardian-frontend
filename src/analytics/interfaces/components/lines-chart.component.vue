@@ -11,7 +11,7 @@
         before:w-6 after:left-8 after:right-0 after:top-0 after:h-[1.5px]">
       </div>
       <div class="mt-6 w-full translate-x-1.5">
-        <Chart class="responsive-trick h-100" type="line" :data="chartData" :options="chartOptions" />
+        <Chart class="responsive-trick h-100" type="line" :data="chartData || {}" :options="chartOptions" />
       </div>
     </div>
   </section>
@@ -20,12 +20,12 @@
 <script setup lang="ts">
 import { Select } from 'primevue';
 
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import Chart from 'primevue/chart';
-import { chartData } from '../../utils/mocks/chart';
 import { chartOptions } from '../../utils/consts/chart';
 import type { PeriodsValue } from '../../utils/types/chart';
+import { AnalyticsService } from '../../application/services/analytics.service';
 
 const options = [
   { label: 'Month', value: 'month' },
@@ -33,11 +33,33 @@ const options = [
 ];
 
 const selectedOption = ref<PeriodsValue>('month');
+// de ahi le meto el tipado
+const chartData = ref<{ labels: string[]; datasets: { label: string; data: number[]; borderColor: string; backgroundColor: string; fill: boolean; tension: number; }[] } | null>(null);
+const analyticsService = new AnalyticsService();
+
+onMounted(async () => {
+  try {
+    const data = await analyticsService.getAnalytics();
+
+    chartData.value = {
+      labels: data.labels,
+      datasets: data.datasets.map((dataset: any) => ({
+        label: dataset.label,
+        data: dataset.data,
+        borderColor: dataset.borderColor,
+        backgroundColor: dataset.backgroundColor,
+        fill: dataset.fill,
+        tension: dataset.tension,
+      })),
+    };
+  } catch (error) {
+    console.error('Error fetching analytics data:', error);
+  }
+});
 
 </script>
 
 <style scoped>
-
 /* this is a trick to make the chart responsive omglul */
 .responsive-trick {
   width: 99% !important;
