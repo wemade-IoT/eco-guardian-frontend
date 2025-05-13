@@ -17,7 +17,7 @@ const stateColors = {
 <template>
   <div class="question-card bg-white p-4 rounded flex items-center h-[125px]">
     <div class="flex flex-col flex-grow">
-      <p class="text-[18px] font-semibold mb-2">ID: {{ id }}</p>
+      <p class="text-[18px] font-semibold mb-2">Question#: {{ id }}</p>
       <p class="text-[16px] font-light mb-2">{{ description }}</p>
       <div class="flex items-center flex-wrap">
         <p class="text-[16px] font-thin">Status:</p>
