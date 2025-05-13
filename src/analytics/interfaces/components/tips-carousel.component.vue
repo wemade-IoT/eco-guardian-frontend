@@ -2,7 +2,7 @@
   <div class="w-full h-full p-4 rounded-lg bg-gray-100">
     <h2 class="text-xl font-semibold mb-4">Related Consultings</h2>
     <div class="flex flex-col gap-4">
-      <div v-for="(query, index) in queries" :key="index" class="bg-white p-3 rounded-lg flex flex-col justify-between">
+      <div v-for="(query, index) in queries.slice(0,4)" :key="index" class="bg-white p-3 rounded-lg flex flex-col justify-between">
         <div class="flex flex-row justify-between items-center">
           <h3 class="text-lg font-bold"># {{ query.code }}</h3>
           <button class="px-2 py-1.5 hover:bg-gray-400 transition-all cursor-pointer rounded-full">
@@ -23,6 +23,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { ConsultingService } from '../../../consulting/application/services/consulting.service';
+
+defineProps({
+  sliceCount: {
+    type: Number,
+    required: true,
+    default: 4,
+  },
+});
 
 const consultingService = new ConsultingService();
 
