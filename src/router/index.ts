@@ -3,6 +3,7 @@ import LoginPage from "@/iam/interfaces/pages/login-page.component.vue";
 import RegisterPage from "@/iam/interfaces/pages/register-page.component.vue";
 import MainLayoutPage from "@/shared/pages/main-layout-page.vue";
 import AnalyticsPage from "@/analytics/interfaces/pages/analytics-page.component.vue";
+import AnatemporalPage from "@/analytics/interfaces/pages/anatemporal-page.component.vue";
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -15,6 +16,11 @@ const routes = [
       {
         path: "home",
         component: AnalyticsPage,
+        props: true,
+      },
+      {
+        path: "hotman",
+        component: AnatemporalPage,
         props: true,
       },
     ],

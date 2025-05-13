@@ -1,9 +1,8 @@
 <template>
-  <analytics-page></analytics-page>
+  <router-view></router-view>
 </template>
 
 <script setup lang="ts">
-import AnalyticsPage from './analytics/interfaces/pages/analytics-page.component.vue';
 </script>
 
 <style scoped></style>
