@@ -8,31 +8,63 @@ defineProps({
   state: { type: Number, required: true },
 });
 
+// Colores para los estados
 const stateColors: Record<number, string> = {
-  1: "#578257",
-  2: "#FF5252",
-  3: "#FFC107",
+  1: "#4CAF50", // Healthy (verde)
+  2: "#FF5252", // Unhealthy (rojo)
+  3: "#FFC107", // Warning (amarillo)
+};
+
+// Iconos para los estados
+const statusIcons: Record<string, string> = {
+  Healthy: "✅",
+  Unhealthy: "❌",
+  Warning: "⚠️",
 };
 </script>
 
 <template>
-  <div class="plant-card bg-white p-4 rounded flex flex-col gap-2">
+  <div
+    class="plant-card bg-white p-4 rounded-lg flex flex-col gap-3 border-l-4"
+    :class="{
+      'border-green-500': status === 'Healthy',
+      'border-red-500': status === 'Unhealthy',
+      'border-yellow-500': status === 'Warning',
+    }"
+  >
     <div class="flex items-center gap-2">
       <div
-        class="w-[10px] h-[10px] rounded-full"
+        class="w-[12px] h-[12px] rounded-full"
         :style="{ backgroundColor: stateColors[state] }"
       ></div>
-      <p class="text-[18px] font-normal">{{ name }}</p>
+      <p class="text-[18px] font-semibold text-gray-800">{{ name }}</p>
     </div>
     <div class="flex items-center gap-2">
-      <p class="text-[14px] font-normal">{{ type }}</p>
+      <p class="text-[14px] font-medium text-gray-600">{{ type }}</p>
       <div
-        class="w-[5px] h-[5px] rounded-full"
+        class="w-[6px] h-[6px] rounded-full"
         :style="{ backgroundColor: stateColors[state] }"
       ></div>
-      <p class="text-[14px] font-normal">{{ status }}</p>
+      <p
+        class="text-[14px] font-medium"
+        :class="{
+          'text-green-500': status === 'Healthy',
+          'text-red-500': status === 'Unhealthy',
+          'text-yellow-500': status === 'Warning',
+        }"
+      >
+        {{ statusIcons[status] }} {{ status }}
+      </p>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.plant-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.plant-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+</style>
