@@ -37,7 +37,6 @@ import WidgetsContainer from '../components/widgets-container.component.vue';
 const authStore = useAuthStore();
 
 const isEnterprise = authStore.user?.role === 'ENTERPRISE';
-const isSpecialist = authStore.user?.role === 'SPECIALIST';
 const isDomestic = authStore.user?.role === 'DOMESTIC';
 </script>
 <style scoped></style>
