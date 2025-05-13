@@ -1,19 +1,29 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
+import { ManagementService } from '../../../management/application/services/management.service';
 import PlantCard from './plant-card.component.vue';
+import { ref } from 'vue';
 
-const plants = [
-  { name: 'Plant A', type: 'Wheat', status: 'Healthy', state: 1 },
-  { name: 'Plant B', type: 'Corn', status: 'Warning', state: 3 },
-  { name: 'Plant C', type: 'Rice', status: 'Unhealthy', state: 2 },
-];
+const managementService = new ManagementService();
 
-function addPlant() {
-  console.log('Add new plant');
-}
+const plants = ref<any[]>([]);
+
+onMounted(async () => {
+  try {
+    const response = await managementService.getPlants();
+    plants.value = response;
+  } catch (error) {
+    console.error('Error fetching plants:', error);
+  }
+});
+
+const addPlant = async () => {
+  console.log('Add plant button clicked');
+};
 </script>
 
 <template>
-  <div class="plants-list bg-[#E3E3E3] p-4 rounded">
+  <div class="plants-list bg-gray-100 p-4 rounded">
     <h2 class="text-[24px] font-semibold mb-4">Plants</h2>
     <div class="flex flex-col gap-4">
       <plant-card
