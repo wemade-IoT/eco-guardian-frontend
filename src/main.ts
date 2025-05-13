@@ -3,12 +3,14 @@ import "./style.css";
 import App from "./App.vue";
 import PrimeVue from "primevue/config";
 import Aura from "@primeuix/themes/aura";
+import '@fortawesome/fontawesome-free/css/all.css';
 
 // PrimeIcons
 import "primeicons/primeicons.css";
 
 // Routing
 import router from "./router/index.ts";
+import { createPinia } from "pinia";
 
 const app = createApp(App);
 app
@@ -21,8 +23,7 @@ app
         darkModeSelector: "manual",
       },
     },
-    unstyled: true,
   })
-  .use(router);
+  .use(router).use(createPinia());
 
 app.mount("#app");

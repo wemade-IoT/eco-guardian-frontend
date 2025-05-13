@@ -13,7 +13,7 @@ const routes = [
     component: MainLayoutPage,
     children: [
       {
-        path: "home",
+        path: "/home",
         component: AnalyticsPage,
         props: true,
       },
