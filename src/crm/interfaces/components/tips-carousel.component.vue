@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { CrmService } from '../../../crm/infrastructure/services/crm.service.ts';
+import { CrmService } from '../../infrastructure/services/crm.service.ts';
 
 defineProps({
   sliceCount: {

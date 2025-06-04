@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import {InstallationService} from "@/managament/infrastructure/services/resources.service.ts";
-import {DEVICE_STATE} from "@/public/utils/types/devices.ts";
+import {DEVICE_STATE} from "@/public/utils/types/devices.js";
 
 
 const devices = ref<any[]>([]);

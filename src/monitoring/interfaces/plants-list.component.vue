@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { MonitoringService } from '../../../monitoring/infrastructure/services/monitoring.service.ts';
+import { MonitoringService } from '../infrastructure/services/monitoring.service.ts';
 import PlantCard from './plant-card.component.vue';
 import { ref } from 'vue';
 
