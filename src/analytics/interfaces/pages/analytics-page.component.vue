@@ -27,11 +27,11 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
-import AlertsList from '../components/alerts-list.component.vue';
-import DevicesList from '../components/devices-list.component.vue';
+import AlertsList from '../../../monitoring/interfaces/alerts-list.component.vue';
+import DevicesList from '../../../resources/interfaces/components/devices-list.component.vue';
 import LinesChart from '../components/lines-chart.component.vue';
-import PlantsList from '../components/plants-list.component.vue';
-import TipsCarousel from '../components/tips-carousel.component.vue';
+import PlantsList from '../../../monitoring/interfaces/plants-list.component.vue';
+import TipsCarousel from '../../../crm/interfaces/components/tips-carousel.component.vue';
 import WidgetsContainer from '../components/widgets-container.component.vue';
 
 const authStore = useAuthStore();

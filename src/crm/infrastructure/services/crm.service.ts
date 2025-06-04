@@ -1,7 +1,7 @@
 import type { AxiosInstance } from "axios";
 import axios from "axios";
 
-export class ConsultingService {
+export class CrmService {
   private baseUrl: string = "";
   private http!: AxiosInstance;
 
@@ -15,10 +15,10 @@ export class ConsultingService {
   public async getConsulting(): Promise<any> {
     try {
       const response = await this.http.get(`${this.baseUrl}/queries`);
-      console.log("Response from consulting service:", response.data);
+      console.log("Response from crm service:", response.data);
       return response.data;
     } catch (error) {
-      console.error("Error fetching consulting:", error);
+      console.error("Error fetching crm:", error);
       throw error;
     }
   }
