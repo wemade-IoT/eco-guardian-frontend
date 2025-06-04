@@ -15,10 +15,10 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { NotificationsService } from '../../../notifications/infrastructure/services/notifications.service';
+import { NotificationsService } from '../../../profile/infrastructure/services/notification.service';
 import AlertCard from './alert-card.component.vue';
 
-const alertsService = new NotificationsService();
+const alertsService = new NotificationService();
 
 const alerts = ref<any[]>([]);
 
