@@ -2,7 +2,7 @@
   <div>
     <div v-if="isEnterprise || isDomestic" class="grid grid-cols-[2fr_1fr_1fr] grid-rows-auto gap-2 h-max py-3">
       <div class="flex flex-col gap-2">
-        <lines-chart></lines-chart>
+        <line-chart></line-chart>
         <widgets-container></widgets-container>
       </div>
       <div v-if="isEnterprise">
@@ -29,7 +29,7 @@
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import AlertsList from '../../../monitoring/interfaces/alerts-list.component.vue';
 import DevicesList from '../../../resources/interfaces/components/devices-list.component.vue';
-import LinesChart from '../components/lines-chart.component.vue';
+import LineChart from '../components/line-chart.component.vue';
 import PlantsList from '../../../monitoring/interfaces/plants-list.component.vue';
 import TipsCarousel from '../../../crm/interfaces/components/tips-carousel.component.vue';
 import WidgetsContainer from '../components/widgets-container.component.vue';
