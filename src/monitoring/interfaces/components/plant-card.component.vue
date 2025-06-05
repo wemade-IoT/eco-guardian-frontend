@@ -4,7 +4,7 @@ import { defineProps } from 'vue';
 defineProps({
   name: { type: String, required: true },
   type: { type: String, required: true },
-  status: { type: String, required: true },
+  status: { type: Number, required: true },
   state: { type: Number, required: true },
 });
 
@@ -16,10 +16,16 @@ const stateColors: Record<number, string> = {
 };
 
 // Iconos para los estados
-const statusIcons: Record<string, string> = {
-  Healthy: "✅",
-  Unhealthy: "❌",
-  Warning: "⚠️",
+const statusIcons: Record<number, string> = {
+  1: "✅",
+  2: "❌",
+  3: "⚠️",
+};
+
+const statusDescriptions: Record<number, string> = {
+  1: "Healthy",
+  2: "Unhealthy",
+  3: "Warning",
 };
 </script>
 
@@ -27,9 +33,9 @@ const statusIcons: Record<string, string> = {
   <div
     class="plant-card bg-white p-4 rounded-lg flex flex-col gap-3 border-l-4"
     :class="{
-      'border-green-500': status === 'Healthy',
-      'border-red-500': status === 'Unhealthy',
-      'border-yellow-500': status === 'Warning',
+      'border-green-500': status === 1,
+      'border-red-500': status === 2,
+      'border-yellow-500': status === 3,
     }"
   >
     <div class="flex items-center gap-2">
@@ -48,12 +54,12 @@ const statusIcons: Record<string, string> = {
       <p
         class="text-[14px] font-medium"
         :class="{
-          'text-green-500': status === 'Healthy',
-          'text-red-500': status === 'Unhealthy',
-          'text-yellow-500': status === 'Warning',
+          'text-green-500': status ===1,
+          'text-red-500': status === 2,
+          'text-yellow-500': status === 3,
         }"
       >
-        {{ statusIcons[status] }} {{ status }}
+        {{ statusIcons[status] }} {{ statusDescriptions[status] }}
       </p>
     </div>
   </div>

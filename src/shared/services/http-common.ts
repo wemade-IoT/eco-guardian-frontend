@@ -2,11 +2,11 @@ import axios, { type AxiosInstance } from "axios";
 
 // config for token access in whole applicacion from localStorage
 export class HttpService {
-  protected http: AxiosInstance;
+ protected http: AxiosInstance;
 
   constructor() {
     this.http = axios.create({
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: "http://localhost:9080/api/v1/", // Replace this with env variable if needed
     });
 
     this.http.interceptors.request.use(

@@ -24,7 +24,8 @@ import { onMounted, ref } from 'vue';
 
 import Chart from 'primevue/chart';
 import { AnalyticsService } from '../../infrastructure/services/analytics.service';
-import {chartOptions} from "@/public/utils/consts/chart.ts";
+import {chartOptions} from "../../../public/utils/consts/chart.ts";
+import type {PeriodsValue} from "../../../public/utils/types/chart.ts";
 
 const options = [
   { label: 'Month', value: 'month' },
