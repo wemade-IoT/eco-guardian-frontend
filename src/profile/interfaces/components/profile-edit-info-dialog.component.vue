@@ -131,3 +131,97 @@ const saveChanges = () => {
 const closeDialog = () => {
   emit('update:visible', false);
 };
+</script>
+
+<template>
+  <Dialog
+    v-model:visible="props.visible"
+    modal
+    header="Edit Profile Information"
+    :style="{ width: '90%', maxWidth: '500px' }"
+    :closable="true"
+    @show="initFormData"
+  >
+    <div class="flex flex-col gap-4">
+
+      <div class="flex flex-col items-center mb-4">
+        <div
+          class="relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#A4D39A] mb-2 cursor-pointer"
+          @click="triggerFileInput"
+        >
+          <img
+            :src="previewImage || formData.photoUrl || 'https://avatars.githubusercontent.com/u/129230632?v=4'"
+            alt="Profile Photo"
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+            <i class="pi pi-camera text-white text-xl"></i>
+          </div>
+        </div>
+        <input
+          type="file"
+          ref="fileInput"
+          class="hidden"
+          accept="image/*"
+          @change="handleFileChange"
+        />
+        <small class="text-gray-500">Click to change photo</small>
+        <small v-if="errors.photoUrl" class="text-red-500">{{ errors.photoUrl }}</small>
+      </div>
+
+
+      <div class="field">
+        <label for="name" class="font-medium text-gray-700 block mb-1">Name</label>
+        <InputText
+          id="name"
+          v-model="formData.name"
+          class="w-full p-inputtext-sm"
+          :class="{ 'p-invalid': errors.name }"
+        />
+        <small v-if="errors.name" class="text-red-500">{{ errors.name }}</small>
+      </div>
+
+
+      <div class="field">
+        <label for="lastName" class="font-medium text-gray-700 block mb-1">Last Name</label>
+        <InputText
+          id="lastName"
+          v-model="formData.lastName"
+          class="w-full p-inputtext-sm"
+          :class="{ 'p-invalid': errors.lastName }"
+        />
+        <small v-if="errors.lastName" class="text-red-500">{{ errors.lastName }}</small>
+      </div>
+
+
+      <div class="field">
+        <label for="email" class="font-medium text-gray-700 block mb-1">Email</label>
+        <InputText
+          id="email"
+          v-model="formData.email"
+          class="w-full p-inputtext-sm"
+          :class="{ 'p-invalid': errors.email }"
+        />
+        <small v-if="errors.email" class="text-red-500">{{ errors.email }}</small>
+      </div>
+    </div>
+
+    <template #footer>
+      <div class="flex justify-end gap-2">
+        <Button
+          label="Cancel"
+          icon="pi pi-times"
+          class="p-button-text"
+          @click="closeDialog"
+        />
+        <Button
+          label="Save"
+          icon="pi pi-check"
+          class="p-button-success"
+          @click="saveChanges"
+        />
+      </div>
+    </template>
+  </Dialog>
+</template>
+
