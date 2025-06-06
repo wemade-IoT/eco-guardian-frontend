@@ -31,3 +31,18 @@
   </div>
 </template>
 
+<style scoped>
+.widget-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  border-width: 1px;
+}
+
+@media (max-width: 640px) {
+  .widget-card {
+    max-width: 100%;
+  }
+}
+</style>
