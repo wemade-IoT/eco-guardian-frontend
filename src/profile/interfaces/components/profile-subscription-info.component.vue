@@ -48,3 +48,27 @@
   </div>
 </template>
 
+<style scoped>
+.widget-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  border-width: 1px;
+}
+
+.widget-card-upgrade {
+  border-width: 1px;
+  max-width: 250px;
+}
+
+@media (max-width: 768px) {
+  .widget-card {
+    max-width: 100%;
+  }
+
+  .widget-card-upgrade {
+    max-width: 100%;
+  }
+}
+</style>
