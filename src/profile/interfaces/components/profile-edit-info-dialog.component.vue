@@ -225,3 +225,12 @@ const closeDialog = () => {
   </Dialog>
 </template>
 
+<style scoped>
+.p-invalid {
+  border-color: #f44336;
+}
+
+.field {
+  margin-bottom: 1rem;
+}
+</style>
