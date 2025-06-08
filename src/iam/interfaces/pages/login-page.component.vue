@@ -6,6 +6,30 @@
       <div class="absolute top-10 left-10">
         <img src="/src/assets/images/logo-ecoguardian.png" alt="EcoGuardian Logo" class="h-16" />
       </div>
+
+      <!-- FORM -->
+      <div class="max-w-md mt-36">
+        <h1 class="text-3xl font-bold mb-2">Welcome to<br>EcoGuardian Platform</h1>
+        <p class="mb-8 md:mt-0 mt-10">Enter your information</p>
+
+        <form @submit.prevent="handleLogin" class="space-y-6">
+          <div>
+            <label for="email" class="block text-sm font-medium mb-2">Usuario *</label>
+            <input type="email" id="email" v-model="email" class="w-full p-3 rounded bg-white placeholder:text-gray-400"
+              placeholder="usuario" required />
+          </div>
+          <div>
+            <label for="password" class="block text-sm font-medium md:mb-0 mb-2 md:mt-0 mt-20">Password *</label>
+            <input type="password" id="password" v-model="password"
+              class="w-full p-3 rounded bg-white placeholder:text-gray-400" placeholder="password" required />
+          </div>
+          <div class="pt-4">
+            <button type="submit" class="w-full py-3 bg-[#578257] text-white rounded hover:bg-[#4a6b4a]  mt-36">
+              Enter
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
