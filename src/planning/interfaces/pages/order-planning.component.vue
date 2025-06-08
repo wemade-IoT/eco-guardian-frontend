@@ -21,7 +21,7 @@ import Button from "primevue/button";
 
 <style scoped>
 .confirm-button {
-  background-color: #578257;
+  background-color: var(--color-primary);
   border: none;
   border-radius: 5px;
   font-size: 1.2rem;
@@ -29,6 +29,6 @@ import Button from "primevue/button";
 .confirm-button:hover,
 .confirm-button:focus,
 .confirm-button:active {
-  background-color: #578257 !important;
+  background-color: #var(--color-primary); !important;
 }
 </style>
