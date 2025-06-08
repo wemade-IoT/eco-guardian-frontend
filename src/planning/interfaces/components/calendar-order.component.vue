@@ -12,7 +12,7 @@ const today = new Date();
       <h1 class="title font-bold text-3xl text-left">
         Schedule your installation
       </h1>
-      <div class="card flex h-[25rem] flex-col items-center justify-items-start">
+      <div class="card flex h-[23rem] flex-col items-center justify-items-start">
         <DatePicker
           v-model="date"
           inline

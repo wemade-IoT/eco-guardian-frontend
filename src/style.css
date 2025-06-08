@@ -16,7 +16,7 @@
 /* Aplicar la fuente Inter al body */
 body {
   font-family: 'Inter', sans-serif;
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 
 /* for testing */
