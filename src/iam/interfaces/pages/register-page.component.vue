@@ -56,6 +56,13 @@
         </form>
       </div>
     </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="hidden md:block w-1/2">
+      <!-- BG ECOGUARDIAN -->
+      <img src="/src/assets/images/bg-register-ecoguardian.png" alt="EcoGuardian Background"
+        class="w-full h-full object-cover" />
+    </div>
   </div>
 </template>
 
