@@ -3,16 +3,23 @@ import { ref } from 'vue';
 import {DatePicker} from "primevue";
 
 const date = ref(null);
+const today = new Date();
 </script>
 
 <template>
-  <div class="flex justify-center min-h-screen">
-    <div class="grid grid-cols-1 gap-4 h-full p-4 w-[80rem]">
+  <div class="flex justify-center w-full">
+    <div class="grid grid-cols-1 gap-4 h-full p-4 w-full">
       <h1 class="title font-bold text-3xl text-left">
         Schedule your installation
       </h1>
-      <div class="card flex h-full flex-col items-center justify-center">
-        <DatePicker v-model="date" inline :numberOfMonths="2" class="w-full sm:w-[50rem]"/>
+      <div class="card flex h-[25rem] flex-col items-center justify-items-start">
+        <DatePicker
+          v-model="date"
+          inline
+          :numberOfMonths="2"
+          class="w-full sm:w-[50rem]"
+          :minDate="today"
+        />
       </div>
     </div>
   </div>
