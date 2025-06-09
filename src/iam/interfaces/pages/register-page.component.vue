@@ -22,18 +22,18 @@
             </div>
             <div class="w-1/2">
               <label for="lastName" class="block text-sm font-medium mb-2">Last Name *</label>
-              <input type="text" id="lastName" v-model="lastName" class="w-full p-3 rounded bg-white placeholder:text-gray-400"
-                placeholder="lastname" required />
+              <input type="text" id="lastName" v-model="lastName"
+                class="w-full p-3 rounded bg-white placeholder:text-gray-400" placeholder="lastname" required />
             </div>
           </div>
-          
+
           <!-- EMAIL -->
           <div>
             <label for="email" class="block text-sm font-medium mb-2">Email *</label>
             <input type="email" id="email" v-model="email" class="w-full p-3 rounded bg-white placeholder:text-gray-400"
               placeholder="email" required />
           </div>
-          
+
           <!-- PASSWORD -->
           <div class="flex gap-4">
             <div class="w-1/2">
@@ -47,9 +47,14 @@
                 class="w-full p-3 rounded bg-white placeholder:text-gray-400" placeholder="confirm password" required />
             </div>
           </div>
-          
-          <div class="pt-4">
-            <button type="submit" class="w-full py-3 bg-[#578257] text-white rounded hover:bg-[#4a6b4a] md:mt-0 mt-16">
+          <div>
+            <router-link to="/login"
+              class="block text-xs font-bold md:mb-0 md:mt-0 text-center text-[#578257] hover:underline">
+              Regresar
+            </router-link>
+          </div>
+          <div>
+            <button type="submit" class="w-full py-3 bg-[#578257] text-white rounded hover:bg-[#4a6b4a] md:mt-0 mt-12">
               Enter
             </button>
           </div>
@@ -102,6 +107,7 @@ const handleRegister = async () => {
 
 <style scoped>
 @media (max-width: 768px) {
+
   input,
   button {
     font-size: 16px;
