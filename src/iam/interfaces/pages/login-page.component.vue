@@ -19,12 +19,17 @@
               placeholder="usuario" required />
           </div>
           <div>
-            <label for="password" class="block text-sm font-medium md:mb-0 mb-2 md:mt-0 mt-20">Password *</label>
+            <label for="password" class="block text-sm font-medium  mb-2 md:mt-0 mt-10">Password *</label>
             <input type="password" id="password" v-model="password"
               class="w-full p-3 rounded bg-white placeholder:text-gray-400" placeholder="password" required />
           </div>
+          <div>
+            <router-link to="/register" class="block text-xs font-bold md:mb-0 mb-2 md:mt-0 text-center text-[#578257] hover:underline">
+              Crear una cuenta
+            </router-link>
+          </div>
           <div class="pt-4">
-            <button type="submit" class="w-full py-3 bg-[#578257] text-white rounded hover:bg-[#4a6b4a]  mt-36">
+            <button type="submit" class="w-full py-3 bg-[#578257] text-white rounded hover:bg-[#4a6b4a]  mt-28">
               Enter
             </button>
           </div>
