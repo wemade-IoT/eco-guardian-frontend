@@ -14,7 +14,8 @@ export class AuthService {
 
   public async signIn(email: string, password: string): Promise<any> {
   try {
-    return await this.http.get(`${this.baseUrl}/users?email=${email}&password=${password}`);
+    const response = await this.http.get(`${this.baseUrl}/users?email=${email}&password=${password}`);
+    return response.data;
   } catch (error) {
     console.error("Error during login:", error);
     throw error;
