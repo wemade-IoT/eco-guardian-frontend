@@ -57,11 +57,12 @@ const router = useRouter();
 
 const handleLogin = async () => {
   const authStore = useAuthStore();
-
   try {
     await authStore.login(email.value, password.value);
+    window.alert("¡Inicio de sesión exitoso! Bienvenido a la plataforma.");
     router.push("/home");
   } catch (error) {
+    window.alert("Error al iniciar sesión. Verifica tus datos e inténtalo de nuevo.");
     console.error("Login failed:", error);
   }
 };
