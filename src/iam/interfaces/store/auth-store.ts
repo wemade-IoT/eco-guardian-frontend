@@ -12,23 +12,25 @@ export const useAuthStore = defineStore("auth", {
     async login(email: string, password: string) {
       try {
         const user = await authService.signIn(email, password);
-
-        if (!user) {
-          throw new Error("Login failed");
-        }
-
+        if (!user) throw new Error("Login failed");
         this.user = user;
-
         localStorage.setItem("user", JSON.stringify(user));
-
-        // mandar al home si todo oki
-        console.log("on ta mi user:", this.user); // aqui ta
         router.push("/home");
       } catch (error) {
         console.error("Error during login:", error);
         throw error;
       }
     },
+
+    async register({ email, password, roleId, name, lastName }: { email: string; password: string; roleId: number; name?: string; lastName?: string }) {
+      try {
+        await authService.signUp(email, password, roleId, name, lastName);
+      } catch (error) {
+        console.error("Error during signup:", error);
+        throw error;
+      }
+    },
+
     logout() {
       this.user = null;
       localStorage.removeItem("user");
