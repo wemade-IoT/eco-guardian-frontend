@@ -35,6 +35,7 @@ import TipsCarousel from '../../../crm/interfaces/components/tips-carousel.compo
 import WidgetsContainer from '../components/widgets-container.component.vue';
 
 const authStore = useAuthStore();
+console.log(authStore.user.role)
 
 const isEnterprise = authStore.user?.role === 'ENTERPRISE';
 const isDomestic = authStore.user?.role === 'DOMESTIC';

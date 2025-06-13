@@ -11,12 +11,29 @@
   --color-dark: #000000; /* Reemplazado con --color-dark */
   --color-border: #e0e0e0; /* Sin cambios */
   --color-border-light: #f0f0f0; /* Sin cambios */
+
+  --animate-pulse: pulse 1s ease-in-out infinite;
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.01);
+    }
+  }
 }
 
 /* Aplicar la fuente Inter al body */
 body {
-  font-family: 'Inter', sans-serif;
-  overflow: hidden;
+  font-family: "Inter", sans-serif;
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 /* for testing */
