@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { NotificationsService } from '../../../profile/infrastructure/services/notification.service';
+import { NotificationsService } from '../../profile/infrastructure/services/notification.service.ts';
 import AlertCard from './alert-card.component.vue';
 
 const alertsService = new NotificationService();

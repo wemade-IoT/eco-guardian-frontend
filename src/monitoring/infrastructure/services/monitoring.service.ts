@@ -1,9 +1,10 @@
 import type { AxiosInstance } from "axios";
 import axios from "axios";
 
-export class InstallationService {
+export class MonitoringService {
   private baseUrl: string = "";
   private http!: AxiosInstance;
+
   constructor() {
     this.baseUrl = import.meta.env.VITE_API_URL;
     this.http = axios.create({
@@ -11,12 +12,12 @@ export class InstallationService {
     });
   }
 
-  public async getSensors(): Promise<any> {
+  public async getPlants(): Promise<any> {
     try {
-      const response = await this.http.get(`${this.baseUrl}/sensors`);
+      const response = await this.http.get(`${this.baseUrl}/plants`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching devices:", error);
+      console.error("Error fetching analytics:", error);
       throw error;
     }
   }

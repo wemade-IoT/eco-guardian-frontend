@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { ConsultingService } from '../../../consulting/infrastructure/services/consulting.service';
+import { CrmService } from '../../infrastructure/services/crm.service.ts';
 
 defineProps({
   sliceCount: {
@@ -32,7 +32,7 @@ defineProps({
   },
 });
 
-const consultingService = new ConsultingService();
+const consultingService = new CrmService();
 
 const queries = ref<any[]>([]);
 

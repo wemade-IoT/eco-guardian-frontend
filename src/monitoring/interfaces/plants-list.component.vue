@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { ManagementService } from '../../../management/infrastructure/services/management.service';
+import { MonitoringService } from '../infrastructure/services/monitoring.service.ts';
 import PlantCard from './plant-card.component.vue';
 import { ref } from 'vue';
 
-const managementService = new ManagementService();
+const managementService = new MonitoringService();
 
 const plants = ref<any[]>([]);
 

@@ -2,7 +2,7 @@ import type { AxiosInstance } from "axios";
 import axios from "axios";
 import { QuestionAssemblerService } from "./question-assembler.service";
 
-export class ConsultingService {
+export class CrmService {
   private baseUrl: string = "";
   private http!: AxiosInstance;
 
@@ -52,14 +52,11 @@ export class ConsultingService {
 
   public async getConsulting(): Promise<any> {
     try {
-      const response = await this.http.get('/queries');
-      console.log("Response from consulting service:", response.data);
-      // asignar los datos al assembler
-      let question_data = QuestionAssemblerService.fromDTOArrayToDomain(response.data);
-      console.log("Transformed question data:", question_data);
-      return question_data;
+      const response = await this.http.get(`${this.baseUrl}/queries`);
+      console.log("Response from crm service:", response.data);
+      return response.data;
     } catch (error) {
-      console.error("Error fetching consulting:", error);
+      console.error("Error fetching crm:", error);
       throw error;
     }
   }

@@ -1,41 +1,47 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="w-full max-w-md p-8 bg-white rounded shadow-md">
-      <h1 class="mb-6 text-2xl font-bold text-center">Login</h1>
-      <form @submit.prevent="handleLogin">
-        <div class="mb-4">
-          <label for="email" class="block mb-2 text-sm font-medium text-gray-700">Email</label>
-          <input
-            type="email"
-            id="email"
-            v-model="email"
-            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your email"
-          />
-        </div>
-        <div class="mb-6">
-          <label for="password" class="block mb-2 text-sm font-medium text-gray-700">Password</label>
-          <input
-            type="password"
-            id="password"
-            v-model="password"
-            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your password"
-          />
-        </div>
-        <button
-          type="submit"
-          class="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Login
-        </button>
-      </form>
-      <div class="mt-4 text-center">
-        <p class="text-sm text-gray-600">
-          Don't have an account?
-          <router-link to="/register" class="text-blue-500 hover:underline">Create one</router-link>
-        </p>
+  <div class="flex flex-col md:flex-row min-h-screen">
+    <!-- LEFT-SIDE  -->
+    <div class="w-full h-screen md:h-auto md:w-1/2 bg-[#FAF5E7] flex flex-col justify-start p-8 md:p-16 relative">
+      <!-- Logo -->
+      <div class="absolute top-10 left-10">
+        <img src="/src/assets/images/logo-ecoguardian.png" alt="EcoGuardian Logo" class="h-16" />
       </div>
+
+      <!-- FORM -->
+      <div class="max-w-md mt-36">
+        <h1 class="text-3xl font-bold mb-2">Welcome to<br>EcoGuardian Platform</h1>
+        <p class="mb-8 md:mt-0 mt-10">Enter your information</p>
+
+        <form @submit.prevent="handleLogin" class="space-y-6">
+          <div>
+            <label for="email" class="block text-sm font-medium mb-2">Usuario *</label>
+            <input type="email" id="email" v-model="email" class="w-full p-3 rounded bg-white placeholder:text-gray-400"
+              placeholder="usuario" required />
+          </div>
+          <div>
+            <label for="password" class="block text-sm font-medium  mb-2 md:mt-0 mt-10">Password *</label>
+            <input type="password" id="password" v-model="password"
+              class="w-full p-3 rounded bg-white placeholder:text-gray-400" placeholder="password" required />
+          </div>
+          <div>
+            <router-link to="/register" class="block text-xs font-bold md:mb-0 mb-2 md:mt-0 text-center text-[#578257] hover:underline">
+              Crear una cuenta
+            </router-link>
+          </div>
+          <div class="pt-4">
+            <button type="submit" class="w-full py-3 bg-[#578257] text-white rounded hover:bg-[#4a6b4a]  mt-28">
+              Enter
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="hidden md:block w-1/2">
+      <!-- BG ECOGUARDIAN -->
+      <img src="/src/assets/images/bg-ecoguardian.png" alt="EcoGuardian Background"
+        class="w-full h-full object-cover" />
     </div>
   </div>
 </template>
@@ -43,20 +49,31 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useAuthStore } from "../store/auth-store";
+import { useRouter } from "vue-router";
 
 const email = ref("");
 const password = ref("");
+const router = useRouter();
 
 const handleLogin = async () => {
   const authStore = useAuthStore();
-
   try {
     await authStore.login(email.value, password.value);
-    console.log("Login successful");
+    window.alert("¡Inicio de sesión exitoso! Bienvenido a la plataforma.");
+    router.push("/home");
   } catch (error) {
+    window.alert("Error al iniciar sesión. Verifica tus datos e inténtalo de nuevo.");
     console.error("Login failed:", error);
   }
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+@media (max-width: 768px) {
+
+  input,
+  button {
+    font-size: 16px;
+  }
+}
+</style>
