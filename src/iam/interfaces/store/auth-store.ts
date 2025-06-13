@@ -11,10 +11,11 @@ export const useAuthStore = defineStore("auth", {
   actions: {
     async login(email: string, password: string) {
       try {
-        const user = await authService.signIn(email, password);
-        if (!user) throw new Error("Login failed");
-        this.user = user;
-        localStorage.setItem("user", JSON.stringify(user));
+        const response = await authService.signIn(email, password);
+        if (!response?.data?.token) throw new Error("Login failed");
+        localStorage.setItem("token", response.data.token);
+        this.user = response.data.user;
+        localStorage.setItem("user", JSON.stringify(response.data.user));
         router.push("/home");
       } catch (error) {
         console.error("Error during login:", error);
@@ -34,6 +35,7 @@ export const useAuthStore = defineStore("auth", {
     logout() {
       this.user = null;
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
       router.push("/login");
     },
   },

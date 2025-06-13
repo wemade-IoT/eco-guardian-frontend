@@ -11,14 +11,14 @@ export class AuthService {
   }
 
   public async signIn(email: string, password: string): Promise<any> {
-  try {
-    const payload = { email, password };
-    return await this.http.post(`${this.baseUrl}/authentication/sign-in`, payload);
-  } catch (error) {
-    console.error("Error during login:", error);
-    throw error;
+    try {
+      const payload = { email, password };
+      return await this.http.post(`${this.baseUrl}/authentication/sign-in`, payload);
+    } catch (error) {
+      console.error("Error during login:", error);
+      throw error;
+    }
   }
-}
 
   public async signUp(email: string, password: string, roleId: number, name?: string, lastName?: string): Promise<any> {
   try {
