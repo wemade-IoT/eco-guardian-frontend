@@ -1,72 +1,118 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="w-full max-w-lg p-8 bg-white rounded shadow-md">
-      <h1 class="mb-6 text-2xl font-bold text-center">Register</h1>
-      <form>
-        <div class="mb-4">
-          <label for="name" class="block mb-2 text-sm font-medium text-gray-700">Name</label>
-          <input
-            type="text"
-            id="name"
-            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your name"
-          />
-        </div>
-        <div class="mb-4">
-          <label for="email" class="block mb-2 text-sm font-medium text-gray-700">Email</label>
-          <input
-            type="email"
-            id="email"
-            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your email"
-          />
-        </div>
-        <div class="mb-4">
-          <label for="address" class="block mb-2 text-sm font-medium text-gray-700">Address</label>
-          <input
-            type="text"
-            id="address"
-            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your address"
-          />
-        </div>
-        <div class="mb-4">
-          <label for="password" class="block mb-2 text-sm font-medium text-gray-700">Password</label>
-          <input
-            type="password"
-            id="password"
-            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your password"
-          />
-        </div>
-        <div class="mb-6">
-          <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-700">Confirm Password</label>
-          <input
-            type="password"
-            id="confirm-password"
-            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Confirm your password"
-          />
-        </div>
-        <button
-          type="button"
-          class="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Create Account
-        </button>
-      </form>
-      <div class="mt-4 text-center">
-        <p class="text-sm text-gray-600">
-          Already have an account?
-          <router-link to="/login" class="text-blue-500 hover:underline">Login</router-link>
-        </p>
+  <div class="flex flex-col md:flex-row min-h-screen">
+    <!-- LEFT-SIDE  -->
+    <div class="w-full h-screen md:h-auto md:w-1/2 bg-[#FAF5E7] flex flex-col justify-start p-8 md:p-16 relative">
+      <!-- Logo -->
+      <div class="absolute top-10 left-10">
+        <img src="/src/assets/images/logo-ecoguardian.png" alt="EcoGuardian Logo" class="h-16" />
       </div>
+
+      <!-- FORMULARIO -->
+      <div class="max-w-md mt-36">
+        <h1 class="text-3xl font-bold mb-2">Welcome to<br>EcoGuardian Platform</h1>
+        <p class="mb-8 md:mt-0 mt-10">Enter your information</p>
+
+        <form @submit.prevent="handleRegister" class="space-y-9">
+          <!-- NAME -->
+          <div class="flex gap-4">
+            <div class="w-1/2">
+              <label for="name" class="block text-sm font-medium mb-2">Name *</label>
+              <input type="text" id="name" v-model="name" class="w-full p-3 rounded bg-white placeholder:text-gray-400"
+                placeholder="name" required />
+            </div>
+            <div class="w-1/2">
+              <label for="lastName" class="block text-sm font-medium mb-2">Last Name *</label>
+              <input type="text" id="lastName" v-model="lastName"
+                class="w-full p-3 rounded bg-white placeholder:text-gray-400" placeholder="lastname" required />
+            </div>
+          </div>
+
+          <!-- EMAIL -->
+          <div>
+            <label for="email" class="block text-sm font-medium mb-2">Email *</label>
+            <input type="email" id="email" v-model="email" class="w-full p-3 rounded bg-white placeholder:text-gray-400"
+              placeholder="email" required />
+          </div>
+
+          <!-- PASSWORD -->
+          <div class="flex gap-4">
+            <div class="w-1/2">
+              <label for="password" class="block text-sm font-medium mb-2">Password *</label>
+              <input type="password" id="password" v-model="password"
+                class="w-full p-3 rounded bg-white placeholder:text-gray-400" placeholder="password" required />
+            </div>
+            <div class="w-1/2">
+              <label for="confirmPassword" class="block text-sm font-medium mb-2">Confirm password *</label>
+              <input type="password" id="confirmPassword" v-model="confirmPassword"
+                class="w-full p-3 rounded bg-white placeholder:text-gray-400" placeholder="confirm password" required />
+            </div>
+          </div>
+          <div>
+            <router-link to="/login"
+              class="block text-xs font-bold md:mb-0 md:mt-0 text-center text-[#578257] hover:underline">
+              Regresar
+            </router-link>
+          </div>
+          <div>
+            <button type="submit" class="w-full py-3 bg-[#578257] text-white rounded hover:bg-[#4a6b4a] md:mt-0 mt-12">
+              Enter
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="hidden md:block w-1/2">
+      <!-- BG ECOGUARDIAN -->
+      <img src="/src/assets/images/bg-register-ecoguardian.png" alt="EcoGuardian Background"
+        class="w-full h-full object-cover" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+import { useAuthStore } from "../store/auth-store";
+import { useRouter } from "vue-router";
+
+const name = ref("");
+const lastName = ref("");
+const email = ref("");
+const password = ref("");
+const confirmPassword = ref("");
+const router = useRouter();
+
+const handleRegister = async () => {
+  if (password.value !== confirmPassword.value) {
+    alert("Las contraseñas no coinciden");
+    return;
+  }
+  const authStore = useAuthStore();
+  try {
+    await authStore.register({
+      email: email.value,
+      password: password.value,
+      roleId: 1, // o el que corresponda
+      name: name.value,
+      lastName: lastName.value,
+    });
+    // Alerta profesional con confirmación
+    window.alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
+    router.push("/login");
+  } catch (error) {
+    alert("Error en el registro. Intenta de nuevo.");
+    console.error("Registration failed:", error);
+  }
+};
 </script>
 
 <style scoped>
+@media (max-width: 768px) {
+
+  input,
+  button {
+    font-size: 16px;
+  }
+}
 </style>

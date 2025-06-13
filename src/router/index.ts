@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import LoginPage from "@/iam/interfaces/pages/login-page.component.vue";
 import RegisterPage from "@/iam/interfaces/pages/register-page.component.vue";
 import MainLayoutPage from "@/shared/pages/main-layout-page.vue";
-import AnalyticsPage from "@/analytics/interfaces/pages/analytics-page.component.vue";
+import DashboardPage from "@/analytics/interfaces/pages/dashboard.component.vue";
 import ChoosePlanPage from "@/payment/interfaces/pages/choose-plan-page.component.vue";
 
 const routes = [
@@ -16,7 +16,7 @@ const routes = [
     children: [
       {
         path: "/home",
-        component: AnalyticsPage,
+        component: DashboardPage, // Asegúrate de que esta sea la página correcta
         props: true,
       },
     ],
