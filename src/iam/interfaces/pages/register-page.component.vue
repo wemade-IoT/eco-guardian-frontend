@@ -88,18 +88,20 @@ const handleRegister = async () => {
     alert("Las contraseñas no coinciden");
     return;
   }
-
   const authStore = useAuthStore();
-
   try {
     await authStore.register({
+      email: email.value,
+      password: password.value,
+      roleId: 1, // o el que corresponda
       name: name.value,
       lastName: lastName.value,
-      email: email.value,
-      password: password.value
     });
+    // Alerta profesional con confirmación
+    window.alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
     router.push("/login");
   } catch (error) {
+    alert("Error en el registro. Intenta de nuevo.");
     console.error("Registration failed:", error);
   }
 };
