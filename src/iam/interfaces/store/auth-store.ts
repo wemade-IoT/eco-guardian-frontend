@@ -18,6 +18,8 @@ export const useAuthStore = defineStore("auth", {
     })(),
     role: getClaimType("role",localStorage.getItem("token") || "") || "",
     id: getClaimType("sid",localStorage.getItem("token") || "") || "",
+    isEnterprise: getClaimType("role",localStorage.getItem("token") || "") === "Enterprise" || false,
+    isAdmin : getClaimType("role",localStorage.getItem("token") || "") === "Admin" || false,
   }),
   actions: {
     async login(email: string, password: string) {

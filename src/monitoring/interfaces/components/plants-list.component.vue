@@ -12,7 +12,6 @@ const plantStore =  usePlantStore();
 const authStore = useAuthStore();
 
 const visible = ref(false);
-const isEnterprise = ref(false);
 const isProceed = ref(false);
 const currentPlantId = ref(0);
 
@@ -25,7 +24,7 @@ const enterpriseValues = ref({
   temperatureThreshold: 0,
   areaCoverage: 1000,
   userId: 1,
-  isPlantation: true,
+  isPlantation: authStore.isEnterprise,
   wellnessStateId: 1,
 });
 
@@ -38,18 +37,18 @@ const domesticValues = ref({
   temperatureThreshold: 0,
   areaCoverage: 0,
   userId: 1,
-  isPlantation: false,
+  isPlantation: authStore.isEnterprise,
   wellnessStateId: 1,
 });
 
 onMounted(async () => {
-    await plantStore.getPlantsByUserId(authStore.id) //TODO: replace with actual user ID
+    await plantStore.getPlantsByUserId(authStore.id)
 });
 
 const savePlant = async () => {
   isProceed.value = false;
   if (!visible.value) {
-    if (isEnterprise.value) {
+    if (authStore.isEnterprise) {
       enterpriseValues.value = { ...enterpriseValues.value, id: 0, name: '', type: '', waterThreshold: 0, lightThreshold: 0, temperatureThreshold: 0 };
     } else {
       domesticValues.value = { ...domesticValues.value, id: 0, name: '', type: '', waterThreshold: 0, lightThreshold: 0, temperatureThreshold: 0 };
@@ -60,8 +59,7 @@ const savePlant = async () => {
 
 function setEditMode(plant: any) {
   isProceed.value = false;
-  isEnterprise.value = plant.isPlantation;
-  if (isEnterprise.value) {
+  if (authStore.isEnterprise) {
     enterpriseValues.value = {
       ...enterpriseValues.value,
       ...plant,
@@ -99,13 +97,13 @@ function onProceedDelete(id:number) {
 }
 
 async function submitForm(updatedValues: any) {
-  if (isEnterprise.value) {
+  if (authStore.isEnterprise) {
     Object.assign(enterpriseValues.value, updatedValues);
   } else {
     Object.assign(domesticValues.value, updatedValues);
   }
 
-  const request = plantAssembler.toRequest(isEnterprise.value ? enterpriseValues.value : domesticValues.value); //TODO: Refactor this when iam will implement
+  const request = plantAssembler.toRequest(authStore.isEnterprise ? enterpriseValues.value : domesticValues.value);
   if (updatedValues.id !== 0) {
     await plantStore.editPlant(updatedValues.id, request);
   } else {
@@ -118,14 +116,14 @@ async function submitForm(updatedValues: any) {
 </script>
 
 <template>
-  <div v-if="isEnterprise">
+  <div v-if="authStore.isEnterprise">
     <plant-dialog
         :is-delete="isProceed"
         @delete-plant="deletePlant"
         @update:isDelete="isProceed = $event"
         v-model:visible="visible"
         @submit-form="submitForm"
-        :form-values="isEnterprise ? enterpriseValues : domesticValues"
+        :form-values="authStore.isEnterprise ? enterpriseValues : domesticValues"
         :header="enterpriseValues.id !== 0 ? 'Edit Plantation' : 'Register a new Plantation'"
         :subtitle="enterpriseValues.id !== 0 ? 'Edit the plantation details' : 'Register a plantation by defining general data'"
     />
@@ -137,7 +135,7 @@ async function submitForm(updatedValues: any) {
         @update:isDelete="isProceed = $event"
         v-model:visible="visible"
         @submit-form="submitForm"
-        :form-values="isEnterprise ? enterpriseValues : domesticValues"
+        :form-values="authStore.isEnterprise ? enterpriseValues : domesticValues"
         :header="domesticValues.id !== 0 ? 'Edit Plant' : 'Register a new Plant'"
         :subtitle="domesticValues.id !== 0 ? 'Edit the plant details' : 'Register a plant by defining general data'"
     />
