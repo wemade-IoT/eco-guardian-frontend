@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import PlantCard from './plant-card.component.vue';
-import { PlantService } from "../../infrastructure/services/plant.service.ts";
 import plantDialog from './plant-dialog.vue';
 import { PlantAssembler } from "../../domain/plant-assembler.ts";
-import {c} from "vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf";
+import {usePlantStore} from "../stores/plant-store.ts";
+import type {PlantResponse} from "@/monitoring/domain/plant-response.ts";
 
-const plantService = new PlantService();
 const plantAssembler = new PlantAssembler();
+const plantStore =  usePlantStore();
 
-const plants = ref<any[]>([]);
 const visible = ref(false);
 const isEnterprise = ref(false);
 const isProceed = ref(false);
@@ -42,16 +41,7 @@ const domesticValues = ref({
 });
 
 onMounted(async () => {
-  try {
-    const response = await plantService.getPlantsByUserId(1); //TODO: replace with actual user ID
-    let plantsAvailable = [];
-    if (response.data.length > 0) {
-      plantsAvailable = response.data.map(plant => plantAssembler.toResponse(plant));
-    }
-    plants.value = plantsAvailable;
-  } catch (error) {
-    console.error('Error fetching plants:', error);
-  }
+    await plantStore.getPlantsByUserId(1) //TODO: replace with actual user ID
 });
 
 const savePlant = async () => {
@@ -86,13 +76,18 @@ function setEditMode(plant: any) {
 }
 
 function deletePlant(){
-  plantService.deletePlant(currentPlantId.value)
+  plantStore.deletePlant(currentPlantId.value)
     .then(() => {
-      plants.value = plants.value.filter(plant => plant.id !== currentPlantId.value);
+      plantStore.deletePlant(currentPlantId.value);
     })
     .catch(error => {
       console.error('Error deleting plant:', error);
     });
+}
+
+function viewPlantInformation(plant:PlantResponse){
+  plantStore.plant = plant;
+  //TODO: Add navigation to analytics page
 }
 
 function onProceedDelete(id:number) {
@@ -108,11 +103,11 @@ async function submitForm(updatedValues: any) {
     Object.assign(domesticValues.value, updatedValues);
   }
 
-  const request = plantAssembler.toRequest(isEnterprise.value ? enterpriseValues.value : domesticValues.value);
+  const request = plantAssembler.toRequest(isEnterprise.value ? enterpriseValues.value : domesticValues.value); //TODO: Refactor this when iam will implement
   if (updatedValues.id !== 0) {
-    await plantService.updatePlant(updatedValues.id, request);
+    await plantStore.editPlant(updatedValues.id, request);
   } else {
-    await plantService.createPlant(request);
+    await plantStore.createPlant(request);
   }
 
   visible.value = false;
@@ -150,14 +145,15 @@ async function submitForm(updatedValues: any) {
     <h2 class="text-[24px] font-semibold mb-4">Plants</h2>
     <div class="flex flex-col gap-4">
       <plant-card
+          @view="viewPlantInformation(plant)"
           @delete="onProceedDelete(plant.id)"
           @edit="setEditMode(plant)"
-          v-for="(plant, index) in plants"
+          v-for="(plant, index) in plantStore.plants"
           :key="index"
           :name="plant.name"
           :type="plant.type"
           :status="plant.wellnessStateId"
-          :state="plant.state"
+          :state="plant.wellnessStateId"
       />
     </div>
     <button
