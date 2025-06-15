@@ -11,6 +11,7 @@ import "primeicons/primeicons.css";
 // Routing
 import router from "./router/index.ts";
 import { createPinia } from "pinia";
+import {Button, Dialog, InputText} from "primevue";
 
 const app = createApp(App);
 app
@@ -25,5 +26,9 @@ app
     },
   })
   .use(router).use(createPinia());
+
+app.component("pv-dialog", Dialog);
+app.component("pv-text",InputText)
+app.component("pv-button",Button)
 
 app.mount("#app");

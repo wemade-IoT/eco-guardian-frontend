@@ -3,11 +3,11 @@
     <h2 class="text-xl font-semibold mb-4">Notifications</h2>
     <div class="flex flex-col gap-4">
       <alert-card
-        v-for="(alert, index) in alerts"
-        :key="index"
-        :title="alert.title"
-        :content="alert.content"
-        :date="alert.created_at"
+          v-for="(alert, index) in alerts"
+          :key="index"
+          :title="alert.title"
+          :content="alert.content"
+          :date="alert.created_at"
       />
     </div>
   </div>
@@ -15,8 +15,8 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { NotificationsService } from '../../profile/infrastructure/services/notification.service.ts';
 import AlertCard from './alert-card.component.vue';
+import {NotificationService} from "../../profile/infrastructure/services/notification.service.ts";
 
 const alertsService = new NotificationService();
 
