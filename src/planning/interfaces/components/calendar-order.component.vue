@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch, defineProps, defineEmits } from 'vue';
 import {DatePicker} from "primevue";
 
-const date = ref(null);
+const props = defineProps<{ modelValue: Date|null }>();
+const emit = defineEmits(['update:modelValue']);
+
+const date = ref(props.modelValue ?? null);
 const today = new Date();
+
+watch(date, (val) => {
+  emit('update:modelValue', val);
+});
+watch(() => props.modelValue, (val) => {
+  date.value = val;
+});
 </script>
 
 <template>

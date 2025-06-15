@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch, defineProps, defineEmits } from 'vue';
+
+const props = defineProps<{ modelValue: number }>();
+const emit = defineEmits(['update:modelValue']);
 
 const timeSlots = [
   '9:00 am - 10:00 am',
@@ -11,11 +14,18 @@ const timeSlots = [
   '3:00 pm - 4:00 pm',
 ];
 
-const selectedSlot = ref(0);
+const selectedSlot = ref(props.modelValue ?? 0);
 
 function selectSlot(idx: number) {
   selectedSlot.value = idx;
 }
+
+watch(selectedSlot, (val) => {
+  emit('update:modelValue', val);
+});
+watch(() => props.modelValue, (val) => {
+  selectedSlot.value = val;
+});
 </script>
 
 <template>
