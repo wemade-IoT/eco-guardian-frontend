@@ -1,22 +1,30 @@
 import { defineStore } from "pinia";
 import router from "../../../router";
 import { AuthService } from "../../infrastructure/services/auth.service";
+import {getClaimType} from "../../../public/utils/helpers/decodeTokenHelper.ts";
 
 const authService = new AuthService();
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
-    user: JSON.parse(localStorage.getItem("user") || "null"),
+    user: (() => {
+      const storedUser = localStorage.getItem("user");
+      try {
+        return storedUser ? JSON.parse(storedUser) : "";
+      } catch (error) {
+        console.error("Invalid JSON in localStorage for 'user':", error);
+        return "";
+      }
+    })(),
+    role: getClaimType("role",localStorage.getItem("token") || "") || "",
+    id: getClaimType("sid",localStorage.getItem("token") || "") || "",
   }),
   actions: {
     async login(email: string, password: string) {
       try {
         const response = await authService.signIn(email, password);
-        if (!response?.data?.token) throw new Error("Login failed");
+        localStorage.setItem("user", JSON.stringify(response.data));
         localStorage.setItem("token", response.data.token);
-        this.user = response.data.user;
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        router.push("/home");
       } catch (error) {
         console.error("Error during login:", error);
         throw error;

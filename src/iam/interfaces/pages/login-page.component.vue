@@ -54,9 +54,9 @@ import { useRouter } from "vue-router";
 const email = ref("");
 const password = ref("");
 const router = useRouter();
+const authStore = useAuthStore();
 
 const handleLogin = async () => {
-  const authStore = useAuthStore();
   try {
     await authStore.login(email.value, password.value);
     window.alert("¡Inicio de sesión exitoso! Bienvenido a la plataforma.");

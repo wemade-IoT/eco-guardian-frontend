@@ -1,19 +1,13 @@
-import type { AxiosInstance } from "axios";
+
 import { HttpService } from "../../../shared/services/http-common";
 
-export class AuthService {
-  private http: AxiosInstance;
-  private baseUrl: string;
+export class AuthService extends HttpService {
 
-  constructor() {
-    this.baseUrl = import.meta.env.VITE_API_URL;
-    this.http = new HttpService().http;
-  }
 
   public async signIn(email: string, password: string): Promise<any> {
     try {
       const payload = { email, password };
-      return await this.http.post(`${this.baseUrl}/authentication/sign-in`, payload);
+      return await this.http.post("authentication/sign-in", payload);
     } catch (error) {
       console.error("Error during login:", error);
       throw error;
@@ -25,7 +19,7 @@ export class AuthService {
       const payload: any = { email, password, roleId };
       if (name) payload.name = name;
       if (lastName) payload.lastName = lastName;
-      return await this.http.post(`${this.baseUrl}/authentication/sign-up`, payload);
+      return await this.http.post("authentication/sign-up", payload);
     } catch (error) {
       console.error("Error during signup:", error);
       throw error;

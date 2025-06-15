@@ -5,9 +5,11 @@ import plantDialog from './plant-dialog.vue';
 import { PlantAssembler } from "../../domain/plant-assembler.ts";
 import {usePlantStore} from "../stores/plant-store.ts";
 import type {PlantResponse} from "../../domain/plant-response.ts";
+import {useAuthStore} from "../../../iam/interfaces/store/auth-store.ts";
 
 const plantAssembler = new PlantAssembler();
 const plantStore =  usePlantStore();
+const authStore = useAuthStore();
 
 const visible = ref(false);
 const isEnterprise = ref(false);
@@ -41,7 +43,7 @@ const domesticValues = ref({
 });
 
 onMounted(async () => {
-    await plantStore.getPlantsByUserId(1) //TODO: replace with actual user ID
+    await plantStore.getPlantsByUserId(authStore.id) //TODO: replace with actual user ID
 });
 
 const savePlant = async () => {
