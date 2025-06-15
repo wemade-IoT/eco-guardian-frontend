@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-//import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
+import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import AlertsList from '../components/alerts-list.component.vue';
 import DevicesList from '../components/devices-list.component.vue';
 import LinesChart from '../components/lines-chart.component.vue';
@@ -35,11 +35,9 @@ import TipsCarousel from '../components/tips-carousel.component.vue';
 import WidgetsContainer from '../components/widgets-container.component.vue';
 import PlantsList from '../../../monitoring/interfaces/components/plants-list.component.vue';
 
-//const authStore = useAuthStore();
+const authStore = useAuthStore();
 
-const isEnterprise = false
-//authStore.user?.role === 'ENTERPRISE';
-const isDomestic = true
-//authStore.user?.role === 'DOMESTIC';
+const isEnterprise =  authStore.user?.role === 'ENTERPRISE';
+const isDomestic = authStore.user?.role === 'DOMESTIC';
 </script>
 <style scoped></style>

@@ -4,7 +4,7 @@ import PlantCard from './plant-card.component.vue';
 import plantDialog from './plant-dialog.vue';
 import { PlantAssembler } from "../../domain/plant-assembler.ts";
 import {usePlantStore} from "../stores/plant-store.ts";
-import type {PlantResponse} from "@/monitoring/domain/plant-response.ts";
+import type {PlantResponse} from "../../domain/plant-response.ts";
 
 const plantAssembler = new PlantAssembler();
 const plantStore =  usePlantStore();
@@ -86,7 +86,7 @@ function deletePlant(){
 }
 
 function viewPlantInformation(plant:PlantResponse){
-  plantStore.plant = plant;
+  plantStore.plant.prototype = plant;
   //TODO: Add navigation to analytics page
 }
 
