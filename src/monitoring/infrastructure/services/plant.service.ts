@@ -2,6 +2,7 @@ import {HttpService} from "../../../shared/services/http-common.ts";
 
 export class PlantService extends HttpService{
     async getPlantsByUserId(userId:number) : Promise<any>{
+        console.log(this.http.defaults.headers);
         return await this.http.get(`plant?userId=${userId}`);
     }
 

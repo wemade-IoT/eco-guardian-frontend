@@ -4,6 +4,7 @@ import PlantCard from './plant-card.component.vue';
 import { PlantService } from "../../infrastructure/services/plant.service.ts";
 import plantDialog from './plant-dialog.vue';
 import { PlantAssembler } from "../../domain/plant-assembler.ts";
+import {c} from "vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf";
 
 const plantService = new PlantService();
 const plantAssembler = new PlantAssembler();
@@ -11,6 +12,8 @@ const plantAssembler = new PlantAssembler();
 const plants = ref<any[]>([]);
 const visible = ref(false);
 const isEnterprise = ref(false);
+const isProceed = ref(false);
+const currentPlantId = ref(0);
 
 const enterpriseValues = ref({
   id: 0,
@@ -52,6 +55,7 @@ onMounted(async () => {
 });
 
 const savePlant = async () => {
+  isProceed.value = false;
   if (!visible.value) {
     if (isEnterprise.value) {
       enterpriseValues.value = { ...enterpriseValues.value, id: 0, name: '', type: '', waterThreshold: 0, lightThreshold: 0, temperatureThreshold: 0 };
@@ -59,10 +63,11 @@ const savePlant = async () => {
       domesticValues.value = { ...domesticValues.value, id: 0, name: '', type: '', waterThreshold: 0, lightThreshold: 0, temperatureThreshold: 0 };
     }
   }
-  visible.value = !visible.value;
+  visible.value =true;
 };
 
 function setEditMode(plant: any) {
+  isProceed.value = false;
   isEnterprise.value = plant.isPlantation;
   if (isEnterprise.value) {
     enterpriseValues.value = {
@@ -80,6 +85,22 @@ function setEditMode(plant: any) {
   visible.value = true;
 }
 
+function deletePlant(){
+  plantService.deletePlant(currentPlantId.value)
+    .then(() => {
+      plants.value = plants.value.filter(plant => plant.id !== currentPlantId.value);
+    })
+    .catch(error => {
+      console.error('Error deleting plant:', error);
+    });
+}
+
+function onProceedDelete(id:number) {
+  isProceed.value = true;
+  visible.value = true;
+  currentPlantId.value = id;
+}
+
 async function submitForm(updatedValues: any) {
   if (isEnterprise.value) {
     Object.assign(enterpriseValues.value, updatedValues);
@@ -88,7 +109,6 @@ async function submitForm(updatedValues: any) {
   }
 
   const request = plantAssembler.toRequest(isEnterprise.value ? enterpriseValues.value : domesticValues.value);
-
   if (updatedValues.id !== 0) {
     await plantService.updatePlant(updatedValues.id, request);
   } else {
@@ -97,11 +117,15 @@ async function submitForm(updatedValues: any) {
 
   visible.value = false;
 }
+
 </script>
 
 <template>
   <div v-if="isEnterprise">
     <plant-dialog
+        :is-delete="isProceed"
+        @delete-plant="deletePlant"
+        @update:isDelete="isProceed = $event"
         v-model:visible="visible"
         @submit-form="submitForm"
         :form-values="isEnterprise ? enterpriseValues : domesticValues"
@@ -111,6 +135,9 @@ async function submitForm(updatedValues: any) {
   </div>
   <div v-else>
     <plant-dialog
+        :is-delete="isProceed"
+        @delete-plant="deletePlant"
+        @update:isDelete="isProceed = $event"
         v-model:visible="visible"
         @submit-form="submitForm"
         :form-values="isEnterprise ? enterpriseValues : domesticValues"
@@ -123,7 +150,8 @@ async function submitForm(updatedValues: any) {
     <h2 class="text-[24px] font-semibold mb-4">Plants</h2>
     <div class="flex flex-col gap-4">
       <plant-card
-          @click="setEditMode(plant)"
+          @delete="onProceedDelete(plant.id)"
+          @edit="setEditMode(plant)"
           v-for="(plant, index) in plants"
           :key="index"
           :name="plant.name"
