@@ -31,6 +31,5 @@ app
 app.component("pv-dialog", Dialog);
 app.component("pv-text",InputText)
 app.component("pv-button",Button)
-app.use(pinia);
 
 app.mount("#app");

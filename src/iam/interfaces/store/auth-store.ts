@@ -8,8 +8,7 @@ const authService = new AuthService();
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: (() => {
-      const storedUser = localStorage.getItem("user");
-      try {
+      try {const storedUser = localStorage.getItem("user") || "";
         return storedUser ? JSON.parse(storedUser) : "";
       } catch (error) {
         console.error("Invalid JSON in localStorage for 'user':", error);
