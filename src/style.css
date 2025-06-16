@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-:root { 
+:root {
   --color-primary: #578257; /* Reemplazado con --color-green-dark */
   --color-secondary: #a4d39a; /* Reemplazado con --color-green-light */
   --color-accent: #99733c; /* Reemplazado con --color-brown */
