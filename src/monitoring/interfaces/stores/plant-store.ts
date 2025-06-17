@@ -20,7 +20,7 @@ export const usePlantStore = defineStore("plant", {
 
         async getPlantsByUserId(userId: number){
             const response = await plantService.getPlantsByUserId(userId);
-            this.plants= response.data.map((plant: any) => plantAssembler.toResponse(plant));
+            this.plants= response.data.map((plant: any) => PlantAssembler.toResponse(plant));
         },
 
         async editPlant(plantId: number, request: PlantRequest) {

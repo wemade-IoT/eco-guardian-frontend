@@ -3,6 +3,7 @@
         <!-- Page title -->
         <div class="page-header">
             <h2 v-if="isEnterprise">Ask Questions About Your Plantations</h2>
+            <h2 v-else-if="isSpecialist">Share your knowledge! Help our users solve their questions</h2>
             <h2 v-else>Ask Questions About Your Plants</h2>
             <p class="page-description">
                 Get expert help with your plant questions and track their status.
@@ -12,7 +13,7 @@
         <!-- Main content area -->
         <div class="main-content">            
             <!-- Question creation form -->
-            <div class="creation-section">
+            <div v-if="!isSpecialist" class="creation-section">
                 <QuestionCreationDialogueComponent 
                     @question-created="handleQuestionCreated"
                 />
@@ -42,9 +43,13 @@ const consultingService = new CrmService();
 // Sample question data using the proper Question interface
 let userQuestions = ref<Question[]>([]);
 let isEnterprise = false;
-isEnterprise = authStore.user.role === 'ENTERPRISE';
-
-console.log('Consulting-page: User role is', authStore.user.role, isEnterprise);
+let isSpecialist = false;
+if (authStore.role == 'ENTERPRISE' || authStore.role == 'Enterprise') {
+    isEnterprise = true;
+} else if (authStore.role == 'Specialist' || authStore.role == 'SPECIALIST' || authStore.role == 'Admin' || authStore.role == 'ADMIN') {
+    isSpecialist = true;
+}
+console.log('Consulting-page: User role is', authStore.role, isSpecialist);
 
 // Initialize sample data with proper Question structure
 import { onMounted } from 'vue';
@@ -64,10 +69,13 @@ const handleQuestionCreated = (newQuestion: Question) => {
 const handleQuestionClick = (question: Question) => {
     console.log('Consulting-page: Question clicked from list', question.id, question.title);
     console.log('Question details:', question);
+    //openQuestionDialog(question);
+    
+
 };
 
 // Computed properties for UI text
-const questionsTitle = ref(isEnterprise ? 'Plantation Questions' : 'Your Plant Questions');
+const questionsTitle = ref(isSpecialist ? isEnterprise ?  'Plantation Questions': 'Questions from Users' : 'Your Plant Questions');
 
 </script>
 

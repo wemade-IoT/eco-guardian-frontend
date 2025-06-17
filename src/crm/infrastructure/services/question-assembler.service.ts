@@ -30,17 +30,17 @@ export class QuestionAssemblerService {
   static toApiRequest(formData: {
     title: string;
     content: string;
-    plantId: number;
-    userId: number;
-    images?: File[];
+    plant_id: number;
+    user_id: number;
+    diagnostic_images?: File[];
   }): CreateQuestionRequest {
     return {
       title: formData.title,
       content: formData.content,
-      plantId:formData.plantId,
-      userId: useAuthStore().id, // Obtener el ID del usuario desde el store
+      plantId:formData.plant_id,
+      userId: parseInt(useAuthStore().id), // Obtener el ID del usuario desde el store
       // Convertir imágenes a URLs simuladas (o manejar subida real)
-      imageUrls: formData.images?.map((_, i) => `image-${i}.jpg`) || []
+      imageUrls: formData.diagnostic_images?.map((_, i) => `image-${i}.jpg`) || []
     };
   }
 

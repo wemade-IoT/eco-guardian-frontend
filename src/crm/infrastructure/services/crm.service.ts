@@ -13,13 +13,19 @@ export class CrmService extends HttpService {
     console.log("ConsultingService: About to POST to /question");
     console.log("Base URL:", this.baseUrl);
     console.log("Question data:", question);
+    const questionRequest = QuestionAssemblerService.toApiRequest(question);
+    console.log("Transformed question request:", questionRequest);
     
     try {
-      const response = await this.http.post('/question', question);
+      const response = await this.http.post('/question', questionRequest);
       console.log("Success! Response from consulting service:", response.data);
+
+      const transformedQuestion = QuestionAssemblerService.toDomainModel(response.data);
+
       return {
         success: true,
-        data: response.data
+
+        data: transformedQuestion
       };
     } catch (error: any) {
       console.error("Error creating question in service:", error);
