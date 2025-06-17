@@ -1,7 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-:root {
+@theme {
+  --color-primary: #578257; /* Reemplazado con --color-green-dark */
+  --color-secondary: #a4d39a; /* Reemplazado con --color-green-light */
+  --color-accent: #99733c; /* Reemplazado con --color-brown */
+  --color-background: #faf5e7; /* Reemplazado con --color-beige */
+  --color-text: #3b2c17; /* Reemplazado con --color-brown-dark */
+  --color-light: #d6e899; /* Reemplazado con --color-green-pale */
+  --color-dark: #000000; /* Reemplazado con --color-dark */
+  --color-border: #e0e0e0; /* Sin cambios */
+  --color-border-light: #f0f0f0; /* Sin cambios */
+
+  --animate-pulse: pulse 1s ease-in-out infinite;
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.01);
+    }
+  }
+}
+
+:root{
   --color-primary: #578257; /* Reemplazado con --color-green-dark */
   --color-secondary: #a4d39a; /* Reemplazado con --color-green-light */
   --color-accent: #99733c; /* Reemplazado con --color-brown */

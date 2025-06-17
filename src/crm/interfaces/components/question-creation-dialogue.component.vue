@@ -7,11 +7,11 @@
       <span> {{ selectedPlantName }}</span>
     </div>
       <!-- 🔧 CAMBIO: Usar div en lugar de form para evitar comportamiento nativo -->
-    <div class="form-wrapper">
+    <div v-else class="form-wrapper">
       <!-- Formulario compacto -->
-      <div class="form-content">
+      <form class="form-content" @submit.prevent.stop="handleFormSubmit">
         <!-- Plant selector (solo si es necesario) -->
-        <select v-if="!isPlantSpecificView && isEnterprise" v-model="selectedPlantId" required>
+        <select v-if="!isPlantSpecificView" v-model="selectedPlantId" required>
           <option value="">Select plant...</option>
           <option v-for="plant in userPlants" :key="plant.id" :value="plant.id">
             {{ plant.name }}
@@ -21,16 +21,12 @@
         <input 
           v-model="questionTitle" 
           placeholder="Question title" 
-          required 
-          @keydown.enter.prevent="handleFormSubmit"
-        />
+          />
         
         <textarea
           v-model="questionContent" 
           placeholder="Describe your question..." 
           required
-          @keydown.enter.ctrl.prevent="handleFormSubmit"
-          @keydown.enter.meta.prevent="handleFormSubmit"
         ></textarea>
         
         <input 
@@ -38,20 +34,23 @@
           @change="handleFileUpload" 
           accept="image/*" 
           multiple 
-          placeholder="Add images (optional)"
-        />
-      </div>
-      
-      <!-- Actions simplificadas -->
-      <div class="actions">
+          placeholder="Add images (optional)"          
+        />      
+        <!-- Actions simplificadas -->
+
+        <div class="actions">
         <button type="button" @click="handleCancel" class="btn-cancel">
           Cancel
         </button>
         <!-- 🔧 CAMBIO: Usar type="button" y @click en lugar de submit -->
-        <button type="button" @click="handleFormSubmit" :disabled="!canSubmit" class="btn-submit">
+        <button type="submit"
+        :disabled="!canSubmit" class="btn-submit">
           Create
         </button>
       </div>
+      </form>
+      
+      
     </div>
   </div>
 </template>
@@ -60,12 +59,13 @@
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
-import { ConsultingService } from '../../infrastructure/services/consulting.service';
+import { CrmService } from '../../infrastructure/services/crm.service';
 
 const authStore = useAuthStore();
 
 const handleFormSubmit = async (event: Event) => {
     event.preventDefault();
+    event.stopImmediatePropagation();
     event.stopPropagation();
     event.stopImmediatePropagation();
     console.log('🔥 Form submit intercepted - no page reload!');
@@ -78,7 +78,7 @@ const handleFormSubmit = async (event: Event) => {
     }
 };
 const route = useRoute();
-const consultingService = new ConsultingService();
+const consultingService = new CrmService();
 
 const props = defineProps({
   selectedPlantId: { type: String, default: null },
@@ -150,20 +150,25 @@ const submitQuestion = async () => {
     console.log('Question creation result:', result);
     
     if (result.success) {
+
       console.log('Question created successfully, resetting form');
+
       resetForm();
       emit('question-created', result.data);
+
     } else {
       console.error('🔥 Error returned from service:', result.details);
       // No throw error - just log it
     }
     
   } catch (error) {
+
     console.error('🔥 Caught error in submitQuestion:', error);
   } finally {
     isSubmitting.value = false;
     console.log('🔥 Setting isSubmitting to false');
   }
+
 };
 
 const resetForm = () => {

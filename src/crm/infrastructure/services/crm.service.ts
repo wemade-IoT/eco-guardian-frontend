@@ -1,26 +1,21 @@
-import type { AxiosInstance } from "axios";
-import axios from "axios";
+
+import { HttpService } from "../../../shared/services/http-common";
 import { QuestionAssemblerService } from "./question-assembler.service";
 
-export class CrmService {
+export class CrmService extends HttpService {
   private baseUrl: string = "";
-  private http!: AxiosInstance;
-
+  
   constructor() {
-    //inicializar assembler 
-    this.baseUrl = import.meta.env.VITE_API_URL;
-    this.http = axios.create({
-      baseURL: this.baseUrl,
-    });
+    super(); // ← Inicializa HttpService (con token interceptor incluido)
+    console.log("🔥 CrmService initialized with HttpService base");
   }
   public async postQuestion(question: any): Promise<any> {
-    console.log("ConsultingService: About to POST to /queries");
+    console.log("ConsultingService: About to POST to /question");
     console.log("Base URL:", this.baseUrl);
     console.log("Question data:", question);
     
     try {
-      // 🔧 CAMBIO: Solo usar '/queries' porque baseURL ya está configurado
-      const response = await this.http.post('/queries', question);
+      const response = await this.http.post('/question', question);
       console.log("Success! Response from consulting service:", response.data);
       return {
         success: true,
@@ -29,7 +24,6 @@ export class CrmService {
     } catch (error: any) {
       console.error("Error creating question in service:", error);
       
-      // 🔧 CAMBIO: Más detalle del error pero no throw - controlar completamente
       if (error.response) {
         console.error("Response error:", error.response.status, error.response.data);
       } else if (error.request) {
@@ -52,9 +46,16 @@ export class CrmService {
 
   public async getConsulting(): Promise<any> {
     try {
-      const response = await this.http.get(`${this.baseUrl}/queries`);
-      console.log("Response from crm service:", response.data);
-      return response.data;
+      console.log("Fetching crm data from /question");
+      console.log("Base URL:", this.baseUrl);
+      console.log("Base URL que deberia ser:", import.meta.env.VITE_API_URL);
+      // Realizar la solicitud GET a la API
+      const response = await this.http.get(`/question`);
+
+      // Usar el assembler para transformar los datos en objeto Question
+      const questions = QuestionAssemblerService.toDomainModelArray(response.data);
+      console.log("Transformed questions:", questions);
+      return questions;
     } catch (error) {
       console.error("Error fetching crm:", error);
       throw error;

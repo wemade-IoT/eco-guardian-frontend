@@ -1,74 +1,75 @@
-// src/consulting/infrastructure/services/question-assembler.service.ts
+// src/crm/domain/services/question-assembler.service.ts
+import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import type { Question } from '../../domain/model/question.entity';
 
-export interface QuestionDTO {
-  id: number;
-  code: string;
-  question: string;
-  status: string;
-  // Campos opcionales que pueden no venir de la API
-  title?: string;
-  content?: string;
-  plant_id?: string;
-  user_id?: string;
-  diagnostic_images?: string[];
-  created_at?: string;
+// 🔧 DTO basado en la estructura REAL de tu API
+export interface QuestionApiDTO {
+  questionId: number;
+  title: string;
+  content: string;
+  status: string; // "Resolved", "Closed", "Pending"
+  createdAt: string; // ISO string "2025-06-15T13:58:38.438902",
+  updatedAt: string; // ISO string "2025-06-15T14:15:02.893139"
+  plantId: number;
+  userId: number;
+  imageUrls: string[];
 }
 
+// 🔧 Request para crear pregunta
 export interface CreateQuestionRequest {
   title: string;
   content: string;
-  plantId: string;
-  userId: string;
-  images?: File[];
+  plantId: number;
+  userId: number;
+  imageUrls?: string[];
 }
 
 export class QuestionAssemblerService {
   
-  // 🔧 Transformar desde el formulario hacia DTO para API
-  static fromFormToDTO(formData: CreateQuestionRequest): any {
+  // 🔧 FROM FORM TO API REQUEST
+  static toApiRequest(formData: {
+    title: string;
+    content: string;
+    plantId: number;
+    userId: number;
+    images?: File[];
+  }): CreateQuestionRequest {
     return {
-      // Mapear a la estructura que espera tu API
-      question: formData.title.trim(), // ← Usar 'question' en lugar de 'title'
-      code: formData.plantId || Math.random().toString(36).substr(2, 9),
-      status: 'Pending',
-      // Agregar otros campos si la API los necesita
-      title: formData.title.trim(),
-      content: formData.content.trim(),
-      plant_id: formData.plantId,
-      user_id: formData.userId,
-      diagnostic_images: formData.images?.map((_, i) => `image-${i}.jpg`) || [],
-      created_at: new Date().toISOString()
+      title: formData.title,
+      content: formData.content,
+      plantId:formData.plantId,
+      userId: useAuthStore().id, // Obtener el ID del usuario desde el store
+      // Convertir imágenes a URLs simuladas (o manejar subida real)
+      imageUrls: formData.images?.map((_, i) => `image-${i}.jpg`) || []
     };
   }
 
-  // 🔧 Transformar múltiples DTOs
-  static fromDTOArrayToDomain(dtos: QuestionDTO[]): Question[] {
-    console.log("Transforming DTOs to domain model:", dtos);
-    return dtos.map(dto => this.fromDTOToDomain(dto));
-  }
-
-  // 🔧 Transformar un solo DTO a dominio
-  static fromDTOToDomain(dto: QuestionDTO): Question {
-    console.log("🔥 Transforming DTO to domain model:", dto);
-
-    let question: Question = {
-      id: dto.id.toString(), // Convertir number a string si es necesario
-      title: dto.title || dto.question || 'No title', // ← Usar 'question' field
-      content: dto.content || dto.question || 'No content', // ← Usar 'question' field
-      plant_id: dto.plant_id || dto.code || '', // ← Usar 'code' como fallback
-      user_id: dto.user_id || 'unknown-user',
-      diagnostic_images: dto.diagnostic_images || [],
-      created_at: dto.created_at ? new Date(dto.created_at) : new Date(),
-      status: dto.status || 'pending'
+  // 🔧 FROM API RESPONSE TO DOMAIN MODEL
+  static toDomainModel(dto: QuestionApiDTO): Question {
+    return {
+      id: dto.questionId,
+      title: dto.title,
+      content: dto.content,
+      plant_id: dto.plantId,
+      status: dto.status.toLowerCase(), // Normalizar a lowercase
+      created_at: new Date(dto.createdAt),
+      updated_at: dto.updatedAt ? new Date(dto.updatedAt) : undefined,
+      image_urls: dto.imageUrls || [],
+      user_id: dto.userId // Normalizar a string
     };
-
-    console.log("✅ Transformed question:", question);
-    return question;
   }
 
-  // 🔧 Formatear para mostrar en UI
-  static formatForDisplay(question: Question) {
+  // 🔧 FROM API ARRAY TO DOMAIN ARRAY
+  static toDomainModelArray(dtos: QuestionApiDTO[]): Question[] {
+    if (!Array.isArray(dtos)) {
+      console.warn('Expected array but received:', typeof dtos);
+      return [];
+    }
+    
+    return dtos.map(dto => this.toDomainModel(dto));
+  }
+
+  static toDisplayModel(question: Question) {
     return {
       ...question,
       displayTitle: `#${question.id} - ${question.title}`,
@@ -77,10 +78,10 @@ export class QuestionAssemblerService {
         month: 'short',
         day: 'numeric'
       }),
-      statusLabel: question.status
-    };
+      hasImages: (question.image_urls?.length ?? 0) > 0,
+    }; // to use in UI components
+    // to use this in UI components, you can import this method and call it with a Question object
+    // // Example: const displayQuestion = QuestionAssemblerService.toDisplayModel(question);
+    // then in the template, you can use displayQuestion.displayTitle, displayQuestion.formattedDate, etc.
   }
-
-  
-  
 }

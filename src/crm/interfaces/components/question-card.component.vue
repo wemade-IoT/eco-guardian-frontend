@@ -1,20 +1,21 @@
 <template>
    <div class="question-card" @click="handleClick">
         <div class="flex flex-row justify-between items-center">
-            <h3 class="text-lg font-bold"># {{ question.title }}</h3>
+            <h3 class="text-lg font-bold">{{ displayQuestion.displayTitle }}</h3>
             <span class="status-badge" :class="`status-${question.status.toLowerCase()}`">{{ formatStatus(question.status) }}</span>
         </div>
         <p class="text-sm">{{ question.content }}</p>
         <div class="flex items-center gap-2 mt-2">
             <span class="text-sm font-medium">Created:</span>
-            <span class="text-sm">{{ formatDate(question.created_at) }}</span>
+            <span class="text-sm">{{ displayQuestion.formattedDate }}</span>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { defineEmits, defineProps } from 'vue';
-import type { Question } from '../../domain/model/question.entity';
+import type { Question } from '../../../crm/domain/model/question.entity';
+import { QuestionAssemblerService } from '../../infrastructure/services/question-assembler.service';
 
 const emit = defineEmits<{
   click: [question: Question];
@@ -24,9 +25,14 @@ const props = defineProps<{
   question: Question;
 }>();
 
+// Transform the question prop to a display model using the assembler service
+const displayQuestion = QuestionAssemblerService.toDisplayModel(props.question);
+
+
 const handleClick = () => {
   emit('click', props.question);
 };
+
 
 const formatStatus = (status: string): string => {
   switch (status) {
@@ -38,18 +44,6 @@ const formatStatus = (status: string): string => {
       return 'Closed';
     default:
       return status;
-  }
-};
-
-const formatDate = (dateInput: string | Date): string => {
-  try {
-    const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-    });
-  } catch {
-    return 'Unknown date';
   }
 };
 
@@ -87,8 +81,8 @@ const formatDate = (dateInput: string | Date): string => {
 }
 
 .status-closed {
-    background-color: #f3f4f6;
-    color: #6b7280;
+    background-color: #fad1d1;
+    color: #f4422a;
 }
 
 .question-card:hover {

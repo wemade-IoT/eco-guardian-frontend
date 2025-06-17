@@ -35,12 +35,11 @@ import { ref } from 'vue';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import QuestionCreationDialogueComponent from '../components/question-creation-dialogue.component.vue';
 import QuestionList from '../components/question-list.component.vue';
-import type { Question } from '../../domain/model/question.entity';
-import { ConsultingService } from '../../infrastructure/services/consulting.service';
+import type { Question } from '../../../crm/domain/model/question.entity';
+import { CrmService } from '../../infrastructure/services/crm.service';
 const authStore = useAuthStore();
-const consultingService = new ConsultingService();
+const consultingService = new CrmService();
 // Sample question data using the proper Question interface
-let questionsSample = ref<Question[]>([]);
 let userQuestions = ref<Question[]>([]);
 let isEnterprise = false;
 isEnterprise = authStore.user.role === 'ENTERPRISE';
@@ -48,38 +47,6 @@ isEnterprise = authStore.user.role === 'ENTERPRISE';
 console.log('Consulting-page: User role is', authStore.user.role, isEnterprise);
 
 // Initialize sample data with proper Question structure
-questionsSample.value = [
-    {
-        id: 'q1',
-        title: 'Leaves turning yellow on tomato plant',
-        content: 'My tomato plant leaves are turning yellow from the bottom up. Is this normal or should I be concerned?',
-        status: 'pending' as 'pending',
-        created_at: new Date('2024-12-05T10:30:00Z'),
-        user_id: authStore.user.id,
-        plant_id: '1',
-        diagnostic_images: ['image1.jpg', 'image2.jpg']
-    },
-    {
-        id: 'q2',
-        title: 'Brown spots on basil leaves',
-        content: 'I noticed small brown spots appearing on my basil leaves. What could be causing this?',
-        status: 'resolved' as 'resolved',
-        created_at: new Date('2024-12-04T14:15:00Z'),
-        user_id: authStore.user.id,
-        plant_id: '3',
-        diagnostic_images: ['basil1.jpg']
-    },
-    {
-        id: 'q3',
-        title: 'Lettuce growth very slow',
-        content: 'My lettuce has been growing very slowly compared to what I expected. Any suggestions?',
-        status: 'closed' as 'closed',
-        created_at: new Date('2024-12-03T09:20:00Z'),
-        user_id: authStore.user.id,
-        plant_id: '2'
-    }
-];
-
 import { onMounted } from 'vue';
 
 onMounted(async () => {
