@@ -7,12 +7,10 @@ export class CrmService extends HttpService {
   
   constructor() {
     super(); // ← Inicializa HttpService (con token interceptor incluido)
-    console.log("🔥 CrmService initialized with HttpService base");
   }
+
   public async postQuestion(question: any): Promise<any> {
-    console.log("ConsultingService: About to POST to /question");
-    console.log("Base URL:", this.baseUrl);
-    console.log("Question data:", question);
+   
     const questionRequest = QuestionAssemblerService.toApiRequest(question);
     console.log("Transformed question request:", questionRequest);
     
@@ -65,6 +63,56 @@ export class CrmService extends HttpService {
     } catch (error) {
       console.error("Error fetching crm:", error);
       throw error;
+    }
+  }
+
+  public async getAnswersByQuestionId(questionId: number): Promise<any> {
+   try {
+    const answer = await this.http.get(`/question/${questionId}/answers`);
+    console.log("Response from getAnswersByQuestionId:", answer.data);
+
+    return answer.data[0];
+   }
+    catch (error) {
+        console.error("Error fetching answers by question ID:", error);
+        throw error;
+      }
+  };
+
+
+  public async postAnswer(answer: any, questionId: number): Promise<any> {
+   
+    const postAnswer = answer;
+    console.log("Transformed question request:", postAnswer);
+    
+    try {
+      const response = await this.http.post(`/question/${questionId}/answers`, postAnswer);
+      console.log("Success! Response from consulting service:", response.data);
+      return {
+        success: true,
+
+        data: response.data
+      };
+    } catch (error: any) {
+      console.error("Error answering in service:", error);
+      
+      if (error.response) {
+        console.error("Response error:", error.response.status, error.response.data);
+      } else if (error.request) {
+        console.error("Request error:", error.request);
+      } else {
+        console.error("Unknown error:", error.message);
+      }
+      
+      return {
+        success: false,
+        error: true,
+        details: {
+          message: error.message || 'Unknown error',
+          status: error.response?.status || 0,
+          data: error.response?.data || null
+        }
+      };
     }
   }
 }

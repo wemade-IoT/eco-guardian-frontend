@@ -20,7 +20,10 @@
                     v-for="question in displayedQuestions"
                     :key="question.id"
                     :question="question"
+                    :is-specialist="isSpecialist"
                     @click="handleQuestionClick"
+                    @expert-response="handleResponse"
+
                 />
             </div>
         </div>
@@ -40,6 +43,7 @@ import { ref } from 'vue';
 const props = defineProps<{
   questions: Question[];
   title: string;
+  isSpecialist?: boolean; // Optional prop to indicate if the user is a specialist
 }>();
 
 let displayedQuestions = ref<Question[]>([]);
@@ -106,10 +110,16 @@ const applySorting = () => {
 
 const emit = defineEmits<{
   questionClick: [question: Question];
+  expertResponse: [questionId: number, response: string];
+
 }>();
 
 const handleQuestionClick = (question: Question) => {
   emit('questionClick', question);
+};
+
+const handleResponse = (id: number, answer: string ) => {
+  emit('expertResponse', id, answer);
 };
 </script>
 
