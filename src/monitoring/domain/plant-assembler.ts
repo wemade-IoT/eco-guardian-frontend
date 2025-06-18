@@ -2,7 +2,7 @@ import {PlantResponse} from "./plant-response.ts";
 import {PlantRequest} from "./plant-request.ts";
 
 export class PlantAssembler{
-    toResponse(response:any): PlantResponse{
+    static toResponse(response:any): PlantResponse{
         return new PlantResponse(
             response.id,
             response.name,
@@ -19,7 +19,16 @@ export class PlantAssembler{
         );
     }
 
-    toRequest(request:any): PlantRequest{
+    static toDomainModelArray(dtos: any[]): PlantResponse[] {
+        if (!Array.isArray(dtos)) {
+          console.warn('Expected array but received:', typeof dtos);
+          return [];
+        }
+        
+        return dtos.map(dto => this.toResponse(dto));
+      }
+
+    static toRequest(request:any): PlantRequest{
         return new PlantRequest(
             request.name,
             request.type,

@@ -20,7 +20,10 @@
                     v-for="question in displayedQuestions"
                     :key="question.id"
                     :question="question"
+                    :is-specialist="isSpecialist"
                     @click="handleQuestionClick"
+                    @expert-response="handleResponse"
+
                 />
             </div>
         </div>
@@ -29,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps, onMounted, watch } from 'vue';
+import { defineEmits, defineProps, watch } from 'vue';
 import type { Question } from '../../../crm/domain/model/question.entity';
 import QuestionCard from './question-card.component.vue';
 
@@ -40,6 +43,7 @@ import { ref } from 'vue';
 const props = defineProps<{
   questions: Question[];
   title: string;
+  isSpecialist?: boolean; // Optional prop to indicate if the user is a specialist
 }>();
 
 let displayedQuestions = ref<Question[]>([]);
@@ -66,16 +70,28 @@ const sortByID = () => {
 };
 
 const sortByStatus = () => {
-    sortType.value = 'status';
+  sortType.value = 'status';
+  
+  // 🔧 Orden de prioridad (1 = más alto, aparece primero)
   const statusOrder = {
-    PENDING: 1,
-    RESOLVED: 2,
-    CLOSED: 3
-  };
+    PENDING: 1,    // ← Cambié de 2 a 1 (más lógico: pendientes primero)
+    RESOLVED: 2,   // ← Cambié de 1 a 2 (resueltas en el medio)
+    CLOSED: 3      // ← Mantuve 3 (cerradas al final)
+  };  
   displayedQuestions.value = props.questions.slice().sort((a, b) => {
-    return (statusOrder[a.status as keyof typeof statusOrder] || 0) - (statusOrder[b.status as keyof typeof statusOrder] || 0);
+    // 🔧 Manejar status case-insensitive
+    const statusA = a.status.toUpperCase();
+    const statusB = b.status.toUpperCase();
+    
+    const orderA = statusOrder[statusA as keyof typeof statusOrder] || 999;
+    const orderB = statusOrder[statusB as keyof typeof statusOrder] || 999;
+    
+    if (orderA === orderB) {
+      return a.id - b.id;
+    }
+    return orderA - orderB;
   });
-};
+  };
 
 
 const applySorting = () => {
@@ -94,10 +110,16 @@ const applySorting = () => {
 
 const emit = defineEmits<{
   questionClick: [question: Question];
+  expertResponse: [questionId: number, response: string];
+
 }>();
 
 const handleQuestionClick = (question: Question) => {
   emit('questionClick', question);
+};
+
+const handleResponse = (id: number, answer: string ) => {
+  emit('expertResponse', id, answer);
 };
 </script>
 
