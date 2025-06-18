@@ -1,17 +1,16 @@
 <template>
   <div class="question-dialog">
     <h3>New Question</h3>
-    
-    <!-- Context info simplificado -->
+      <!-- Context info cuando hay planta específica -->
     <div v-if="isPlantSpecificView" class="context-info">
       <span> {{ selectedPlantName }}</span>
     </div>
-      <!-- 🔧 CAMBIO: Usar div en lugar de form para evitar comportamiento nativo -->
+    
+    <!-- Form wrapper - siempre mostrar el formulario -->
     <div class="form-wrapper">
-      <!-- Formulario compacto -->
-      <div class="form-content">
-        <!-- Plant selector (solo si es necesario) -->
-        <select v-if="!isPlantSpecificView && isEnterprise" v-model="selectedPlantId" required>
+      <form class="form-content" @submit.prevent.stop="handleFormSubmit">
+        <!-- Plant selector solo cuando NO hay planta específica -->
+        <select v-if="!isPlantSpecificView" v-model="selectedPlantId" required name="plant_id">
           <option value="">Select plant...</option>
           <option v-for="plant in userPlants" :key="plant.id" :value="plant.id">
             {{ plant.name }}
@@ -21,16 +20,12 @@
         <input 
           v-model="questionTitle" 
           placeholder="Question title" 
-          required 
-          @keydown.enter.prevent="handleFormSubmit"
-        />
+          />
         
         <textarea
           v-model="questionContent" 
           placeholder="Describe your question..." 
           required
-          @keydown.enter.ctrl.prevent="handleFormSubmit"
-          @keydown.enter.meta.prevent="handleFormSubmit"
         ></textarea>
         
         <input 
@@ -38,34 +33,40 @@
           @change="handleFileUpload" 
           accept="image/*" 
           multiple 
-          placeholder="Add images (optional)"
-        />
-      </div>
-      
-      <!-- Actions simplificadas -->
-      <div class="actions">
+          placeholder="Add images (optional)"          
+        />      
+        <!-- Actions simplificadas -->
+
+        <div class="actions">
         <button type="button" @click="handleCancel" class="btn-cancel">
           Cancel
         </button>
         <!-- 🔧 CAMBIO: Usar type="button" y @click en lugar de submit -->
-        <button type="button" @click="handleFormSubmit" :disabled="!canSubmit" class="btn-submit">
+        <button type="submit"
+        :disabled="!canSubmit" class="btn-submit">
           Create
         </button>
       </div>
+      </form>
+      
+      
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
-import { ConsultingService } from '../../infrastructure/services/consulting.service';
+import { CrmService } from '../../infrastructure/services/crm.service';
+import { MonitoringService } from '../../../monitoring/infrastructure/services/monitoring.service';
+import { PlantResponse } from '../../../monitoring/domain/plant-response';
 
 const authStore = useAuthStore();
 
 const handleFormSubmit = async (event: Event) => {
     event.preventDefault();
+    event.stopImmediatePropagation();
     event.stopPropagation();
     event.stopImmediatePropagation();
     console.log('🔥 Form submit intercepted - no page reload!');
@@ -78,10 +79,11 @@ const handleFormSubmit = async (event: Event) => {
     }
 };
 const route = useRoute();
-const consultingService = new ConsultingService();
+const consultingService = new CrmService();
+const monitoringService = new MonitoringService();
 
 const props = defineProps({
-  selectedPlantId: { type: String, default: null },
+  selectedPlantId: { type: Number, default: 0 },
   mode: { type: String, default: 'general' }
 });
 
@@ -92,7 +94,9 @@ const questionTitle = ref('');
 const questionContent = ref('');
 const questionImages = ref<File[]>([]);
 const isSubmitting = ref(false);
-const selectedPlantId = ref(props.selectedPlantId || route.params.plantId || '');
+const selectedPlantId = ref<string>(
+  route.params.plantId as string || '' // ← Desde la URL o vacío
+);
 
 // Computed properties
 const isEnterprise = computed(() => authStore.user?.role === 'ENTERPRISE');
@@ -106,16 +110,40 @@ const canSubmit = computed(() => {
   return hasTitle && hasContent && hasPlantId && !isSubmitting.value;
 });
 
+
+
 // Mock data simplificado
-const userPlants = ref([
-  { id: '1', name: 'Tomato Plant 1' },
-  { id: '2', name: 'Lettuce Plant' },
-  { id: '3', name: 'Basil Plant' },
-  { id: '4', name: 'Pepper Plant' },
-]);
+let userPlants = ref<PlantResponse[]>([]);
+
+onMounted(async () => {  
+    
+    if (!authStore.user || !authStore.user.id) {
+        console.error('No user ID available');
+        return;
+    }
+    
+    try {
+        const response = await monitoringService.getPlantByUserId(authStore.user.id);
+        if (response && response.data && Array.isArray(response.data)) {
+            userPlants.value = response.data;
+
+        } else if (Array.isArray(response)) {
+            userPlants.value = response;
+        } else {
+            console.warn('⚠️ Unexpected response structure:', response);
+            userPlants.value = [];
+        }
+    } catch (error) {
+        console.error('❌ Error message:', (error as Error)?.message || 'Unknown error');
+        userPlants.value = [];
+    }
+  });
+
+
+//Falta que monitoring tenga un get plants by user ID
 
 const selectedPlantName = computed(() => {
-  const plant = userPlants.value.find(p => p.id === selectedPlantId.value);
+  const plant = userPlants.value.find(p => p.id == parseInt(selectedPlantId.value));
   return plant ? plant.name : 'Plant';
 });
 
@@ -143,27 +171,30 @@ const submitQuestion = async () => {
       plant_id: selectedPlantId.value,
       user_id: authStore.user.id,
       diagnostic_images: questionImages.value.map((_, i) => `mock-image-${i}.jpg`),
-      created_at: new Date().toISOString(),
-      status: 'pending'
     };    console.log('🔥 Creating question:', questionData);
     const result = await consultingService.postQuestion(questionData);
     console.log('Question creation result:', result);
     
     if (result.success) {
+
       console.log('Question created successfully, resetting form');
+
       resetForm();
       emit('question-created', result.data);
+
     } else {
       console.error('🔥 Error returned from service:', result.details);
       // No throw error - just log it
     }
     
   } catch (error) {
+
     console.error('🔥 Caught error in submitQuestion:', error);
   } finally {
     isSubmitting.value = false;
     console.log('🔥 Setting isSubmitting to false');
   }
+
 };
 
 const resetForm = () => {

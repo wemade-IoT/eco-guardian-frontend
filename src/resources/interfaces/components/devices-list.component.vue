@@ -49,23 +49,18 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-/* import {InstallationService} from "@/managament/infrastructure/services/resources.service.ts"; */
-import {DEVICE_STATE} from "../../../public/utils/types/devices";
-
+import { DEVICE_STATE } from "../../../public/utils/types/devices.ts";
 
 const devices = ref<any[]>([]);
-/* const installationService = new installationService(); */
 
 onMounted(async () => {
   try {
-    /* const data = await installationService.getSensors();
-    devices.value = data; */
+    // devices.value = data;
   } catch (error) {
     console.error('Error fetching devices:', error);
   }
 });
 </script>
-
 
 <style scoped>
 .device-container::-webkit-scrollbar {

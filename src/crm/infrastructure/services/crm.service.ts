@@ -1,35 +1,33 @@
-import type { AxiosInstance } from "axios";
-import axios from "axios";
+
+import { HttpService } from "../../../shared/services/http-common";
 import { QuestionAssemblerService } from "./question-assembler.service";
 
-export class CrmService {
+export class CrmService extends HttpService {
   private baseUrl: string = "";
-  private http!: AxiosInstance;
-
+  
   constructor() {
-    //inicializar assembler 
-    this.baseUrl = import.meta.env.VITE_API_URL;
-    this.http = axios.create({
-      baseURL: this.baseUrl,
-    });
+    super(); // ← Inicializa HttpService (con token interceptor incluido)
   }
+
   public async postQuestion(question: any): Promise<any> {
-    console.log("ConsultingService: About to POST to /queries");
-    console.log("Base URL:", this.baseUrl);
-    console.log("Question data:", question);
+   
+    const questionRequest = QuestionAssemblerService.toApiRequest(question);
+    console.log("Transformed question request:", questionRequest);
     
     try {
-      // 🔧 CAMBIO: Solo usar '/queries' porque baseURL ya está configurado
-      const response = await this.http.post('/queries', question);
+      const response = await this.http.post('/question', questionRequest);
       console.log("Success! Response from consulting service:", response.data);
+
+      const transformedQuestion = QuestionAssemblerService.toDomainModel(response.data);
+
       return {
         success: true,
-        data: response.data
+
+        data: transformedQuestion
       };
     } catch (error: any) {
       console.error("Error creating question in service:", error);
       
-      // 🔧 CAMBIO: Más detalle del error pero no throw - controlar completamente
       if (error.response) {
         console.error("Response error:", error.response.status, error.response.data);
       } else if (error.request) {
@@ -52,12 +50,69 @@ export class CrmService {
 
   public async getConsulting(): Promise<any> {
     try {
-      const response = await this.http.get(`${this.baseUrl}/queries`);
-      console.log("Response from crm service:", response.data);
-      return response.data;
+      console.log("Fetching crm data from /question");
+      console.log("Base URL:", this.baseUrl);
+      console.log("Base URL que deberia ser:", import.meta.env.VITE_API_URL);
+      // Realizar la solicitud GET a la API
+      const response = await this.http.get(`/question`);
+
+      // Usar el assembler para transformar los datos en objeto Question
+      const questions = QuestionAssemblerService.toDomainModelArray(response.data);
+      console.log("Transformed questions:", questions);
+      return questions;
     } catch (error) {
       console.error("Error fetching crm:", error);
       throw error;
+    }
+  }
+
+  public async getAnswersByQuestionId(questionId: number): Promise<any> {
+   try {
+    const answer = await this.http.get(`/question/${questionId}/answers`);
+    console.log("Response from getAnswersByQuestionId:", answer.data);
+
+    return answer.data[0];
+   }
+    catch (error) {
+        console.error("Error fetching answers by question ID:", error);
+        throw error;
+      }
+  };
+
+
+  public async postAnswer(answer: any, questionId: number): Promise<any> {
+   
+    const postAnswer = answer;
+    console.log("Transformed question request:", postAnswer);
+    
+    try {
+      const response = await this.http.post(`/question/${questionId}/answers`, postAnswer);
+      console.log("Success! Response from consulting service:", response.data);
+      return {
+        success: true,
+
+        data: response.data
+      };
+    } catch (error: any) {
+      console.error("Error answering in service:", error);
+      
+      if (error.response) {
+        console.error("Response error:", error.response.status, error.response.data);
+      } else if (error.request) {
+        console.error("Request error:", error.request);
+      } else {
+        console.error("Unknown error:", error.message);
+      }
+      
+      return {
+        success: false,
+        error: true,
+        details: {
+          message: error.message || 'Unknown error',
+          status: error.response?.status || 0,
+          data: error.response?.data || null
+        }
+      };
     }
   }
 }

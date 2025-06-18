@@ -13,8 +13,10 @@ import ToastService from "primevue/toastservice";
 // Routing
 import router from "./router/index.ts";
 import { createPinia } from "pinia";
+import {Button, Dialog, InputText} from "primevue";
 
 const app = createApp(App);
+const pinia = createPinia();
 app
   .use(PrimeVue, {
     theme: {
@@ -30,5 +32,9 @@ app
   .use(ToastService)
   .use(router)
   .use(createPinia())
+
+app.component("pv-dialog", Dialog);
+app.component("pv-text",InputText)
+app.component("pv-button",Button)
 
 app.mount("#app");
