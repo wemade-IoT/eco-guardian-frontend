@@ -1,13 +1,16 @@
 import axios, { type AxiosInstance } from "axios";
 
 export class HttpService {
-  public http: AxiosInstance;
+  protected http: AxiosInstance;
 
   constructor() {
     this.http = axios.create({
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: "http://localhost:9080/api/v1/",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
     });
-
     this.http.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem("token");

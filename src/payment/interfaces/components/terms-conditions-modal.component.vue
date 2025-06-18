@@ -1,11 +1,12 @@
 <template>
   <Dialog
-    v-model:visible="visible"
+    :visible="open"
     modal
     header="Terms & Conditions"
     :closable="false"
     :dismissableMask="true"
     :style="{ width: '500px' }"
+    class="pt-6"
   >
     <div class="flex flex-col gap-4 py-2">
       <div class="text-gray-700 text-sm max-h-80 custom-scrollbar overflow-y-auto px-1">
@@ -40,24 +41,24 @@
         </ul>
       </div>
       <div class="flex justify-center gap-2 mt-4">
-        <Button label="Understood" icon="pi pi-check" @click="visible = false" />
+        <Button label="Understood" icon="pi pi-check" @click="$emit('close')" />
       </div>
     </div>
   </Dialog>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 
-const visible = ref(false)
+defineProps({
+  open: {
+    type: Boolean,
+    default: false
+  }
+})
 
-function open() {
-  visible.value = true
-}
 
-defineExpose({ open })
 </script>
 
 <style scoped>

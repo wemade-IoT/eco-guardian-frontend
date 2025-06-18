@@ -8,24 +8,32 @@
     </div>
     <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-10 w-full mx-auto">
       <plan-card v-for="(plan, index) in plans" :key="index" :plan="plan" :plant-selected="planSelected"
-        @select="planSelected = $event"></plan-card>
+        @select="planSelected = $event" @price="selectedPrice = $event"></plan-card>
     </div>
-    <billing-form></billing-form>
+    <billing-form :amount="selectedPrice" :is-plan-selected="isPlanSelected"
+      :plan-selected="planSelected"></billing-form>
   </div>
-  <confirm-payment-modal></confirm-payment-modal>
-  <terms-conditions-modal></terms-conditions-modal>
+  <!-- <confirm-payment-modal></confirm-payment-modal> -->
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { PlanType } from '../../../public/utils/types/plan-selected';
 import { plans } from '../../../public/utils/consts/plans';
 import PlanCard from '../components/plan-card.component.vue';
-import ConfirmPaymentModal from '../components/confirm-payment-modal.component.vue';
-import TermsConditionsModal from '../components/terms-conditions-modal.component.vue';
 import BillingForm from '../components/billing-form.component.vue';
+import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
+
+const auth = useAuthStore();
+
+console.log('userData', auth.userData);
 
 const planSelected = ref<PlanType | null>(null);
+const selectedPrice = ref<number>(0);
+
+const isPlanSelected = computed(() => {
+  return planSelected.value !== null;
+});
 </script>
 
 <style scoped>
