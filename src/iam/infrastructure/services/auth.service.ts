@@ -15,9 +15,7 @@ export class AuthService extends HttpService {
   public async signUp(email: string, password: string, roleId: number): Promise<any> {
     try {
       const payload: any = { email, password, roleId };
-      if (name) payload.name = name;
-      if (lastName) payload.lastName = lastName;
-      return await this.http.post("authentication/sign-up", payload);
+      return await this.http.post(`authentication/sign-up`, payload);
     } catch (error) {
       console.error("Error during signup:", error);
       throw error;

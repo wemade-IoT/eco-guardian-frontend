@@ -36,11 +36,11 @@ export const useAuthStore = defineStore("auth", {
 
     async register({ email, password, roleId }: { email: string; password: string; roleId: number }): Promise<any> {
       try {
-      const response = await authService.signUp(email, password, roleId);
-      return response.data;
+        const response = await authService.signUp(email, password, roleId);
+        return response.data;
       } catch (error) {
-      console.error("Error during signup:", error);
-      throw error;
+        console.error("Error during signup:", error);
+        throw error;
       }
     },
 
