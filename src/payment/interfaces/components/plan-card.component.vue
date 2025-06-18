@@ -36,12 +36,14 @@ import type { PlanType } from '../../../public/utils/types/plan-selected';
 const props = defineProps<{ plan: PlanProps, plantSelected?: PlanType | null }>()
 const emit = defineEmits<{
   (e: 'select', type: PlanType): void
+  (e: 'price', price: number): void
 }>()
 
 const isSelected = computed(() => props.plantSelected === props.plan.type)
 
 function selectPlan() {
   emit('select', props.plan.type)
+  emit('price', Number(props.plan.price))
 }
 </script>
 

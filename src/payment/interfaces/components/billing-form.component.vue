@@ -13,7 +13,7 @@
         <label for="billing-email" class="block text-gray-700 mb-1">
           Email <span class="text-red-500">*</span>
         </label>
-        <Input id="billing-email" v-model="email as string" type="email" required :class="[
+        <Input id="billing-email" v-model="email" type="email" required :class="[
           'w-full border-1 rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-primary',
           emailError ? '!border-red-500' : 'border-gray-400/60'
         ]" placeholder="maku@email.com" />
@@ -40,7 +40,7 @@
       <label for="discount" class="block text-gray-700 mb-1">
         Discount Code <span class="text-gray-400 text-xs">(Optional)</span>
       </label>
-      <Input id="discount-code" v-model="discountCode as string" type="text" required :class="[
+      <Input id="discount-code" v-model="discountCode" type="text" required :class="[
         'w-full border-1 rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-primary',
         discountCodeError ? '!border-red-500' : 'border-gray-400/60'
       ]" placeholder="Enter your discount code" />
@@ -62,9 +62,10 @@
       <label for="terms" class="text-sm text-gray-500 select-none font-semibold flex items-center gap-1">
         <span>
           I have read and accept the
-          <a href="/terms" target="_blank" class="underline text-primary hover:text-green-800 font-bold">
+          <span @click="showTermsModal = true" class="underline text-primary hover:text-green-800 font-bold"
+            style="cursor:pointer;">
             Terms & Conditions
-          </a>
+          </span>
         </span>
       </label>
     </div>
@@ -76,8 +77,9 @@
     ]" :disabled="!acceptedTerms">
       <span class="text-white">Confirm Payment</span>
     </button>
+    <!-- <payment-card-form></payment-card-form> -->
+    <terms-conditions-modal :open="showTermsModal" @close="showTermsModal = false" />
   </form>
-
 </template>
 
 <script setup lang="ts">
@@ -88,6 +90,19 @@ import { countries } from '../../../public/utils/consts/countries';
 import { ref } from 'vue';
 import { useField, useForm } from 'vee-validate';
 import billingDetailSchema from '../../../public/schemas/billing-detail.schema';
+import { useDialog, useToast } from 'primevue';
+import PaymentCardForm from './payment-card-form.component.vue';
+import TermsConditionsModal from '../components/terms-conditions-modal.component.vue';
+import { usePaymentStore } from '../store/payment-store';
+import { convertAmountByCountry, getCurrencyByCountry } from '../../../public/utils/helpers/currency';
+import type { CountryName } from '../../../public/utils/interfaces/country';
+import type { PlanType } from '../../../public/utils/types/plan-selected';
+
+const props = defineProps<{
+  isPlanSelected: boolean;
+  amount: number;
+  planSelected: PlanType | null;
+}>();
 
 const { handleSubmit, resetForm, errors } = useForm({
   validationSchema: billingDetailSchema,
@@ -98,19 +113,62 @@ const { handleSubmit, resetForm, errors } = useForm({
   }
 })
 
-const { value: email, errorMessage: emailError } = useField('email');
-const { value: country, errorMessage: countryError } = useField('country');
-const { value: discountCode, errorMessage: discountCodeError } = useField('discountCode');
+const paymentStore = usePaymentStore();
+const toast = useToast();
+const dialog = useDialog();
 const acceptedTerms = ref<boolean>(false)
+const showTermsModal = ref<boolean>(false);
 
-const onSubmitBillingForm = handleSubmit((values) => {
+const { value: email, errorMessage: emailError } = useField<string>('email');
+const { value: country, errorMessage: countryError } = useField<string>('country');
+const { value: discountCode, errorMessage: discountCodeError } = useField<string>('discountCode');
+
+const onSubmitBillingForm = handleSubmit(async (values) => {
+
+  if (!props.planSelected) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Please select a plan before proceeding.',
+      life: 3000
+    });
+    return;
+  }
+
   if (!acceptedTerms.value) return;
-  console.log({
-    ...values,
-    acceptedTerms: acceptedTerms.value
+
+  const convertedAmount = await convertAmountByCountry(props.amount, values.country as CountryName);
+
+  console.log('Converted Amount:', convertedAmount);
+
+  const response = await paymentStore.createPaymentIntent({
+    amount: convertedAmount,
+    currency: getCurrencyByCountry(values.country as CountryName),
+    paymentMethodId: '',
   });
-  resetForm();
-  acceptedTerms.value = !acceptedTerms.value;
+
+  const clientSecret = response?.clientSecret || '';
+
+  dialog.open(PaymentCardForm, {
+    props: {
+      modal: true,
+      style: { width: "500px" },
+      closable: false,
+    },
+    data: {
+      email: values.email,
+      country: values.country,
+      discountCode: values.discountCode,
+      clientSecret: clientSecret,
+      amount: props.amount,
+      currency: getCurrencyByCountry(values.country as CountryName),
+      countryName: values.country,
+      planSelected: props.planSelected as PlanType,
+    },
+    onClose: () => {
+      console.log("Dialog closed");
+    },
+  });
 });
 
 </script>

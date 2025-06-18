@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import router from "../../../router";
 import { AuthService } from "../../infrastructure/services/auth.service";
+import type { UserData } from "../../../public/utils/interfaces/user-data";
 import {getClaimType} from "../../../public/utils/helpers/decodeTokenHelper.ts";
 
 const authService = new AuthService();
@@ -19,6 +20,7 @@ export const useAuthStore = defineStore("auth", {
     id: getClaimType("sid",localStorage.getItem("token") || "") || "",
     isEnterprise: getClaimType("role",localStorage.getItem("token") || "") === "Enterprise" || false,
     isAdmin : getClaimType("role",localStorage.getItem("token") || "") === "Admin" || false,
+    userData: {} as UserData,
   }),
   actions: {
     async login(email: string, password: string) {
@@ -32,13 +34,19 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async register({ email, password, roleId, name, lastName }: { email: string; password: string; roleId: number; name?: string; lastName?: string }) {
+    async register({ email, password, roleId }: { email: string; password: string; roleId: number }): Promise<any> {
       try {
-        await authService.signUp(email, password, roleId, name, lastName);
+      const response = await authService.signUp(email, password, roleId);
+      return response.data;
       } catch (error) {
-        console.error("Error during signup:", error);
-        throw error;
+      console.error("Error during signup:", error);
+      throw error;
       }
+    },
+
+    // this method is used to set the user data after register
+    setUserData(user: UserData) {
+      this.userData = user;
     },
 
     logout() {

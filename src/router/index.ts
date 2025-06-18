@@ -4,6 +4,7 @@ import RegisterPage from "@/iam/interfaces/pages/register-page.component.vue";
 import MainLayoutPage from "@/shared/pages/main-layout-page.vue";
 import DashboardPage from "@/analytics/interfaces/pages/dashboard.component.vue";
 import ChoosePlanPage from "@/payment/interfaces/pages/choose-plan-page.component.vue";
+import PaymentSuccededPage from "../payment/interfaces/pages/payment-succeded-page.component.vue";
 import ConsultingPageComponent from "../crm/interfaces/pages/consulting-page.component.vue";
 
 const routes = [
@@ -11,6 +12,8 @@ const routes = [
   { path: "/login", component: LoginPage },
   { path: "/register", component: RegisterPage },
   { path: "/choose-plan", component: ChoosePlanPage },
+  { path: "/payment-succeded", component: PaymentSuccededPage },
+  
   {
     path: "/",
     component: MainLayoutPage,

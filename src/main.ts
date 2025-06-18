@@ -3,10 +3,12 @@ import "./style.css";
 import App from "./App.vue";
 import PrimeVue from "primevue/config";
 import Aura from "@primeuix/themes/aura";
-import '@fortawesome/fontawesome-free/css/all.css';
+import "@fortawesome/fontawesome-free/css/all.css";
 
 // PrimeIcons
 import "primeicons/primeicons.css";
+import DialogService from "primevue/dialogservice";
+import ToastService from "primevue/toastservice";
 
 // Routing
 import router from "./router/index.ts";
@@ -26,7 +28,10 @@ app
       },
     },
   })
-  .use(router).use(createPinia());
+  .use(DialogService)
+  .use(ToastService)
+  .use(router)
+  .use(createPinia())
 
 app.component("pv-dialog", Dialog);
 app.component("pv-text",InputText)

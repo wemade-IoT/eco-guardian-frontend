@@ -1,8 +1,6 @@
-
 import { HttpService } from "../../../shared/services/http-common";
 
 export class AuthService extends HttpService {
-
 
   public async signIn(email: string, password: string): Promise<any> {
     try {
@@ -14,7 +12,7 @@ export class AuthService extends HttpService {
     }
   }
 
-  public async signUp(email: string, password: string, roleId: number, name?: string, lastName?: string): Promise<any> {
+  public async signUp(email: string, password: string, roleId: number): Promise<any> {
     try {
       const payload: any = { email, password, roleId };
       if (name) payload.name = name;

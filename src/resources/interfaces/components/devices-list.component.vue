@@ -49,20 +49,18 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import {DEVICE_STATE} from "../../../public/utils/types/devices.ts";
-
+import { DEVICE_STATE } from "../../../public/utils/types/devices.ts";
 
 const devices = ref<any[]>([]);
 
 onMounted(async () => {
   try {
-    //devices.value = data;
+    // devices.value = data;
   } catch (error) {
     console.error('Error fetching devices:', error);
   }
 });
 </script>
-
 
 <style scoped>
 .device-container::-webkit-scrollbar {
