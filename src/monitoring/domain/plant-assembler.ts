@@ -19,14 +19,6 @@ export class PlantAssembler{
         );
     }
 
-    static toDomainModelArray(dtos: any[]): PlantResponse[] {
-        if (!Array.isArray(dtos)) {
-          console.warn('Expected array but received:', typeof dtos);
-          return [];
-        }
-        
-        return dtos.map(dto => this.toResponse(dto));
-      }
 
     static toRequest(request:any): PlantRequest{
         return new PlantRequest(

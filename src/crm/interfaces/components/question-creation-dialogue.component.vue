@@ -59,8 +59,8 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import { CrmService } from '../../infrastructure/services/crm.service';
-import { MonitoringService } from '../../../monitoring/infrastructure/services/monitoring.service';
 import { PlantResponse } from '../../../monitoring/domain/plant-response';
+import {PlantService} from "@/monitoring/infrastructure/services/plant.service.ts";
 
 const authStore = useAuthStore();
 
@@ -80,7 +80,7 @@ const handleFormSubmit = async (event: Event) => {
 };
 const route = useRoute();
 const consultingService = new CrmService();
-const monitoringService = new MonitoringService();
+const plantService = new PlantService();
 
 const props = defineProps({
   selectedPlantId: { type: Number, default: 0 },
@@ -123,7 +123,8 @@ onMounted(async () => {
     }
     
     try {
-        const response = await monitoringService.getPlantByUserId(authStore.user.id);
+        const response = await plantService.getPlantsByUserId(authStore.id);
+        console.log('🔥 Response from getPlantByUserId:', response);
         if (response && response.data && Array.isArray(response.data)) {
             userPlants.value = response.data;
 
