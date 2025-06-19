@@ -3,11 +3,6 @@ import { HttpService } from "../../../shared/services/http-common";
 import { QuestionAssemblerService } from "./question-assembler.service";
 
 export class CrmService extends HttpService {
-  private baseUrl: string = "";
-  
-  constructor() {
-    super(); // ← Inicializa HttpService (con token interceptor incluido)
-  }
 
   public async postQuestion(question: any): Promise<any> {
    
@@ -15,7 +10,7 @@ export class CrmService extends HttpService {
     console.log("Transformed question request:", questionRequest);
     
     try {
-      const response = await this.http.post('/question', questionRequest);
+      const response = await this.http.post('question', questionRequest);
       console.log("Success! Response from consulting service:", response.data);
 
       const transformedQuestion = QuestionAssemblerService.toDomainModel(response.data);
@@ -50,11 +45,8 @@ export class CrmService extends HttpService {
 
   public async getConsulting(): Promise<any> {
     try {
-      console.log("Fetching crm data from /question");
-      console.log("Base URL:", this.baseUrl);
-      console.log("Base URL que deberia ser:", import.meta.env.VITE_API_URL);
       // Realizar la solicitud GET a la API
-      const response = await this.http.get(`/question`);
+      const response = await this.http.get(`question`);
 
       // Usar el assembler para transformar los datos en objeto Question
       const questions = QuestionAssemblerService.toDomainModelArray(response.data);
@@ -68,7 +60,7 @@ export class CrmService extends HttpService {
 
   public async getAnswersByQuestionId(questionId: number): Promise<any> {
    try {
-    const answer = await this.http.get(`/question/${questionId}/answers`);
+    const answer = await this.http.get(`question/${questionId}/answers`);
     console.log("Response from getAnswersByQuestionId:", answer.data);
 
     return answer.data[0];
@@ -86,7 +78,7 @@ export class CrmService extends HttpService {
     console.log("Transformed question request:", postAnswer);
     
     try {
-      const response = await this.http.post(`/question/${questionId}/answers`, postAnswer);
+      const response = await this.http.post(`question/${questionId}/answers`, postAnswer);
       console.log("Success! Response from consulting service:", response.data);
       return {
         success: true,

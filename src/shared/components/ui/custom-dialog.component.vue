@@ -22,9 +22,11 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 import { computed, inject } from 'vue'
+import { useRouter } from 'vue-router';
 
 const dialogRef = inject<any>('dialogRef')
 const dialogData = dialogRef.value.data;
+const router = useRouter()
 
 const iconClass = computed(() => {
   switch (dialogData.type) {
@@ -52,7 +54,12 @@ const buttonSeverity = computed(() => {
   }
 })
 
-function handleClose() {
-  dialogRef.value.close()
+async function handleClose() {
+  if (dialogData.redirectionPath) {
+    router.push(dialogData.redirectionPath)
+    dialogRef.value.close()
+  } else {
+    dialogRef.value.close()
+  }
 }
 </script>

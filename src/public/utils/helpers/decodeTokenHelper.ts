@@ -45,5 +45,5 @@ export function getClaimType(type: string, token: string): any {
     }
 
     const claimKey = `${namespace}${type}`;
-    return payload[claimKey] || null;
+    return payload[claimKey] ?? null;
 }

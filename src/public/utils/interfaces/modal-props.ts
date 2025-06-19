@@ -5,4 +5,5 @@ export interface ModalProps {
   subtitle: string;
   type: AlertType;
   severity: "secondary" | "success" | "info" | "warning" | "help" | "danger";
+  redirectionPath?: string;
 }

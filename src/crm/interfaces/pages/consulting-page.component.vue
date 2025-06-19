@@ -114,8 +114,8 @@ const questionsTitle = ref(isSpecialist ? isEnterprise ?  'Plantation Questions'
     height: 100%;
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    padding: 20px;
+    gap: 1rem;
+    padding: 20px 0;
 }
 
 /* Page header */

@@ -16,7 +16,7 @@ export const useAuthStore = defineStore("auth", {
         return "";
       }
     })(),
-    role: getClaimType("role",localStorage.getItem("token") || "") || "",
+    role: getClaimType("role", localStorage.getItem("token") || "") || "GUEST",
     id: getClaimType("sid",localStorage.getItem("token") || "") || "",
     isEnterprise: getClaimType("role",localStorage.getItem("token") || "") === "Enterprise" || false,
     isAdmin : getClaimType("role",localStorage.getItem("token") || "") === "Admin" || false,
@@ -26,6 +26,7 @@ export const useAuthStore = defineStore("auth", {
     async login(email: string, password: string) {
       try {
         const response = await authService.signIn(email, password);
+        console.log("Login successful, response:", response.data);
         localStorage.setItem("user", JSON.stringify(response.data));
         localStorage.setItem("token", response.data.token);
       } catch (error) {
@@ -53,6 +54,7 @@ export const useAuthStore = defineStore("auth", {
       this.user = null;
       localStorage.removeItem("user");
       localStorage.removeItem("token");
+      localStorage.removeItem("reloaded");
       router.push("/login");
     },
   },

@@ -5,7 +5,9 @@ export class AuthService extends HttpService {
   public async signIn(email: string, password: string): Promise<any> {
     try {
       const payload = { email, password };
-      return await this.http.post("authentication/sign-in", payload);
+      const response = await this.http.post("authentication/sign-in", payload);
+      console.log("Login successful, response:", response.data);
+      return response;
     } catch (error) {
       console.error("Error during login:", error);
       throw error;

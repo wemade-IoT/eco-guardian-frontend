@@ -25,6 +25,7 @@ export const createModal = (
       subtitle: data.subtitle,
       type: data.type,
       severity: data.severity,
+      redirectionPath: data.redirectionPath,
     },
     onClose: () => {
       console.log("Dialog closed");

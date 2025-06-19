@@ -7,13 +7,13 @@ import {usePlantStore} from "../stores/plant-store.ts";
 import type {PlantResponse} from "../../domain/plant-response.ts";
 import {useAuthStore} from "../../../iam/interfaces/store/auth-store.ts";
 
-const plantAssembler = new PlantAssembler();
 const plantStore =  usePlantStore();
 const authStore = useAuthStore();
 
 const visible = ref(false);
 const isProceed = ref(false);
 const currentPlantId = ref(0);
+const plants = ref<PlantResponse[]>([]);
 
 const enterpriseValues = ref({
   id: 0,
@@ -23,7 +23,7 @@ const enterpriseValues = ref({
   lightThreshold: 0,
   temperatureThreshold: 0,
   areaCoverage: 1000,
-  userId: 1,
+  userId: authStore.user?.id || 0,
   isPlantation: authStore.isEnterprise,
   wellnessStateId: 1,
 });
@@ -36,13 +36,14 @@ const domesticValues = ref({
   lightThreshold: 0,
   temperatureThreshold: 0,
   areaCoverage: 0,
-  userId: 1,
+  userId: authStore.user?.id || 0,
   isPlantation: authStore.isEnterprise,
   wellnessStateId: 1,
 });
 
 onMounted(async () => {
-    await plantStore.getPlantsByUserId(authStore.id)
+    const response = await plantStore.getPlantsByUserId(authStore.user.id)
+    plants.value = response;
 });
 
 const savePlant = async () => {
@@ -103,7 +104,7 @@ async function submitForm(updatedValues: any) {
     Object.assign(domesticValues.value, updatedValues);
   }
 
-  const request = plantAssembler.toRequest(authStore.isEnterprise ? enterpriseValues.value : domesticValues.value);
+  const request = PlantAssembler.toRequest(authStore.isEnterprise ? enterpriseValues.value : domesticValues.value);
   if (updatedValues.id !== 0) {
     await plantStore.editPlant(updatedValues.id, request);
   } else {
@@ -145,10 +146,10 @@ async function submitForm(updatedValues: any) {
     <h2 class="text-[24px] font-semibold mb-4">Plants</h2>
     <div class="flex flex-col gap-4">
       <plant-card
+          v-for="(plant, index) in plants"
           @view="viewPlantInformation(plant)"
           @delete="onProceedDelete(plant.id)"
           @edit="setEditMode(plant)"
-          v-for="(plant, index) in plantStore.plants"
           :key="index"
           :name="plant.name"
           :type="plant.type"

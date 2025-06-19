@@ -2,6 +2,7 @@
 import {ref, watch} from 'vue';
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
   header: {
@@ -26,6 +27,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:visible', 'submit-form', 'delete-plant', 'update:isDelete']);
 const isDeleteConfirm = ref(false);
+const router = useRouter();
 
 const validator = yup.object({
   name: yup.string().required('Name is required'),
@@ -71,8 +73,16 @@ const submitForm = handleSubmit(() => {
     lightThreshold: lightThreshold.value,
     temperatureThreshold: temperatureThreshold.value,
   };
-  emit('submit-form', updatedValues);
   resetForm();
+  // para simular el proceso de instalacion, pero ya se creo (no hubo tiempo en este sprint)
+  // usa el codigo TOTO-2025 para un descuento
+  if (props.header === 'Register a new Plant' || props.header === 'Register a new Plantation') {
+    // solo por este sprint deberiamos validar pero por tiempo, borrar luego esto Dx
+    emit('submit-form', updatedValues);
+    router.push('/installation');
+  } else {
+    emit('submit-form', updatedValues);
+  }
 });
 
 const handleDelete = () => {
@@ -96,7 +106,7 @@ const cancelDelete = () => {
 
     <div v-if="isDeleteConfirm " class="flex flex-col gap-4">
       <section class="flex flex-col items-center text-center gap-4">
-        <h2 class="font-bold text-xl text-black font-bold"> Plant Name ID### Deleted</h2>
+        <h2 class="font-bold text-xl text-black"> Plant Name ID### Deleted</h2>
         <div class="w-1/2 mx-auto">
           <hr />
         </div>

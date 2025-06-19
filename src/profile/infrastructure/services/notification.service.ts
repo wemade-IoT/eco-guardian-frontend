@@ -12,9 +12,10 @@ export class NotificationService {
     });
   }
 
+  // TODO: POR AHORA CON FAKE DATA, LUEGO SE DEBE CONECTAR A LA API
   public async getNotifications(): Promise<any> {
     try {
-      const response = await this.http.get(`${this.baseUrl}/notifications`);
+      const response = await this.http.get(`http://localhost:3000/notifications`);
       return response.data;
     } catch (error) {
       console.error("Error fetching notifications:", error);

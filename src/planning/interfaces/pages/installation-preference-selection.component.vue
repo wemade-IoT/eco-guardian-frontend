@@ -3,8 +3,8 @@ import InstallationPreferenceSelection from '@/planning/interfaces/components/in
 </script>
 
 <template>
-  <div class="w-[80%] min-h-screen flex flex-row items-center justify-center mx-auto">
-    <div class="flex flex-col flex-1">
+  <div class="min-h-full flex flex-row items-center justify-center mx-auto">
+    <div class="flex flex-col flex-1 h-full">
       <installation-preference-selection />
     </div>
   </div>
