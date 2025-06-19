@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import PlantCard from './plant-card.component.vue';
 import plantDialog from './plant-dialog.vue';
-import { PlantAssembler } from "../../domain/plant-assembler.ts";
 import {usePlantStore} from "../stores/plant-store.ts";
 import type {PlantResponse} from "../../domain/plant-response.ts";
 import {useAuthStore} from "../../../iam/interfaces/store/auth-store.ts";
-
 const plantStore =  usePlantStore();
 const authStore = useAuthStore();
 
@@ -42,8 +40,7 @@ const domesticValues = ref({
 });
 
 onMounted(async () => {
-    const response = await plantStore.getPlantsByUserId(authStore.user.id)
-    plants.value = response;
+  plants.value = await plantStore.getPlantsByUserId(authStore.id);
 });
 
 const savePlant = async () => {
@@ -103,12 +100,10 @@ async function submitForm(updatedValues: any) {
   } else {
     Object.assign(domesticValues.value, updatedValues);
   }
-
-  const request = PlantAssembler.toRequest(authStore.isEnterprise ? enterpriseValues.value : domesticValues.value);
   if (updatedValues.id !== 0) {
-    await plantStore.editPlant(updatedValues.id, request);
+    await plantStore.editPlant(updatedValues.id, authStore.isEnterprise ? enterpriseValues.value : domesticValues.value);
   } else {
-    await plantStore.createPlant(request);
+    await plantStore.createPlant(authStore.isEnterprise ? enterpriseValues.value : domesticValues.value);
   }
 
   visible.value = false;
