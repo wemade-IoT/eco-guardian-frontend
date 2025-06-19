@@ -225,7 +225,7 @@ const errors = reactive<ValidationErrors>({})
 const dialog = useDialog();
 
 // Validation functions
-const validateEmail = (email: string): string | null => {
+/* const validateEmail = (email: string): string | null => {
   if (!email.trim()) {
     return 'El email es requerido'
   }
@@ -262,9 +262,10 @@ const validateForm = (): boolean => {
   }
 
   return Object.keys(errors).length === 0
-}
+} */
 
 const handleSubmit = async (): Promise<void> => {
+
   try {
     isLoading.value = true
     await simulateRequest(2000)

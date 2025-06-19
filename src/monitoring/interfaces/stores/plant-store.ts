@@ -1,18 +1,17 @@
 import {defineStore} from "pinia";
 import {PlantService} from "../../infrastructure/services/plant.service.ts";
 import {PlantResponse} from "../../domain/plant-response.ts";
-import type {PlantRequest} from "../../domain/plant-request.ts";
 import {PlantAssembler} from "../../domain/plant-assembler.ts";
 
 const plantService = new PlantService();
-const plantAssembler = new PlantAssembler();
 export const usePlantStore = defineStore("plant", {
     state:() => ({
         plant: PlantResponse,
         plants: [] as PlantResponse[],
     }),
     actions: {
-        async createPlant(request:PlantRequest){
+        async createPlant(plantRequest:any){
+            const request =PlantAssembler.toRequest(plantRequest);
             await plantService.createPlant(request).then(()=> {
                  this.getPlantsByUserId(request.userId);
             });
@@ -23,7 +22,8 @@ export const usePlantStore = defineStore("plant", {
             return this.plants= response.data.map((plant: any) => PlantAssembler.toResponse(plant));
         },
 
-        async editPlant(plantId: number, request: PlantRequest) {
+        async editPlant(plantId: number, plantRequest: any) {
+            const request =PlantAssembler.toRequest(plantRequest);
             await plantService.updatePlant(plantId, request);
             await this.getPlantsByUserId(request.userId);
         },

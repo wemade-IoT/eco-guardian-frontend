@@ -6,11 +6,9 @@ import { PlantAssembler } from "../../domain/plant-assembler.ts";
 import {usePlantStore} from "../stores/plant-store.ts";
 import type {PlantResponse} from "../../domain/plant-response.ts";
 import {useAuthStore} from "../../../iam/interfaces/store/auth-store.ts";
-import {useRouter} from "vue-router";
 
 const plantStore =  usePlantStore();
 const authStore = useAuthStore();
-const router = useRouter();
 
 const visible = ref(false);
 const isProceed = ref(false);
@@ -89,9 +87,8 @@ function deletePlant(){
 }
 
 function viewPlantInformation(plant:PlantResponse){
-  plantStore.plant = plant;
+  plantStore.plant.prototype = plant;
   //TODO: Add navigation to analytics page
-  router.push("/plant-information")
 }
 
 function onProceedDelete(id:number) {

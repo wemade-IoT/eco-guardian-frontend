@@ -10,7 +10,7 @@ defineProps({
 
 const emit = defineEmits({
   'edit': () => true,
-  'delete': (id: number) => true,
+  'delete': (_id: number) => true,
   'view': () => true,
 });
 
@@ -70,16 +70,16 @@ const statusDescriptions: Record<number, string> = {
         </p>
       </div>
       <div class="flex justify-end gap-3">
-        <button class="cursor-pointer flex items-center justify-center bg-gray-300/50 w-10 h-10 rounded-md group
-        hover:bg-slate-700 transition-all duration-300 ease-in-out  hover:text-white" @click="editPlant">
+        <button type="button" class="cursor-pointer flex items-center justify-center bg-gray-300/50 w-10 h-10 rounded-md group
+      hover:bg-slate-700 transition-all duration-300 ease-in-out hover:text-white" @click="editPlant">
           <i class="pi pi-pencil"></i>
         </button>
-        <button class="cursor-pointer flex items-center justify-center bg-gray-300/50 w-10 h-10 rounded-md group
-        hover:bg-slate-700 transition-all duration-300 ease-in-out  hover:text-white" @click="deletePlant">
+        <button type="button" class="cursor-pointer flex items-center justify-center bg-gray-300/50 w-10 h-10 rounded-md group
+      hover:bg-slate-700 transition-all duration-300 ease-in-out hover:text-white" @click="() => deletePlant(1)">
           <i class="pi pi-trash"></i>
         </button>
-        <button @click="view" class="cursor-pointer flex items-center justify-center bg-gray-300/50 w-10 h-10 rounded-md group
-        hover:bg-slate-700 transition-all duration-300 ease-in-out  hover:text-white">
+        <button type="button" class="cursor-pointer flex items-center justify-center bg-gray-300/50 w-10 h-10 rounded-md group
+      hover:bg-slate-700 transition-all duration-300 ease-in-out hover:text-white" @click="view">
           <i class="pi pi-eye"></i>
         </button>
       </div>

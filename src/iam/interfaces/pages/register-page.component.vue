@@ -146,12 +146,12 @@ import { ref } from 'vue'
 import signUpSchema from '../../../public/schemas/sign-up-schema'
 import { createModal } from '../../../public/utils/helpers/create-modal'
 import CustomDialog from '../../../shared/components/ui/custom-dialog.component.vue'
-import { useDialog, useToast } from 'primevue'
+import { useDialog } from 'primevue'
 import { useAuthStore } from '../store/auth-store'
 import { useRouter } from 'vue-router'
 
 const dialog = useDialog();
-const toast = useToast();
+/* const toast = useToast(); */
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -159,7 +159,7 @@ const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const isLoading = ref(false)
 
-const { handleSubmit, resetForm, errors } = useForm({
+const { errors } = useForm({
   validationSchema: signUpSchema,
   initialValues: {
     firstName: '',

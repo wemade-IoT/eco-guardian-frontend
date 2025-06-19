@@ -104,7 +104,7 @@ const props = defineProps<{
   planSelected: PlanType | null;
 }>();
 
-const { handleSubmit, resetForm, errors } = useForm({
+const { handleSubmit, errors } = useForm({
   validationSchema: billingDetailSchema,
   initialValues: {
     email: '',
