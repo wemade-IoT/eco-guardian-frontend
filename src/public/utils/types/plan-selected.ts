@@ -1,0 +1,1 @@
+export type PlanType = 'DOMESTIC' | 'PRO' | 'ENTERPRISE';

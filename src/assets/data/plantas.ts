@@ -1,0 +1,80 @@
+export const plantas = [
+  {
+    id: 1,
+    name: "Tomato",
+    type: "Vegetable",
+    user_id: 1,
+    water_threshold: 0.75,
+    created_at: "2025-05-01T08:00:00",
+    updated_at: "2025-05-12T10:00:00",
+    light_threshold: 0.85,
+    temperature_threshold: 22.5,
+    status: "Healthy",
+    state: 1
+  },
+  {
+    id: 2,
+    name: "Lettuce",
+    type: "Vegetable",
+    user_id: 2,
+    water_threshold: 0.6,
+    created_at: "2025-05-02T09:00:00",
+    updated_at: "2025-05-12T11:00:00",
+    light_threshold: 0.7,
+    temperature_threshold: 20.0,
+    status: "Warning",
+    state: 3
+  },
+  {
+    id: 3,
+    name: "Carrot",
+    type: "Vegetable",
+    user_id: 3,
+    water_threshold: 0.65,
+    created_at: "2025-05-03T10:00:00",
+    updated_at: "2025-05-12T12:00:00",
+    light_threshold: 0.75,
+    temperature_threshold: 18.0,
+    status: "Unhealthy",
+    state: 2
+  },
+  {
+    id: 4,
+    name: "Cucumber",
+    type: "Vegetable",
+    user_id: 1,
+    water_threshold: 0.8,
+    created_at: "2025-05-04T08:30:00",
+    updated_at: "2025-05-12T10:30:00",
+    light_threshold: 0.9,
+    temperature_threshold: 24.0,
+    status: "Healthy",
+    state: 1
+  },
+  {
+    id: 5,
+    name: "Spinach",
+    type: "Vegetable",
+    user_id: 2,
+    water_threshold: 0.7,
+    created_at: "2025-05-05T09:15:00",
+    updated_at: "2025-05-12T11:15:00",
+    light_threshold: 0.65,
+    temperature_threshold: 19.0,
+    status: "Warning",
+    state: 3
+  },
+  {
+    id: 6,
+    name: "Pepper",
+    type: "Vegetable",
+    user_id: 3,
+    water_threshold: 0.85,
+    created_at: "2025-05-06T10:45:00",
+    updated_at: "2025-05-12T12:45:00",
+    light_threshold: 0.8,
+    temperature_threshold: 23.0,
+    status: "Healthy",
+    state: 1
+  }
+];

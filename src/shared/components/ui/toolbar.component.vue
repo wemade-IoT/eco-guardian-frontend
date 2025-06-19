@@ -3,8 +3,8 @@
     <div class="flex flex-row items-center gap-5">
       <h1 class="text-shadow-dark text-2xl tracking-wide">EcoGuardian Monitoring</h1>
       <p class="mr-3 flex items-center gap-1 font-medium text-gray-700 text-base">
-        <span class="px-2 py-1 bg-green-300/60 text-slate-700 rounded-full text-sm">
-          {{ authStore.user?.role ?? 'GUEST' }}
+        <span class="px-2 py-1 bg-green-300/60 text-slate-700 rounded-full text-sm uppercase">
+          {{ authStore.role ?? 'GUEST' }}
         </span>
       </p>
     </div>
@@ -30,6 +30,8 @@
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 
 const authStore = useAuthStore();
+
+console.log('Auth Store:', authStore.role);
 </script>
 
 <style scoped></style>
