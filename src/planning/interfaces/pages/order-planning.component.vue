@@ -3,27 +3,31 @@ import { ref } from 'vue';
 import CalendarOrder from "@/planning/interfaces/components/calendar-order.component.vue";
 import TimeSlotsOrder from "@/planning/interfaces/components/time-slots-order.component.vue";
 import Button from "primevue/button";
-import { useOrderStore } from "../../../planning/interfaces/stores/order-store.ts";
-import { OrderDetailRequest } from "../../../planning/domain/order-detail-request.ts";
+/* import { useOrderStore } from "../../../planning/interfaces/stores/order-store.ts";
+import { OrderDetailRequest } from "../../../planning/domain/order-detail-request.ts"; */
 import { useRouter } from 'vue-router';
 import { createModal } from '../../../public/utils/helpers/create-modal.ts';
 import CustomDialog from '../../../shared/components/ui/custom-dialog.component.vue';
 import ProgressSpinner from 'primevue/progressspinner'
 import { useDialog } from 'primevue';
-import { useAuthStore } from '../../../iam/interfaces/store/auth-store.ts';
+/* import { useAuthStore } from '../../../iam/interfaces/store/auth-store.ts'; */
 import { simulateRequest } from '../../../public/utils/helpers/sleep.ts';
 
-const orderStore = useOrderStore();
+/* const orderStore = useOrderStore(); */
 const selectedDate = ref<Date | null>(null);
 const selectedSlot = ref<number>(0);
 const dialog = useDialog();
-const authStore = useAuthStore();
+/* const authStore = useAuthStore(); */
 
-const consumerId = authStore.user?.id || 0;
+/* const consumerId = authStore.user?.id || 0; */
+/* const consumerId = authStore.user?.id || 0; */
 //TODO: Reemplazar los detalles de la orden por los reales
-const details = [
+/* const details = [
   new OrderDetailRequest(1, 1, 100, 'Instalación básica', 10)
-];
+]; */
+/* const details = [
+  new OrderDetailRequest(1, 1, 100, 'Instalación básica', 10)
+]; */
 
 const router = useRouter();
 const isLoading = ref<boolean>(false);

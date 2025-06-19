@@ -16,7 +16,6 @@ import { createPinia } from "pinia";
 import {Button, Dialog, InputText} from "primevue";
 
 const app = createApp(App);
-const pinia = createPinia();
 app
   .use(PrimeVue, {
     theme: {

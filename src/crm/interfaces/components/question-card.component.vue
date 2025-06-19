@@ -123,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps, onMounted, ref } from 'vue';
+import { defineEmits, defineProps, ref } from 'vue';
 import type { Question } from '../../../crm/domain/model/question.entity';
 import { QuestionAssemblerService } from '../../infrastructure/services/question-assembler.service';
 import { Button } from 'primevue';

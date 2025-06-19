@@ -5,7 +5,6 @@ import type {PlantRequest} from "../../domain/plant-request.ts";
 import {PlantAssembler} from "../../domain/plant-assembler.ts";
 
 const plantService = new PlantService();
-const plantAssembler = new PlantAssembler();
 export const usePlantStore = defineStore("plant", {
     state:() => ({
         plant: PlantResponse,

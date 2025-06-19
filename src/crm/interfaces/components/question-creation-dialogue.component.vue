@@ -99,7 +99,7 @@ const selectedPlantId = ref<string>(
 );
 
 // Computed properties
-const isEnterprise = computed(() => authStore.user?.role === 'ENTERPRISE');
+/* const isEnterprise = computed(() => authStore.user?.role === 'ENTERPRISE'); */
 const isPlantSpecificView = computed(() => !!route.params.plantId || !!props.selectedPlantId);
 
 const canSubmit = computed(() => {

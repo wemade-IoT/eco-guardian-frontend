@@ -28,7 +28,6 @@
 <script setup lang="ts">
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store.ts';
 import AlertsList from '../../../monitoring/interfaces/alerts-list.component.vue';
-import DevicesList from '../../../resources/interfaces/components/devices-list.component.vue';
 import LinesChart from '../../../analytics/interfaces/components/line-chart.component.vue';
 
 import TipsCarousel from '../../../crm/interfaces/components/tips-carousel.component.vue';
