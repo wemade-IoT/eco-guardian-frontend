@@ -20,7 +20,7 @@
       </div>
       <div class="flex flex-row items-center gap-2.5 h-9 rounded-md overflow-hidden bg-gray-300/50 px-3">
         <i class="pi pi-calendar text-lg text-gray-500 -mt-0.5"></i>
-        <span>Sunday, October 1, 2023</span>
+        <span>{{ current_date }}</span>
       </div>
     </div>
   </header>
@@ -30,6 +30,17 @@
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 
 const authStore = useAuthStore();
+
+// format the date to a readable string
+//        <span>Sunday, October 1, 2023</span>
+var current_date = new Date().toLocaleDateString('en-US', {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+
+
 
 console.log('Auth Store:', authStore.role);
 </script>
