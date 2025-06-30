@@ -11,7 +11,7 @@
         before:w-6 after:left-8 after:right-0 after:top-0 after:h-[1.5px]">
       </div>
       <div class="mt-6 w-full translate-x-1.5">
-        <Chart class="responsive-trick h-100" type="line" :data="chartData || {}" :options="chartOptions" />
+        <Chart class="responsive-trick h-50" type="line" :data="chartData || {}" :options="chartOptions" />
       </div>
     </div>
   </section>

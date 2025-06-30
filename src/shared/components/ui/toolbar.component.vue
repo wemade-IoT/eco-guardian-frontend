@@ -31,8 +31,7 @@ import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 
 const authStore = useAuthStore();
 
-// format the date to a readable string
-//        <span>Sunday, October 1, 2023</span>
+// The date is formatted to be readable and to be calculated based on the time.
 var current_date = new Date().toLocaleDateString('en-US', {
   weekday: 'long',
   year: 'numeric',
@@ -40,9 +39,14 @@ var current_date = new Date().toLocaleDateString('en-US', {
   day: 'numeric'
 });
 
+/* Missing fixes: 
+- The alert count is static, it should be dynamic based on the actual alerts (Notifications, and it should redirect to the profile section with the notifications).
+*/
 
 
-console.log('Auth Store:', authStore.role);
+
+
+console.log('Auth Store (User Role):', authStore.role);
 </script>
 
 <style scoped></style>

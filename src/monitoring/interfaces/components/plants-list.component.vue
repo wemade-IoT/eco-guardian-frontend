@@ -142,9 +142,12 @@ async function submitForm(updatedValues: any) {
     />
   </div>
 
-  <div class="plants-list bg-gray-100 p-4 rounded">
-    <h2 class="text-[24px] font-semibold mb-4">Plants</h2>
-    <div class="flex flex-col gap-4">
+  <div class="plant-container bg-gray-100 rounded">
+    <div class="title">
+      <h2 class="text-[24px] font-semibold">Plants</h2>
+    </div> 
+
+    <div class="plants-list flex flex-col gap-4 pt-2">
       <plant-card
           v-for="(plant, index) in plants"
           @view="viewPlantInformation(plant)"
@@ -157,13 +160,53 @@ async function submitForm(updatedValues: any) {
           :state="plant.wellnessStateId"
       />
     </div>
-    <button
-        class="mt-4 w-full h-10 bg-[#578257] text-white rounded flex items-center justify-center"
+    <div class="add-plant">
+      <button
+        class=" w-full h-10 bg-[#578257] text-white rounded flex items-center justify-center"
         @click="savePlant"
     >
       <i class="pi pi-plus text-[16px]"></i>
     </button>
+    </div>
+    
   </div>
 </template>
 
-<style scoped></style>
+<style>
+
+.plant-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.plants-list {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin; 
+  scrollbar-color: #9CA3AF transparent; 
+}
+
+.plants-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.plants-list::-webkit-scrollbar-track {
+  background: transparent; 
+  border-radius: 8px;
+}
+
+.title {
+  padding: 1rem 1rem 0 1rem;
+
+}
+.add-plant {
+  padding: 1rem;
+}
+
+</style>

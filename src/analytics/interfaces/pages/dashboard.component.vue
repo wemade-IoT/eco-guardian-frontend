@@ -1,23 +1,32 @@
 <template>
-  <div>
-    <div v-if="isEnterprise || isDomestic" class="grid grid-cols-[2fr_1fr_1fr] grid-rows-auto gap-2 h-max py-3">
-      <div class="flex flex-col gap-2">
-        <lines-chart></lines-chart>
-        <widgets-container></widgets-container>
-      </div>
-     <!--  <div v-if="isEnterprise">
-        <devices-list></devices-list>
-      </div> -->
-      <div>
-        <plants-list></plants-list>
-      </div>
-      <div class="flex flex-col gap-2 h-full">
-        <tips-carousel></tips-carousel>
-        <alerts-list></alerts-list>
-      </div>
+  <div class="main-dashboard-container">
+    <div v-if="isEnterprise || isDomestic" class="dashboard-container">
+      
+          <div class="dashboard-column flex flex-col gap-2">
+            <div class="line-chart">
+                      <lines-chart></lines-chart>
+            </div>
+            <div class = "widgets">        
+              <widgets-container></widgets-container>
+            </div>
+          </div>
+        <!--  <div v-if="isEnterprise">
+            <devices-list></devices-list>
+          </div> -->
+        <div class="list-container">
+          <plants-list></plants-list>
+        </div>
+        <div class="flex flex-col gap-2 h-full justify-around">
+          <div class="tips-carousel-container">
+            <tips-carousel></tips-carousel>
+          </div>
+          <div class="alerts-list-container">
+            <alerts-list></alerts-list>
+          </div>
+        </div>
     </div>
 
-    <div v-else class="grid grid-cols-3 gap-2 h-max py-3">
+    <div v-else class="grid grid-cols-3 gap-2 h-max py-3" style="background-color: pink;">
       <tips-carousel></tips-carousel>
       <tips-carousel></tips-carousel>
       <tips-carousel></tips-carousel>
@@ -56,4 +65,54 @@ onMounted(() => {
   }
 });
 </script>
-<style scoped></style>
+<style>
+
+.dashboard-container {
+  display: flex;
+  gap: 1rem;
+  height: 100%;
+  width: 100%;
+}
+
+
+.main-dashboard-container {
+  height: 100%;
+  overflow-y: hidden;
+}
+
+.list-container {
+  width: 30%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.tips-carousel-container {
+  width: 100%;
+}
+
+.alerts-list-container {
+  width: 100%;
+}
+
+.dashboard-column {
+  width: 40%;
+}
+
+
+@media (max-width: 1024px) {
+
+  .dashboard-container {
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #9CA3AF transparent; /* Firefox */
+  }
+
+  .dashboard-column {
+    width: 100%;
+    max-height: none;
+  }
+
+}
+
+</style>

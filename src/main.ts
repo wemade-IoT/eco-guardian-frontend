@@ -13,7 +13,7 @@ import ToastService from "primevue/toastservice";
 // Routing
 import router from "./router/index.ts";
 import { createPinia } from "pinia";
-import {Button, Dialog, InputText} from "primevue";
+import {Button, Dialog, InputText, Tooltip} from "primevue";
 
 const app = createApp(App);
 app
@@ -35,5 +35,5 @@ app
 app.component("pv-dialog", Dialog);
 app.component("pv-text",InputText)
 app.component("pv-button",Button)
-
+app.directive('tooltip', Tooltip);
 app.mount("#app");
