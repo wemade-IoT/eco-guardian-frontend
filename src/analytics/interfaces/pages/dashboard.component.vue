@@ -50,6 +50,7 @@ onMounted(() => {
     router.push('/consulting');
   }
 
+
   if (!localStorage.getItem('reloaded')) {
     localStorage.setItem('reloaded', 'true');
     window.location.reload();

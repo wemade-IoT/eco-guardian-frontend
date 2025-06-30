@@ -32,18 +32,16 @@ export function getClaimType(type: string, token: string): any {
     }
 
     const namespaces: Record<string, string> = {
-        role: "http://schemas.microsoft.com/ws/2008/06/identity/claims/",
-        sid: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/",
+        role: "role",
+        sid: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid",
     };
 
-    const namespace = namespaces[type] || "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/";
+    const namespace = namespaces[type];
     
     const payload = getPayload(token);
     if (!payload) {
         console.warn(`Cannot extract payload from token for claim type: ${type}`);
         return null;
     }
-
-    const claimKey = `${namespace}${type}`;
-    return payload[claimKey] ?? null;
+    return payload[namespace] ?? null;
 }
