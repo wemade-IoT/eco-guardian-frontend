@@ -4,6 +4,7 @@ import RegisterPage from "@/iam/interfaces/pages/register-page.component.vue";
 import MainLayoutPage from "@/shared/pages/main-layout-page.vue";
 import DashboardPage from "@/analytics/interfaces/pages/dashboard.component.vue";
 import ChoosePlanPage from "@/payment/interfaces/pages/choose-plan-page.component.vue";
+
 import PaymentSuccededPage from "../payment/interfaces/pages/payment-succeded-page.component.vue";
 import ConsultingPageComponent from "../crm/interfaces/pages/consulting-page.component.vue";
 import OrderPlanningPage from "../planning/interfaces/pages/order-planning.component.vue";
@@ -50,6 +51,31 @@ const routes = [
       {
         path: "/profile",
         component: ProfileInformationPage,
+        props: true,
+      },
+      {
+        path: "/consulting",
+        component: ConsultingPageComponent, // Asegúrate de que esta sea la página correcta
+        props: true,
+      },
+      {
+        path: "/installation",
+        component: InstallationPreferenceSelectionComponent,
+        props: true,
+      },
+      {
+        path: "/order-planning",
+        component: OrderPlanningComponent,
+        props: true,
+      },
+      {
+        path: "/order-payment",
+        component: OrderPaymentPageComponent,
+        props: true,
+      },
+      {
+        path: "/profile",
+        component: ProfileInformationPageComponent,
         props: true,
       },
     ],

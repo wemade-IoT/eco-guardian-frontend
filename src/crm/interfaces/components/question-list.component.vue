@@ -146,6 +146,7 @@ const handleResponse = (id: number, answer: string ) => {
 }
 
 .list-container {
+    width: 100%;
     flex: 1;
     min-height: 0;
     overflow-y: auto;

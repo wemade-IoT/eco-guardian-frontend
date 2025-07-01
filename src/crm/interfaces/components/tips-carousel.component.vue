@@ -1,6 +1,12 @@
 <template>
-  <div class="w-full px-4 py-5 rounded-lg bg-gray-100">
-    <h2 class="text-xl font-semibold mb-4">Related Consultings</h2>
+  <div class="w-full px-4 pt-5 rounded-lg bg-gray-100">
+    <div class="header">
+          <h2 class="text-xl font-semibold">Recent Questions</h2>
+          <button type="button" class="cursor-pointer flex items-center justify-center bg-[#578257] text-white w-8 h-8 rounded-md group
+      hover:bg-emerald-200transition-all duration-300 ease-in-out hover:text-white" @click="$router.push('/consulting')">
+          <i class="pi pi-plus"></i>
+        </button>
+    </div>
 
     <!-- Fallback cuando no hay consultas -->
     <div v-if="!queries || queries.length === 0" class="flex flex-col items-center justify-center py-5 text-center">
@@ -18,22 +24,14 @@
     </div>
 
     <!-- Lista de consultas cuando existen -->
-    <div v-else class="flex flex-col gap-4">
-      <div v-for="(query, index) in queries.slice(0, 4)" :key="index"
-        class="bg-white p-3 rounded-lg flex flex-col justify-between">
-        <div class="flex flex-row justify-between items-center">
-          <h3 class="text-lg font-bold">#{{ query.id }} - {{ query.title }}</h3>
-          <button class="px-2 py-1.5 hover:bg-gray-400 transition-all cursor-pointer rounded-full">
-            <i class="pi pi-external-link"></i>
-          </button>
-        </div>
-        <p class="text-sm">{{ query.content }}</p>
-        <div class="flex items-center gap-2 mt-2">
-          <span class="text-sm font-medium">Status</span>
-          <span class="w-2 h-2 bg-gray-800 rounded-full"></span>
-          <span class="text-sm font-semibold">{{ query.status }}</span>
-        </div>
-      </div>
+
+    <div v-else class="flex flex-col">
+        <question-card
+                    v-for="question in queries.reverse().slice(0, 2)" 
+                    :key="question.id"
+                    :question="question"
+                    :is-specialist="false"
+                />
     </div>
   </div>
 </template>
@@ -41,6 +39,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { CrmService } from '../../infrastructure/services/crm.service.ts';
+import QuestionCard from './question-card.component.vue';
+
 
 defineProps({
   sliceCount: {
@@ -65,4 +65,14 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped></style>
+<style>
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+</style>

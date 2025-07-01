@@ -27,11 +27,9 @@
           </p>
             <span class="text-sm text-gray-600">Created: {{ displayQuestion.formattedDate }}</span>
 
-        <!-- 🔧 IMAGES SECTION MEJORADA -->
         <div v-if="question.image_urls && question.image_urls.length > 0" class="images-section mb-6">
           <h4 class="images-title">Attached Images</h4>
           
-          <!-- Grid responsivo para imágenes -->
           <div class="images-grid">
             <div v-for="(imageUrl, index) in question.image_urls" :key="index" class="image-wrapper">
               <Image alt="Question Image" preview class="custom-image">
@@ -190,11 +188,9 @@ const getQuestionAnswer = (questionId: number): QuestionResponse => {
 
   consultingService.getAnswersByQuestionId(questionId)
     .then((response) => {
-      console.log('🔥 Question answer fetched:', response);
       // You may want to update a ref or emit an event here instead of returning
       questionAnswer.value = response;
       questionAnswer.value.createdAt = new Date(response.createdAt).toLocaleString();
-      console.log('🔥 Question answer updated:', questionAnswer.value);
     })
     .catch((error) => {
       console.error('Error fetching question answer:', error);
@@ -215,11 +211,8 @@ const handleClick = () => {
 
 // 🔧 AGREGAR: Debug en submitResponse
 const submitResponse = () => {
-  console.log('🔥 Submit clicked');
-  console.log('🔥 expertResponse value:', expertResponse.value);
   
   
-    console.log('🔥 Emitting response...');
     emit('expertResponse', props.question.id, expertResponse.value);
     visible.value = false;
     expertResponse.value = '';

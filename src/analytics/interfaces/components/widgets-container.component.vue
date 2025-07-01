@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <div class="grid grid-cols-3 gap-2 w-full">
+    <div class="widgets-container">
       <widget-card
         v-for="(widget, index) in widgets"
         :key="index"
@@ -43,4 +43,16 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped></style>
+<style>
+
+.widgets-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+</style>
