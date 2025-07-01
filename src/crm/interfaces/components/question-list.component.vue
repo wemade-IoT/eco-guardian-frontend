@@ -73,9 +73,9 @@ const sortByStatus = () => {
   sortType.value = 'status';
   
   const statusOrder = {
-    PENDING: 1,    // ← Cambié de 2 a 1 (más lógico: pendientes primero)
-    RESOLVED: 2,   // ← Cambié de 1 a 2 (resueltas en el medio)
-    CLOSED: 3      // ← Mantuve 3 (cerradas al final)
+    PENDING: 1,   
+    RESOLVED: 2,
+    CLOSED: 3     
   };  
   displayedQuestions.value = props.questions.slice().sort((a, b) => {
     const statusA = a.status.toUpperCase();

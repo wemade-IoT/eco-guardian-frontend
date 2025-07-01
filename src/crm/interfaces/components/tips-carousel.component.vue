@@ -27,7 +27,7 @@
 
     <div v-else class="flex flex-col">
         <question-card
-                    v-for="question in queries.reverse().slice(0, 2)" 
+                    v-for="question in displayedQueries" 
                     :key="question.id"
                     :question="question"
                     :is-specialist="false"
@@ -37,27 +37,22 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { CrmService } from '../../infrastructure/services/crm.service.ts';
 import QuestionCard from './question-card.component.vue';
-
-
-defineProps({
-  sliceCount: {
-    type: Number,
-    required: true,
-    default: 4,
-  },
-});
+import type { Question } from '../../domain/model/question.entity';
 
 const consultingService = new CrmService();
 
-const queries = ref<any[]>([]);
+const queries = ref<Question[]>([]);
+
+const displayedQueries = computed(() => {
+  return [...queries.value].reverse().slice(0, 2);
+});
 
 onMounted(async () => {
   try {
     const response = await consultingService.getConsulting();
-
     queries.value = response;
   } catch (error) {
     console.error('Error fetching questions:', error);

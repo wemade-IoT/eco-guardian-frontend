@@ -2,8 +2,8 @@
     <div class="consulting-page">
         <!-- Page title -->
         <div class="page-header">
-            <h2 v-if="isEnterprise">Ask Questions About Your Plantations</h2>
-            <h2 v-else-if="isSpecialist">Share your knowledge! Help our users solve their questions</h2>
+            <h2 v-if="authStore.isEnterprise">Ask Questions About Your Plantations</h2>
+            <h2 v-else-if="authStore.isSpecialist">Share your knowledge! Help our users solve their questions</h2>
             <h2 v-else>Ask Questions About Your Plants</h2>
             <p class="page-description">
                 Get expert help with your plant questions and track their status.
@@ -13,7 +13,7 @@
         <!-- Main content area -->
         <div class="main-content">            
             <!-- Question creation form -->
-            <div v-if="!isSpecialist" class="creation-section">
+            <div v-if="!authStore.isSpecialist" class="creation-section">
                 <QuestionCreationDialogueComponent 
                     @question-created="handleQuestionCreated"
                 />
@@ -23,7 +23,7 @@
                 <QuestionList
                     :questions="userQuestions"
                     :title="questionsTitle"
-                    :is-specialist="isSpecialist"
+                    :is-specialist="authStore.isSpecialist"
                     @questionClick="handleQuestionClick"
                     @expert-response="handleResponse"
                 />
@@ -44,14 +44,6 @@ const authStore = useAuthStore();
 const consultingService = new CrmService();
 // Sample question data using the proper Question interface
 let userQuestions = ref<Question[]>([]);
-let isEnterprise = false;
-let isSpecialist = false;
-if (authStore.role == 'ENTERPRISE' || authStore.role == 'Enterprise') {
-    isEnterprise = true;
-} else if (authStore.role == 'Specialist' || authStore.role == 'SPECIALIST' || authStore.role == 'Admin' || authStore.role == 'ADMIN') {
-    isSpecialist = true;
-}
-console.log('Consulting-page: User role is', authStore.role, isSpecialist);
 
 // Initialize sample data with proper Question structure
 import { onMounted } from 'vue';
@@ -103,7 +95,7 @@ const handleQuestionClick = (question: Question) => {
 //Revisar y refactorizar esta función y logica de componentes luego, ya se sobre complico el tema...
 
 // Computed properties for UI text
-const questionsTitle = ref(isSpecialist ? isEnterprise ?  'Plantation Questions': 'Questions from Users' : 'Your Plant Questions');
+const questionsTitle = ref(authStore.isSpecialist ? authStore.isEnterprise ?  ' Your Plant Questions': 'Questions from Users' : ' Plantation Questions');
 
 </script>
 

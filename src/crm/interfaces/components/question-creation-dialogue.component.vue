@@ -11,7 +11,10 @@
       <form class="form-content" @submit.prevent.stop="handleFormSubmit">
         <!-- Plant selector solo cuando NO hay planta específica -->
         <select v-if="!isPlantSpecificView" v-model="selectedPlantId" required name="plant_id">
-          <option value="">Select plant...</option>
+          <option v-if="authStore.isEnterprise!" value="">Select plantation...</option>
+          <option v-else value="">Select plant...</option>
+          
+
           <option v-for="plant in userPlants" :key="plant.id" :value="plant.id">
             {{ plant.name }}
           </option>

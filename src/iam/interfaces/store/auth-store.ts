@@ -19,6 +19,7 @@ export const useAuthStore = defineStore("auth", {
     role: getClaimType("role", localStorage.getItem("token") || "") || "GUEST",
     id: getClaimType("sid",localStorage.getItem("token") || "") || "",
     isEnterprise: getClaimType("role",localStorage.getItem("token") || "") === "Business" || false,
+    isSpecialist: getClaimType("role",localStorage.getItem("token") || "") === "Specialist" || false,
     isAdmin : getClaimType("role",localStorage.getItem("token") || "") === "Admin" || false,
     userData: {} as UserData,
   }),
