@@ -46,7 +46,7 @@ export class CrmService extends HttpService {
   public async getConsulting(): Promise<any> {
     try {
       // Realizar la solicitud GET a la API
-      const response = await this.http.get(`question`);
+      const response = await this.http.get(`questions`);
 
       // Usar el assembler para transformar los datos en objeto Question
       const questions = QuestionAssemblerService.toDomainModelArray(response.data);
@@ -60,7 +60,7 @@ export class CrmService extends HttpService {
 
   public async getAnswersByQuestionId(questionId: number): Promise<any> {
    try {
-    const answer = await this.http.get(`question/${questionId}/answers`);
+    const answer = await this.http.get(`questions/${questionId}/answers`);
     console.log("Response from getAnswersByQuestionId:", answer.data);
 
     return answer.data[0];
@@ -78,7 +78,7 @@ export class CrmService extends HttpService {
     console.log("Transformed question request:", postAnswer);
     
     try {
-      const response = await this.http.post(`question/${questionId}/answers`, postAnswer);
+      const response = await this.http.post(`questions/${questionId}/answers`, postAnswer);
       console.log("Success! Response from consulting service:", response.data);
       return {
         success: true,

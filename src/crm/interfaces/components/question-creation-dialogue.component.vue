@@ -60,7 +60,7 @@ import { useRoute } from 'vue-router';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import { CrmService } from '../../infrastructure/services/crm.service';
 import { PlantResponse } from '../../../monitoring/domain/plant-response';
-import {PlantService} from "@/monitoring/infrastructure/services/plant.service.ts";
+import { PlantService } from '../../../monitoring/infrastructure/services/plant.service';
 
 const authStore = useAuthStore();
 
@@ -69,13 +69,13 @@ const handleFormSubmit = async (event: Event) => {
     event.stopImmediatePropagation();
     event.stopPropagation();
     event.stopImmediatePropagation();
-    console.log('🔥 Form submit intercepted - no page reload!');
+    console.log('Form submit intercepted - no page reload!');
     
     try {
         await submitQuestion();
-        console.log('🔥 Question submission completed successfully');
+        console.log('Question submission completed successfully');
     } catch (error) {
-        console.error('🔥 Error in handleFormSubmit:', error);
+        console.error('Error in handleFormSubmit:', error);
     }
 };
 const route = useRoute();
@@ -99,7 +99,6 @@ const selectedPlantId = ref<string>(
 );
 
 // Computed properties
-/* const isEnterprise = computed(() => authStore.user?.role === 'ENTERPRISE'); */
 const isPlantSpecificView = computed(() => !!route.params.plantId || !!props.selectedPlantId);
 
 const canSubmit = computed(() => {
@@ -112,7 +111,6 @@ const canSubmit = computed(() => {
 
 
 
-// Mock data simplificado
 let userPlants = ref<PlantResponse[]>([]);
 
 onMounted(async () => {  
@@ -124,18 +122,17 @@ onMounted(async () => {
     
     try {
         const response = await plantService.getPlantsByUserId(authStore.id);
-        console.log('🔥 Response from getPlantByUserId:', response);
         if (response && response.data && Array.isArray(response.data)) {
             userPlants.value = response.data;
 
         } else if (Array.isArray(response)) {
             userPlants.value = response;
         } else {
-            console.warn('⚠️ Unexpected response structure:', response);
+            console.warn('Unexpected response structure:', response);
             userPlants.value = [];
         }
     } catch (error) {
-        console.error('❌ Error message:', (error as Error)?.message || 'Unknown error');
+        console.error('Error message:', (error as Error)?.message || 'Unknown error');
         userPlants.value = [];
     }
   });
@@ -153,18 +150,13 @@ const handleCancel = () => {
   emit('cancel');
 };
 
-// Funciones simplificadas
 const submitQuestion = async () => {
-  console.log('🔥 submitQuestion started');
   
   if (!canSubmit.value) {
-    console.log('🔥 Cannot submit - validation failed');
+    console.log('Cannot submit - validation failed');
     return;
   }
-  
-  isSubmitting.value = true;
-  console.log('🔥 Setting isSubmitting to true');
-  
+  isSubmitting.value = true;  
   try {
     const questionData = {
       title: questionTitle.value.trim(),
@@ -172,28 +164,24 @@ const submitQuestion = async () => {
       plant_id: selectedPlantId.value,
       user_id: authStore.user.id,
       diagnostic_images: questionImages.value.map((_, i) => `mock-image-${i}.jpg`),
-    };    console.log('🔥 Creating question:', questionData);
+    };
     const result = await consultingService.postQuestion(questionData);
-    console.log('Question creation result:', result);
     
     if (result.success) {
 
-      console.log('Question created successfully, resetting form');
 
       resetForm();
       emit('question-created', result.data);
 
     } else {
-      console.error('🔥 Error returned from service:', result.details);
-      // No throw error - just log it
+      console.error('Error returned from service:', result.details);
     }
     
   } catch (error) {
 
-    console.error('🔥 Caught error in submitQuestion:', error);
+    console.error('Caught error in submitQuestion:', error);
   } finally {
     isSubmitting.value = false;
-    console.log('🔥 Setting isSubmitting to false');
   }
 
 };
@@ -239,8 +227,6 @@ const handleFileUpload = (event: Event) => {
   display: flex;
   flex-direction: column;
   height: 100%;
-
-
 }
 
 .question-dialog h3 {
