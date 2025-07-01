@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full px-4 pt-5 rounded-lg bg-gray-100">
+  <div class="h-full w-full px-4 pt-5 rounded-lg bg-gray-100">
     <div class="header">
           <h2 class="text-xl font-semibold">Recent Questions</h2>
           <button type="button" class="cursor-pointer flex items-center justify-center bg-[#578257] text-white w-8 h-8 rounded-md group

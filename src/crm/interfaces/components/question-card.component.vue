@@ -1,7 +1,7 @@
 <template>
    <div class="question-card" @click="handleClick">
         <div class="flex flex-row justify-between items-center">
-            <h3 class="text-lg font-bold">{{ displayQuestion.displayTitle }}</h3>
+            <h3 class="question-title text-lg font-bold">{{ displayQuestion.displayTitle }}</h3>
             <span class="status-badge" :class="`status-${question.status.toLowerCase()}`">{{ formatStatus(question.status) }}</span>
         </div>
         <p class="text-sm">{{ question.content }}</p>
@@ -302,6 +302,13 @@ const formatStatus = (status: string): string => {
   padding: 0.5rem 0;
 }
 
+.question-title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 70%; /* or any width you prefer */
+}
+
 .question-info {
   padding: 1rem;
   background: #f8f9fa;
@@ -402,7 +409,6 @@ const formatStatus = (status: string): string => {
   border-top: 1px solid #e5e7eb;
 }
 
-/* 🔧 NO IMAGES STATE */
 .no-images-state {
   text-align: center;
   padding: 2rem;
@@ -412,7 +418,6 @@ const formatStatus = (status: string): string => {
 }
 
 
-/* 🔧 SPECIALIST SECTION */
 .specialist-section {
   border-top: 2px solid #e5e7eb;
   padding-top: 1.5rem;

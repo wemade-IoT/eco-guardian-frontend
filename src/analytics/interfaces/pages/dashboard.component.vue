@@ -84,15 +84,16 @@ onMounted(() => {
 .list-container {
   width: 30%;
   height: 100%;
-  overflow-y: auto;
 }
 
 .tips-carousel-container {
+  flex: 1;
   width: 100%;
 }
 
 .alerts-list-container {
   width: 100%;
+  flex: 1;
 }
 
 .dashboard-column {
@@ -111,8 +112,13 @@ onMounted(() => {
 
   .dashboard-column {
     width: 100%;
-    max-height: none;
+    height: auto;
   }
+
+  .list-container {
+  width: 100%;
+  height: 50%;
+}
 
 }
 

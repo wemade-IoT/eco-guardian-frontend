@@ -72,14 +72,12 @@ const sortByID = () => {
 const sortByStatus = () => {
   sortType.value = 'status';
   
-  // 🔧 Orden de prioridad (1 = más alto, aparece primero)
   const statusOrder = {
     PENDING: 1,    // ← Cambié de 2 a 1 (más lógico: pendientes primero)
     RESOLVED: 2,   // ← Cambié de 1 a 2 (resueltas en el medio)
     CLOSED: 3      // ← Mantuve 3 (cerradas al final)
   };  
   displayedQuestions.value = props.questions.slice().sort((a, b) => {
-    // 🔧 Manejar status case-insensitive
     const statusA = a.status.toUpperCase();
     const statusB = b.status.toUpperCase();
     
@@ -135,6 +133,7 @@ const handleResponse = (id: number, answer: string ) => {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    flex: 1;
 }
 
 .wrapper {

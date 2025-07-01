@@ -13,6 +13,14 @@
           <i class="pi pi-home text-[20px]"
             :class="isActive('/home') ? 'text-slate-50' : 'text-gray-500 group-hover:text-slate-50'"></i>
         </li>
+        <!-- Plants -->
+        <li v-if="authStore.role !== 'Specialist'" role="button" @click="$router.push('/info-panel')" :class="[
+          'cursor-pointer flex items-center justify-center bg-gray-300/50 w-14 h-14 rounded-md group transition-all duration-300 ease-in-out',
+          isActive('/info-panel') ? 'bg-slate-700' : '',
+        ]">
+          <i class="fa-solid fa-seedling text-[16px]"
+            :class="isActive('/info-panel') ? 'text-slate-50' : 'text-gray-500 group-hover:text-slate-50'"></i>
+        </li>
         <!-- Consulting (Chat) -->
         <li role="button" @click="$router.push('/consulting')" :class="[
           'cursor-pointer flex items-center justify-center bg-gray-300/50 w-14 h-14 rounded-md group transition-all duration-300 ease-in-out',

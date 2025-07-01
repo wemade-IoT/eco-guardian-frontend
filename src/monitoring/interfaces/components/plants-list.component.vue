@@ -6,6 +6,7 @@ import { PlantAssembler } from "../../domain/plant-assembler.ts";
 import {usePlantStore} from "../stores/plant-store.ts";
 import type {PlantResponse} from "../../domain/plant-response.ts";
 import {useAuthStore} from "../../../iam/interfaces/store/auth-store.ts";
+import router from '../../../router/index.ts';
 
 const plantStore =  usePlantStore();
 const authStore = useAuthStore();
@@ -87,8 +88,10 @@ function deletePlant(){
 }
 
 function viewPlantInformation(plant:PlantResponse){
-  plantStore.plant.prototype = plant;
+  console.log('Viewing plant information:', plant);
+  router.push('/info-panel');
   //TODO: Add navigation to analytics page
+  //Correction theres a page for the plant information specifically, analytics may be for comparing data across multiple plants
 }
 
 function onProceedDelete(id:number) {

@@ -1,7 +1,7 @@
 <template>
   <div class="bg-gray-100 h-full p-4 rounded-lg">
     <h2 class="text-xl font-semibold mb-4">Notifications</h2>
-    <div class="flex flex-col gap-4 flex-1">
+    <div v-if="notificationStore.notifications.length > 0" class="flex flex-col gap-4 flex-1">
       <alert-card
           v-for="(alert, index) in notificationStore.notifications"
           :key="index"
@@ -9,6 +9,9 @@
           :content="alert.subject"
           :date="alert.createdAt"
       />
+    </div>
+    <div v-else class="text-center text-gray-500">
+      <p>It appears that there are no notifications yet.</p>
     </div>
   </div>
 </template>
