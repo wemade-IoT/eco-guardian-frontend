@@ -144,7 +144,8 @@ async function submitForm(updatedValues: any) {
 
   <div class="plant-container bg-gray-100 rounded">
     <div class="title">
-      <h2 class="text-[24px] font-semibold">Plants</h2>
+      <h2 v-if="authStore.isEnterprise" class="text-[24px] font-semibold">Plantation</h2>
+      <h2 v-else class="text-[24px] font-semibold">Plants</h2>
     </div> 
 
     <div class="plants-list flex flex-col gap-4 pt-2">
