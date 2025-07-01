@@ -11,6 +11,7 @@ import OrderPlanningPage from "../planning/interfaces/pages/order-planning.compo
 import InstallationPreferenceSelectionPage from "../planning/interfaces/pages/installation-preference-selection.component.vue";
 import OrderPaymentPage from "../planning/interfaces/pages/order-payment-page.component.vue";
 import ProfileInformationPage from "../profile/interfaces/pages/profile-information-page.component.vue";
+import ProfileInformationPageComponent from "../profile/interfaces/pages/profile-information-page.component.vue";
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -60,17 +61,17 @@ const routes = [
       },
       {
         path: "/installation",
-        component: InstallationPreferenceSelectionComponent,
+        component: InstallationPreferenceSelectionPage,
         props: true,
       },
       {
         path: "/order-planning",
-        component: OrderPlanningComponent,
+        component: OrderPlanningPage,
         props: true,
       },
       {
         path: "/order-payment",
-        component: OrderPaymentPageComponent,
+        component: OrderPaymentPage,
         props: true,
       },
       {
