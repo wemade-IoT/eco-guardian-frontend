@@ -5,7 +5,7 @@ export class NotificationService extends HttpService {
 
   public async getNotifications(profileId:number): Promise<any> {
     try {
-      return await this.http.get<NotificationResponse[]>(`/notification?profileId=${profileId}`);
+      return await this.http.get<NotificationResponse[]>(`/notifications?profileId=${profileId}`);
     } catch (error) {
       console.error("Error fetching notifications:", error);
       throw error;

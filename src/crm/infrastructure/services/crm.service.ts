@@ -10,7 +10,7 @@ export class CrmService extends HttpService {
     console.log("Transformed question request:", questionRequest);
     
     try {
-      const response = await this.http.post('question', questionRequest);
+      const response = await this.http.post('questions', questionRequest);
       console.log("Success! Response from consulting service:", response.data);
 
       const transformedQuestion = QuestionAssemblerService.toDomainModel(response.data);

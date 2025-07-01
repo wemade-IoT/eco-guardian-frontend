@@ -3,7 +3,7 @@ import { HttpService } from "../../../shared/services/http-common";
 export class SubscriptionService extends HttpService {
   public async createSubscription(req: any): Promise<string> {
     try {
-      const response = await this.http.post("subscription", req);
+      const response = await this.http.post("subscriptions", req);
       return response.data;
     } catch (error) {
       console.error("Error creating subscription:", error);
@@ -13,7 +13,7 @@ export class SubscriptionService extends HttpService {
 
   public async getAllSubscriptions(): Promise<any> {
     try {
-      const response = await this.http.get("subscription/all");
+      const response = await this.http.get("subscriptions/all");
       return response.data;
     } catch (error) {
       console.error("Error fetching all subscriptions:", error);
@@ -23,7 +23,7 @@ export class SubscriptionService extends HttpService {
 
   public async getSubscriptionByUserId(userId: string): Promise<any> {
     try {
-      const response = await this.http.get(`subscription/user/${userId}`);
+      const response = await this.http.get(`subscriptions/user/${userId}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching subscription by user ID:", error);
