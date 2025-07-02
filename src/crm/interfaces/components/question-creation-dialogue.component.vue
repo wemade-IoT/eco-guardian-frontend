@@ -1,5 +1,5 @@
 <template>
-  <div class="question-dialog">
+  <div class="new-question-dialog">
     <h3>New Question</h3>
       <!-- Context info cuando hay planta específica -->
     <div v-if="isPlantSpecificView" class="context-info">
@@ -38,13 +38,11 @@
           multiple 
           placeholder="Add images (optional)"          
         />      
-        <!-- Actions simplificadas -->
 
         <div class="actions">
         <button type="button" @click="handleCancel" class="btn-cancel">
           Cancel
         </button>
-        <!-- 🔧 CAMBIO: Usar type="button" y @click en lugar de submit -->
         <button type="submit"
         :disabled="!canSubmit" class="btn-submit">
           Create
@@ -220,7 +218,7 @@ const handleFileUpload = (event: Event) => {
   flex: 1; 
 }
 
-.question-dialog {
+.new-question-dialog {
   background: #f9fafb;
   border-radius: 12px;
   padding: 20px;
@@ -232,7 +230,7 @@ const handleFileUpload = (event: Event) => {
   height: 100%;
 }
 
-.question-dialog h3 {
+.new-question-dialog h3 {
   font-size: 1.25rem;
   font-weight: 600;
   color: #1f2937;
@@ -356,7 +354,7 @@ const handleFileUpload = (event: Event) => {
 
 /* Responsive */
 @media (max-width: 640px) {
-  .question-dialog {
+  .new-question-dialog {
     margin: 16px;
     padding: 16px;
   }

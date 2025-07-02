@@ -2,11 +2,9 @@
     <div class="consulting-page">
         <!-- Page title -->
         <div class="page-header">
-            <h2 v-if="authStore.isEnterprise">Ask Questions About Your Plantations</h2>
-            <h2 v-else-if="authStore.isSpecialist">Share your knowledge! Help our users solve their questions</h2>
-            <h2 v-else>Ask Questions About Your Plants</h2>
+            <h2>{{mainText.Title}}</h2>
             <p class="page-description">
-                Get expert help with your plant questions and track their status.
+                {{mainText.subtitle}}
             </p>
         </div>
 
@@ -17,7 +15,28 @@
                 <QuestionCreationDialogueComponent 
                     @question-created="handleQuestionCreated"
                 />
-            </div>    
+            </div>
+            <!-- Shows the answers done by this specialist -->
+                
+                <div v-if="authStore.isSpecialist" class="question-info-container">
+                    <QuestionInfoComponent
+                    :question="questionSelected"
+                    @plant-title="handlePlantData"
+                    ></QuestionInfoComponent>
+                </div>
+                <div v-if="authStore.isSpecialist" class="answer-specialist-section">
+                <!-- Shows the questions that this specialist is answering -->
+                    <specialistAnsweringComponent
+                    :question="questionSelected"
+                    @expert-response="handleResponse"
+
+                    />
+                <!-- Shows additional help if needed -->
+                    <specialistAdditionalHelpComponent 
+                    :plant-name="plantName"
+                    :plant-selected="isPlantSeleced"/> 
+                </div>
+
             <!-- Questions list -->
             <div class="questions-section">
                 <QuestionList
@@ -25,7 +44,6 @@
                     :title="questionsTitle"
                     :is-specialist="authStore.isSpecialist"
                     @questionClick="handleQuestionClick"
-                    @expert-response="handleResponse"
                 />
             </div>       
         </div>
@@ -40,20 +58,27 @@ import QuestionCreationDialogueComponent from '../components/question-creation-d
 import QuestionList from '../components/question-list.component.vue';
 import type { Question } from '../../../crm/domain/model/question.entity';
 import { CrmService } from '../../infrastructure/services/crm.service';
+import specialistAdditionalHelpComponent from '../components/specialist-additional-help.component.vue';
+import specialistAnsweringComponent from '../components/specialist-answering.component.vue';
+import { onMounted } from 'vue';
+import QuestionInfoComponent from '../components/question-info.component.vue';
 const authStore = useAuthStore();
 const consultingService = new CrmService();
 // Sample question data using the proper Question interface
 let userQuestions = ref<Question[]>([]);
 
 // Initialize sample data with proper Question structure
-import { onMounted } from 'vue';
+
+let plantName = ref(''); // Plant name for additional help
+const isPlantSeleced = ref(false); // Flag to indicate if a plant is selected
+let questionSelected = ref<Question | undefined>(undefined); // Selected question for answering
 
 onMounted(async () => {
     await loadQuestions();
 });
 
 const loadQuestions = async () => {
-    try {
+    try {//When specialist fetch all, when user fetch only the questions that he created
         const response = await consultingService.getConsulting();
         console.log('Consulting-page: Questions loaded successfully', response);
         userQuestions.value = response;
@@ -66,6 +91,11 @@ const loadQuestions = async () => {
 const handleQuestionCreated = (newQuestion: Question) => {
     console.log('Consulting-page: New question created', newQuestion);
     userQuestions.value.push(newQuestion);
+};
+
+const handlePlantData = (namePlant: string) => {
+    console.log('Consulting-page: Plant data received', namePlant);
+    plantName.value = namePlant;
 };
 
 const handleResponse = async (id: number, answer: string) => {
@@ -90,6 +120,8 @@ const handleResponse = async (id: number, answer: string) => {
 const handleQuestionClick = (question: Question) => {
     console.log('Consulting-page: Question clicked from list', question.id, question.title);
     console.log('Question details:', question);
+    questionSelected.value = question;
+    isPlantSeleced.value = question.plant_id !== null && question.plant_id !== undefined;
 };
 
 //Revisar y refactorizar esta función y logica de componentes luego, ya se sobre complico el tema...
@@ -97,9 +129,14 @@ const handleQuestionClick = (question: Question) => {
 // Computed properties for UI text
 const questionsTitle = ref(authStore.isSpecialist ? authStore.isEnterprise ?  ' Your Plant Questions': 'Questions from Users' : ' Plantation Questions');
 
+const mainText = {
+    Title:  ref(authStore.isSpecialist ? authStore.isEnterprise ?  ' Ask Questions About Your Plants': 'Share your knowledge!' : 'Ask Questions About Your Plantations'),
+    subtitle: ref(authStore.isSpecialist ? authStore.isEnterprise ?  'Help our users solve their questions.': 'Help our users solve their questions' : 'Get expert help with your plantation questions and track their status.')
+}
+
 </script>
 
-<style scoped>
+<style>
 .consulting-page {
     background-color: transparent;
     width: 100%;
@@ -127,6 +164,17 @@ const questionsTitle = ref(authStore.isSpecialist ? authStore.isEnterprise ?  ' 
     margin: 0;
 }
 
+.specialist-content{
+    display: flex;
+    flex-direction: row;
+    width: 60%;
+}
+
+.question-info-container {
+    flex: 2;
+    width: 30%;
+}
+
 /* Main content layout */
 .main-content {
     display: flex;
@@ -142,9 +190,17 @@ const questionsTitle = ref(authStore.isSpecialist ? authStore.isEnterprise ?  ' 
 }
 
 .questions-section {
-    flex: 1;
-    min-width: 0;
+    flex: 2;
+    width: 40%;
     overflow: hidden;
+}
+
+.answer-specialist-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 30%;
 }
 
 /* Responsive design */

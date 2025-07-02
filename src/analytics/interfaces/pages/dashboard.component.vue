@@ -16,7 +16,7 @@
         <div class="list-container">
           <plants-list></plants-list>
         </div>
-        <div class="flex flex-col gap-2 h-full justify-around">
+        <div class="tips-container flex flex-col gap-2 h-full justify-around">
           <div class="tips-carousel-container">
             <tips-carousel></tips-carousel>
           </div>
@@ -84,6 +84,21 @@ onMounted(() => {
 .list-container {
   width: 30%;
   height: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+
+}
+
+.tips-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  width: 30%;
+
 }
 
 .tips-carousel-container {
@@ -98,6 +113,10 @@ onMounted(() => {
 
 .dashboard-column {
   width: 40%;
+  flex-grow: 2;
+  flex-shrink: 1;
+  display: flex;
+
 }
 
 

@@ -10,6 +10,15 @@ export class PlantService extends HttpService{
         }
     }
 
+    async getPlantById(id:number) : Promise<any>{
+        try {
+            return await this.http.get(`plant/${id}`);
+        } catch (error) {
+            console.error("Error fetching plant by ID:", error);
+            throw error;
+        }
+    }
+
     async createPlant(request: any) : Promise<boolean>{
         try {
             const response = await this.http.post("plant", request);

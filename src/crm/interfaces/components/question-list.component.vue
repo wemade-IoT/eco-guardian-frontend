@@ -2,27 +2,26 @@
   <div class="question-list-container">
     <h2 class="text-xl font-semibold p-4">{{ title }}</h2>
     <div class="wrapper">
+      <div v-if="questions.length > 0" class="sort-controls">
+            <!-- Display sorting buttons -->
+            <span class="sort-label">Sort by:</span>
+            <div class="button-group">
+                <button type="button" @click="sortByDate" :class="['btn', { active: sortType === 'date' }]">Date</Button>
+                <button type="button" @click="sortByStatus" :class="['btn', { active: sortType === 'status' }]">Status</Button>
+                <button type="button" @click="sortByID" :class="['btn', { active: sortType === 'id' }]">ID</Button>
+            </div>
+        </div>
         <div class="list-container">
             <div v-if="questions.length === 0" class="empty-state">
                 <p>No questions yet. Start by creating your first question!</p>
             </div>
             <div v-else>
-                <div class="sort-controls">
-                    <!-- Display sorting buttons -->
-                    <span class="sort-label">Sort by:</span>
-                    <div class="button-group">
-                        <button type="button" @click="sortByDate" :class="['btn', { active: sortType === 'date' }]">Date</Button>
-                        <button type="button" @click="sortByStatus" :class="['btn', { active: sortType === 'status' }]">Status</Button>
-                        <button type="button" @click="sortByID" :class="['btn', { active: sortType === 'id' }]">ID</Button>
-                    </div>
-                </div>
+                
                 <question-card
                     v-for="question in displayedQuestions"
                     :key="question.id"
                     :question="question"
-                    :is-specialist="isSpecialist"
                     @click="handleQuestionClick"
-                    @expert-response="handleResponse"
 
                 />
             </div>
@@ -108,7 +107,6 @@ const applySorting = () => {
 
 const emit = defineEmits<{
   questionClick: [question: Question];
-  expertResponse: [questionId: number, response: string];
 
 }>();
 
@@ -116,9 +114,7 @@ const handleQuestionClick = (question: Question) => {
   emit('questionClick', question);
 };
 
-const handleResponse = (id: number, answer: string ) => {
-  emit('expertResponse', id, answer);
-};
+
 </script>
 
 <style scoped>
@@ -195,7 +191,7 @@ const handleResponse = (id: number, answer: string ) => {
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 8px 0;
+  padding: 0 1rem 1rem 0;
   justify-content: flex-end;
 
 }

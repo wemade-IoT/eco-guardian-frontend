@@ -66,8 +66,7 @@ export class CrmService extends HttpService {
     return answer.data[0];
    }
     catch (error) {
-        console.error("Error fetching answers by question ID:", error);
-        throw error;
+        console.error("Error fetching answers by question ID:", error);//Probably that there is no answer yet
       }
   };
 
