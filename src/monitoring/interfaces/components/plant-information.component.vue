@@ -19,10 +19,21 @@ const wellnessStates : Record<number,string> = {
   2: "Unhealthy",
   3: "Warning"
 }
+
+// Helper function para formatear fechas
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
 </script>
 
 <template>
-  <section class="bg-gray-100 p-4 h-max">
+  <section class="info-component bg-gray-100 p-4 ">
     <div v-if="!isEnterprise" class="flex items-center justify-between">
       <h2 class="text-xl font-bold">Plant Information</h2>
       <i class="pi pi-cog text-xl text-slate-900"></i>
@@ -92,11 +103,11 @@ const wellnessStates : Record<number,string> = {
       <div class="mt-4 flex flex-col gap-2">
         <div class="flex flex-row items-center justify-between">
           <p class="text-sm text-slate-500">Added at:</p>
-          <span class="text-slate-900 font-medium">{{props.plant.createdAt}}</span>
+          <span class="text-slate-900 font-medium">{{formatDate(props.plant.createdAt)}}</span>
         </div>
         <div class="flex flex-row items-center justify-between">
           <p class="text-sm text-slate-500">Last Updated:</p>
-          <span class="text-slate-900 font-medium">{{props.plant.updatedAt}}</span>
+          <span class="text-slate-900 font-medium">{{formatDate(props.plant.updatedAt)}}</span>
         </div>
       </div>
     </div>
@@ -104,4 +115,14 @@ const wellnessStates : Record<number,string> = {
 </template>
 
 
-<style scoped></style>
+<style scoped>
+
+.info-component {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+}
+
+</style>

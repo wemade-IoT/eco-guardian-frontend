@@ -93,13 +93,23 @@ function deletePlant(){
     });
 }
 
+const emit = defineEmits<{
+  plantSelected: [plantId: number];
+}>();
+
 function viewPlantInformation(plant:PlantResponse){
   console.log('Viewing plant information:', plant);
   
+
   // Usar el método optimizado del store
   plantStore.selectPlant(plant);
   
   // Navegar a la página de información
+  //Si ya estamos en la página de información, no es necesario navegar de nuevo
+  if (router.currentRoute.value.path === '/info-panel') {
+      emit('plantSelected', plant.id);
+    return;
+  }
   router.push('/info-panel');
 }
 

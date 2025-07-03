@@ -27,6 +27,7 @@ const routes = [
     children: [
       {
         path: "/home",
+        name: "Dashboard",
         component: DashboardPage,
         props: true,
       },
@@ -52,11 +53,13 @@ const routes = [
       },
       {
         path: "/profile",
+        name: "Profile",
         component: ProfileInformationPage,
         props: true,
       },
       {
         path: "/consulting",
+        name: "Consulting",
         component: ConsultingPageComponent, // Asegúrate de que esta sea la página correcta
         props: true,
       },
@@ -77,11 +80,13 @@ const routes = [
       },
       {
         path: "/profile",
+        name: "Profile Page",
         component: ProfileInformationPageComponent,
         props: true,
       },
       {
         path: "/info-panel",
+        name: "Information Panel",
         component: PlantInfoPageComponent,
         props: true,
       }

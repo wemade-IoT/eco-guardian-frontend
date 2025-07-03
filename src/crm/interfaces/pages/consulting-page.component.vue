@@ -40,7 +40,7 @@
             <!-- Questions list -->
             <div class="questions-section">
                 <QuestionList
-                    :questions="userQuestions"
+                    :questions="questionStore.questions"
                     :title="questionsTitle"
                     :is-specialist="authStore.isSpecialist"
                     @questionClick="handleQuestionClick"
@@ -57,15 +57,14 @@ import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import QuestionCreationDialogueComponent from '../components/question-creation-dialogue.component.vue';
 import QuestionList from '../components/question-list.component.vue';
 import type { Question } from '../../../crm/domain/model/question.entity';
-import { CrmService } from '../../infrastructure/services/crm.service';
+import { useQuestionStore } from '../stores/question-store';
 import specialistAdditionalHelpComponent from '../components/specialist-additional-help.component.vue';
 import specialistAnsweringComponent from '../components/specialist-answering.component.vue';
 import { onMounted } from 'vue';
 import QuestionInfoComponent from '../components/question-info.component.vue';
 const authStore = useAuthStore();
-const consultingService = new CrmService();
+const questionStore = useQuestionStore();
 // Sample question data using the proper Question interface
-let userQuestions = ref<Question[]>([]);
 
 // Initialize sample data with proper Question structure
 
@@ -78,19 +77,20 @@ onMounted(async () => {
 });
 
 const loadQuestions = async () => {
-    try {//When specialist fetch all, when user fetch only the questions that he created
-        const response = await consultingService.getConsulting();
-        console.log('Consulting-page: Questions loaded successfully', response);
-        userQuestions.value = response;
+    try {
+        // Use the question store to load questions
+        await questionStore.loadQuestions();
+        console.log('Consulting-page: Questions loaded successfully', questionStore.questions.length);
     } catch (error) {
         console.error('Consulting-page: Error loading questions', error);
     }
 };
 
 // Funciones para manejar eventos de las questions
-const handleQuestionCreated = (newQuestion: Question) => {
-    console.log('Consulting-page: New question created', newQuestion);
-    userQuestions.value.push(newQuestion);
+const handleQuestionCreated = () => {
+    console.log('Consulting-page: New question created, refreshing list');
+    // The question store already handles adding the new question
+    // We just need to refresh if needed
 };
 
 const handlePlantData = (namePlant: string) => {
@@ -98,28 +98,26 @@ const handlePlantData = (namePlant: string) => {
     plantName.value = namePlant;
 };
 
-const handleResponse = async (id: number, answer: string) => {
-    console.log('Answer for question ', id , ": ", answer);
+const handleResponse = async (response: { questionId: number, answer: string }) => {
+    console.log('Answer for question ', response.questionId , ": ", response.answer);
 
     let postAnswer = {
         specialistId: parseInt(authStore.id),
-        answerText: answer
+        answerText: response.answer
     };
 
-    await consultingService.postAnswer(postAnswer, id)
-        .then(response => {
-            console.log('Consulting-page: Expert response posted successfully', response);
-        })
-        .catch(error => {
-            console.error('Consulting-page: Error posting expert response', error);
-            
-        });
-    await loadQuestions(); 
+    const success = await questionStore.postAnswer(postAnswer, response.questionId);
+    if (success) {
+        console.log('Consulting-page: Expert response posted successfully');
+    } else {
+        console.error('Consulting-page: Error posting expert response', questionStore.error);
+    }
 };
 
 const handleQuestionClick = (question: Question) => {
     console.log('Consulting-page: Question clicked from list', question.id, question.title);
     console.log('Question details:', question);
+    questionStore.selectQuestion(question);
     questionSelected.value = question;
     isPlantSeleced.value = question.plant_id !== null && question.plant_id !== undefined;
 };

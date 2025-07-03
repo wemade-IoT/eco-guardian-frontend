@@ -14,7 +14,7 @@ export class PlantAssembler{
             response.temperatureThreshold,
             response.lightThreshold,
             new Date(response.createdAt),
-            new Date(response.updatedAt),
+            response.updatedAt ? new Date(response.updatedAt) : new Date(), // Si updatedAt es null, usar fecha actual
             response.wellnessStateId,
             response.image
         );

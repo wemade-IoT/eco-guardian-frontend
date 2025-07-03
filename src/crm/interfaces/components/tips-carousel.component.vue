@@ -41,7 +41,9 @@ import { onMounted, ref, computed } from 'vue';
 import { CrmService } from '../../infrastructure/services/crm.service.ts';
 import QuestionCard from './question-card.component.vue';
 import type { Question } from '../../domain/model/question.entity';
+import { useAuthStore } from '../../../iam/interfaces/store/auth-store.ts';
 
+const userId = useAuthStore().id;
 const consultingService = new CrmService();
 
 const queries = ref<Question[]>([]);
@@ -52,7 +54,7 @@ const displayedQueries = computed(() => {
 
 onMounted(async () => {
   try {
-    const response = await consultingService.getConsulting();
+    const response = await consultingService.getQuestionsByUserId(userId);
     queries.value = response;
   } catch (error) {
     console.error('Error fetching questions:', error);

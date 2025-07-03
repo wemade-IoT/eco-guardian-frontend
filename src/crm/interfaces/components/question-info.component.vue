@@ -29,7 +29,7 @@
             <p><strong>Type:</strong> {{ plant.type }}</p>
           </div>
         <!-- Empty state -->
-        <div v-else class="empty-state">
+        <div v-else class="empty-state align-middle">
             <p>No plant information available</p>
         </div>
     </div>
@@ -193,7 +193,7 @@ watch(() => props.question?.plant_id, (newPlantId) => {
   flex: 1;
 }
 
-.loading-state, .error-state, .empty-state {
+.loading-state, .error-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -202,6 +202,17 @@ watch(() => props.question?.plant_id, (newPlantId) => {
   gap: 0.5rem;
   text-align: center;
   color: #6b7280;
+}
+
+.empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+    align-self: center;
 }
 
 .error-state {

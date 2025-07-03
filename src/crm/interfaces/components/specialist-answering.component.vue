@@ -46,16 +46,13 @@ import { ref, defineEmits, defineProps, computed, watch } from 'vue';
 import type { Question } from '../../domain/model/question.entity';
 import {Textarea} from 'primevue';
 import {FloatLabel} from 'primevue';
-import { CrmService } from '../../infrastructure/services/crm.service';
 
 const emit = defineEmits<{
-  'expert-response': { questionId: number; answer: string };
+  'expert-response': [payload: { questionId: number; answer: string }];
 }>();
 
 const Answer = ref('');
 const selectedQuestion = ref<Question | null>(null);
-
-const crmService = new CrmService();
 
 const props = defineProps<{
   question: Question | undefined;

@@ -1,7 +1,7 @@
 <template>
   <header class="h-20 bg-[#ebebeb] flex items-center justify-between px-4">
     <div class="flex flex-row items-center gap-5">
-      <h1 class="text-shadow-dark text-2xl tracking-wide">EcoGuardian Monitoring</h1>
+      <h1 class="text-shadow-dark text-2xl tracking-wide">EcoGuardian {{ current_route }}</h1>
       <p class="mr-3 flex items-center gap-1 font-medium text-gray-700 text-base">
         <span class="px-2 py-1 bg-green-300/60 text-slate-700 rounded-full text-sm uppercase">
           {{ authStore.role ?? 'GUEST' }}
@@ -28,6 +28,17 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
+import { useRoute } from 'vue-router';
+import { computed } from 'vue';
+
+const route = useRoute();
+
+// it changes with the route navigation, so it is dynamic.
+const current_route = computed(() => {
+  const routeName = route.name ? route.name.toString().replace(/([A-Z])/g, ' $1').trim() : 'Home';
+  console.log('Current Route:', route.name, '-> Display:', routeName);
+  return routeName;
+});
 
 const authStore = useAuthStore();
 

@@ -235,7 +235,7 @@ const formatStatus = (status: string): string => {
 
 .question-card:hover {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    background-color: #f8f9fa;
+    background-color: var(--color-gray-100);
     transform: translateY(-1px);
     cursor: pointer;
 }

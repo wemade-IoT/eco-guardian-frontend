@@ -15,33 +15,62 @@ export interface QuestionApiDTO {
   imageUrls: string[];
 }
 
-// 🔧 Request para crear pregunta
-export interface CreateQuestionRequest {
+
+export interface CreateQuestionFormRequest {
   title: string;
   content: string;
   plantId: number;
   userId: number;
-  imageUrls?: string[];
+  images?: File[];
 }
 
 export class QuestionAssemblerService {
-  
-  // 🔧 FROM FORM TO API REQUEST
-  static toApiRequest(formData: {
-    title: string;
-    content: string;
-    plant_id: number;
-    user_id: number;
-    diagnostic_images?: File[];
-  }): CreateQuestionRequest {
-    return {
-      title: formData.title,
-      content: formData.content,
-      plantId:formData.plant_id,
-      userId: parseInt(useAuthStore().id), // Obtener el ID del usuario desde el store
-      // Convertir imágenes a URLs simuladas (o manejar subida real)
-      imageUrls: formData.diagnostic_images?.map((_, i) => `image-${i}.jpg`) || []
-    };
+  // 🔧 NEW: FROM FORM TO FORMDATA REQUEST (for multipart/form-data)
+  static toFormDataRequest(request: CreateQuestionFormRequest): FormData {
+
+    console.log('Creating FormData from request:', request);
+
+    const formData = new FormData();
+    
+    // Agregar campos básicos con nombres en PascalCase para el backend
+    formData.append("Title", request.title);
+    formData.append("Content", request.content);
+    formData.append("UserId", request.userId.toString());
+    formData.append("PlantId", request.plantId.toString());
+    
+    // Agregar imágenes si existen
+    if (request.images && request.images.length > 0) {
+      console.log('🔧 Assembler: Processing images...');
+      request.images.forEach((image, index) => {
+        console.log(`🔧 Assembler: Processing image ${index}:`, {
+          name: image.name,
+          size: image.size,
+          type: image.type,
+          isFile: image instanceof File
+        });
+        //ImagesUrl is a list of images file so we append each image with the same key
+        if (image instanceof File) {
+          formData.append(`ImageUrls`, image, image.name);
+          console.log(`🔧 Assembler: Appended image ${index} to FormData`);
+        } else {
+          console.warn(`🔧 Assembler: Image ${index} is not a File instance:`, typeof image);
+        }
+      });
+    } else {
+      console.log('🔧 Assembler: No images to process');
+    }
+    
+    // Log final FormData contents
+    console.log('🔧 Assembler: Final FormData entries:');
+    for (let [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`${key}: File(${value.name}, ${value.size} bytes, ${value.type})`);
+      } else {
+        console.log(`${key}: ${value}`);
+      }
+    }
+    
+    return formData;
   }
 
   // 🔧 FROM API RESPONSE TO DOMAIN MODEL
