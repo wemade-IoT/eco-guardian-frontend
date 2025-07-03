@@ -19,6 +19,7 @@ export const usePlantStore = defineStore("plant", {
 
         async getPlantsByUserId(userId: number){
             const response = await plantService.getPlantsByUserId(userId);
+            console.log("Plants fetched:", response.data);
             return this.plants= response.data.map((plant: any) => PlantAssembler.toResponse(plant));
         },
 

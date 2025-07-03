@@ -29,7 +29,7 @@ const wellnessStates : Record<number,string> = {
       <i class="pi pi-cog text-xl text-slate-900"></i>
     </div>
     <figure class="relative mt-4 w-full rounded-md overflow-hidden h-90">
-      <img :src=props.plant.imageUrl alt="Plant Information" class="w-full h-full object-cover" />
+      <img :src="props.plant.image" alt="Plant Information" class="w-full h-full object-cover" />
       <div
         class="absolute bottom-0 left-0 w-full h-2/3 bg-gradient-to-t from-black to-transparent flex items-end justify-center">
         <div class="flex flex-col text-white p-4 w-full">

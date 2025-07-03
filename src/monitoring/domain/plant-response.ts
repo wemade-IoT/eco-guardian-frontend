@@ -11,7 +11,7 @@ export class PlantResponse{
     createdAt:Date;
     updatedAt:Date;
     wellnessStateId:number;
-    imageUrl:string;
+    image:string;
 
     constructor(
         id:number,
@@ -26,7 +26,7 @@ export class PlantResponse{
         createdAt:Date,
         updatedAt:Date,
         wellnessStateId:number,
-        imageUrl:string
+        image:string
     ){
         this.id = id;
         this.name = name;
@@ -40,7 +40,7 @@ export class PlantResponse{
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.wellnessStateId =wellnessStateId;
-        this.imageUrl = imageUrl;
+        this.image = image;
     }
 
 }
