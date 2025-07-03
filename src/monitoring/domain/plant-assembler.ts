@@ -16,7 +16,7 @@ export class PlantAssembler{
             new Date(response.createdAt),
             new Date(response.updatedAt),
             response.wellnessStateId,
-            response.imageUrl
+            response.image
         );
     }
 

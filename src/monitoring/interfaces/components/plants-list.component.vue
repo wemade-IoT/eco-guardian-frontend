@@ -27,6 +27,7 @@ const enterpriseValues = ref({
   userId: authStore.user?.id || 0,
   isPlantation: authStore.isEnterprise,
   wellnessStateId: 1,
+  image: '',
 });
 
 const domesticValues = ref({
@@ -40,20 +41,23 @@ const domesticValues = ref({
   userId: authStore.user?.id || 0,
   isPlantation: authStore.isEnterprise,
   wellnessStateId: 1,
+  image: '',
+
 });
 
 onMounted(async () => {
     const response = await plantStore.getPlantsByUserId(authStore.user.id)
     plants.value = response;
+    console.log('Fetched plants:', plants.value);
 });
 
 const savePlant = async () => {
   isProceed.value = false;
   if (!visible.value) {
     if (authStore.isEnterprise) {
-      enterpriseValues.value = { ...enterpriseValues.value, id: 0, name: '', type: '', waterThreshold: 0, lightThreshold: 0, temperatureThreshold: 0 };
+      enterpriseValues.value = { ...enterpriseValues.value, id: 0, name: '', type: '', waterThreshold: 0, lightThreshold: 0, temperatureThreshold: 0, image: '' };
     } else {
-      domesticValues.value = { ...domesticValues.value, id: 0, name: '', type: '', waterThreshold: 0, lightThreshold: 0, temperatureThreshold: 0 };
+      domesticValues.value = { ...domesticValues.value, id: 0, name: '', type: '', waterThreshold: 0, lightThreshold: 0, temperatureThreshold: 0, image: '' };
     }
   }
   visible.value =true;
@@ -66,12 +70,14 @@ function setEditMode(plant: any) {
       ...enterpriseValues.value,
       ...plant,
       areaCoverage: plant.areaCoverage || 1000,
+      image: plant.imageUrl || '', // Asignar la imagen existente
     };
   } else {
     domesticValues.value = {
       ...domesticValues.value,
       ...plant,
       areaCoverage: 0,
+      image: plant.imageUrl || '', // Asignar la imagen existente
     };
   }
   visible.value = true;

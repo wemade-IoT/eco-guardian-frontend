@@ -11,6 +11,9 @@ const props = defineProps<{
   plant: PlantResponse
 }>();
 
+console.log("Plant Information Props:", plantStore.plant);
+console.log("Image URL:", plantStore.plant?.image);
+
 const wellnessStates : Record<number,string> = {
   1: "Healthy",
   2: "Unhealthy",
