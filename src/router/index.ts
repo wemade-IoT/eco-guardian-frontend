@@ -12,8 +12,7 @@ import InstallationPreferenceSelectionPage from "../planning/interfaces/pages/in
 import OrderPaymentPage from "../planning/interfaces/pages/order-payment-page.component.vue";
 import ProfileInformationPage from "../profile/interfaces/pages/profile-information-page.component.vue";
 import ProfileInformationPageComponent from "../profile/interfaces/pages/profile-information-page.component.vue";
-import path from "path";
-import PlantInformationComponent from "../monitoring/interfaces/components/plant-information.component.vue";
+import PlantInfoPageComponent from "../monitoring/interfaces/pages/plant-info-page.component.vue";
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -83,7 +82,8 @@ const routes = [
       },
       {
         path: "/info-panel",
-        component: PlantInformationComponent,
+        component: PlantInfoPageComponent,
+        props: true,
       }
     ],
   },

@@ -1,4 +1,5 @@
 import {HttpService} from "../../../shared/services/http-common.ts";
+import {PlantAssembler} from "../../domain/plant-assembler.ts";
 
 export class PlantService extends HttpService{
     async getPlantsByUserId(userId:number) : Promise<any>{
@@ -21,9 +22,22 @@ export class PlantService extends HttpService{
 
     async createPlant(request: any) : Promise<boolean>{
         try {
-            const response = await this.http.post("plant", request);
+            console.log('Original request:', request);
+            
+            //assembler rompe el form data asi q se pasa de forma directa en img file
+       
+            
+         
+            // Para FormData, debemos eliminar el Content-Type y dejar que el navegador lo establezca
+            const response = await this.http.post("plant", request, {
+                headers: {
+                    'Content-Type': "multipart/form-data" // Eliminar el Content-Type para que el navegador maneje FormData
+                }
+            });
             return response.status === 201;
-        } catch (error) {
+        
+        } catch (error: any) {
+            console.error("Error creating plant:", error);
             return false;
         }
     }
@@ -33,6 +47,7 @@ export class PlantService extends HttpService{
             const response = await this.http.put(`plant/${id}`, request);
             return response.status === 200;
         } catch (error) {
+            console.error("Error updating plant:", error);
             return false;
         }
     }

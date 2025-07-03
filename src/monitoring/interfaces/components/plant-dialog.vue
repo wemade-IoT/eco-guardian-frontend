@@ -48,6 +48,29 @@ const { value: waterThreshold, errorMessage: waterThresholdError, meta: waterThr
 const { value: lightThreshold, errorMessage: lightThresholdError, meta: lightThresholdMeta } = useField('lightThreshold');
 const { value: temperatureThreshold, errorMessage: temperatureThresholdError, meta: temperatureThresholdMeta } = useField('temperatureThreshold');
 
+// Image handling
+const selectedImage = ref<File | null>(null);
+const imagePreview = ref<string | null>(null);
+
+const handleImageChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+  
+  if (file) {
+    selectedImage.value = file;
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imagePreview.value = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  } else {
+    selectedImage.value = null;
+    imagePreview.value = null;
+  }
+};
+
 watch(
     () => props.formValues,
     (newValues) => {
@@ -61,11 +84,14 @@ const toggleVisibility = () => {
   if(props.isDelete){
     emit('update:isDelete', false);
   }
+  // Reset image when closing dialog
+  selectedImage.value = null;
+  imagePreview.value = null;
   resetForm();
 };
 
 const submitForm = handleSubmit(() => {
-  const updatedValues = {
+  const updatedValues: any = {
     ...props.formValues,
     name: name.value,
     type: type.value,
@@ -73,9 +99,20 @@ const submitForm = handleSubmit(() => {
     lightThreshold: lightThreshold.value,
     temperatureThreshold: temperatureThreshold.value,
   };
+  
+  // Solo agregar imagen si se seleccionó una
+  if (selectedImage.value) {
+    updatedValues.image = selectedImage.value;
+  }
+  
+  console.log('Submitting values:', updatedValues);
+  
   resetForm();
-  // para simular el proceso de instalacion, pero ya se creo (no hubo tiempo en este sprint)
-  // usa el codigo TOTO-2025 para un descuento
+  // Reset image after submit
+  selectedImage.value = null;
+  imagePreview.value = null;
+  
+  // para simular el proceso de instalacion
   if (props.header === 'Register a new Plant' || props.header === 'Register a new Plantation') {
     // solo por este sprint deberiamos validar pero por tiempo, borrar luego esto Dx
     emit('submit-form', updatedValues);
@@ -179,6 +216,22 @@ const cancelDelete = () => {
                 :class="{ 'border-red-500 border': typeError && typeMeta.touched }"
             />
             <span class="text-red-500 text-sm" v-if="typeError && typeMeta.touched">{{ typeError }}</span>
+          </div>
+
+          <!-- Image Upload Section -->
+          <div class="flex flex-col gap-2">
+            <label for="image" class="text-sm font-medium">Plant Image</label>
+            <input
+                id="image"
+                type="file"
+                accept="image/*"
+                @change="handleImageChange"
+                class="p-2 w-full bg-gray-200 text-[#578257] border-none rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#578257] file:text-white hover:file:bg-[#467046]"
+            />
+            <!-- Image Preview -->
+            <div v-if="imagePreview" class="mt-2">
+              <img :src="imagePreview" alt="Preview" class="w-20 h-20 object-cover rounded-lg border-2 border-gray-300" />
+            </div>
           </div>
 
           <h2 class="text-black font-bold text-xl">Thresholds</h2>

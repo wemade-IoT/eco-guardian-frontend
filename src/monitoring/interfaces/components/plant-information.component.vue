@@ -1,9 +1,15 @@
 <script setup lang="ts">
 
+import { useAuthStore } from "../../../iam/interfaces/store/auth-store.ts";
+import { PlantResponse } from "../../domain/plant-response.ts";
 import {usePlantStore} from "../stores/plant-store.ts";
 
-const isEnterprise = true; // Change this to false for domestic plants
+const isEnterprise = useAuthStore().isEnterprise;
 const plantStore = usePlantStore();
+console.log("Plant Store:", plantStore);
+const props = defineProps<{
+  plant: PlantResponse
+}>();
 
 const wellnessStates : Record<number,string> = {
   1: "Healthy",
@@ -23,19 +29,19 @@ const wellnessStates : Record<number,string> = {
       <i class="pi pi-cog text-xl text-slate-900"></i>
     </div>
     <figure class="relative mt-4 w-full rounded-md overflow-hidden h-90">
-      <img src="../../../assets/images/planta_prueba.webp" alt="Plant Information" class="w-full h-full object-cover" />
+      <img :src=props.plant.imageUrl alt="Plant Information" class="w-full h-full object-cover" />
       <div
         class="absolute bottom-0 left-0 w-full h-2/3 bg-gradient-to-t from-black to-transparent flex items-end justify-center">
         <div class="flex flex-col text-white p-4 w-full">
-          <h3 class="text-2xl font-bold">{{plantStore.plant.name}}</h3>
+          <h3 class="text-2xl font-bold">{{props.plant.name}}</h3>
           <div class="mt-1 flex flex-row items-center justify-between">
             <div class="flex flex-row gap-2.5">
-              <p class="text-base text-slate-300 font-sans">{{plantStore.plant.type}} <span>
+              <p class="text-base text-slate-300 font-sans">{{props.plant.type}} <span>
                 </span>
               </p>
               <div class="flex flex-row gap-1.5 items-center">
                 <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                <span class="font-medium text-sm font-sans text-green-500">{{wellnessStates[plantStore.plant.wellnessStateId]}}</span>
+                <span class="font-medium text-sm font-sans text-green-500">{{wellnessStates[props.plant.wellnessStateId]}}</span>
               </div>
             </div>
           </div>
@@ -44,7 +50,7 @@ const wellnessStates : Record<number,string> = {
     </figure>
       <div  v-if="isEnterprise" class="flex flex-row gap-5  ">
         <h3 class="text-lg font-bold">Area coverage</h3>
-        <span class="text-slate-900 font-medium">{{plantStore.plant.areaCoverage}} km</span>
+        <span class="text-slate-900 font-medium">{{props.plant.areaCoverage}} km</span>
      </div>
     <div class="mt-3 flex flex-col px-4 py-4 bg-white rounded-lg">
       <div class="flex flex-row items-center justify-between">
@@ -56,21 +62,21 @@ const wellnessStates : Record<number,string> = {
           <p class="text-sm text-slate-500">Humidity</p>
           <div class="flex flex-row items-center gap-2">
             <div class="w-2 h-2 rounded-full bg-green-500"></div>
-            <span class="text-slate-900 font-medium">{{plantStore.plant.waterThreshold}} %</span>
+            <span class="text-slate-900 font-medium">{{props.plant.waterThreshold}} %</span>
           </div>
         </div>
         <div class="flex flex-row items-center justify-between">
           <p class="text-sm text-slate-500">Light</p>
           <div class="flex flex-row items-center gap-2">
             <div class="w-2 h-2 rounded-full bg-green-500"></div>
-            <span class="text-slate-900 font-medium">{{plantStore.plant.lightThreshold}}%</span>
+            <span class="text-slate-900 font-medium">{{props.plant.lightThreshold}}%</span>
           </div>
         </div>
         <div class="flex flex-row items-center justify-between">
           <p class="text-sm text-slate-500">Temperature</p>
           <div class="flex flex-row items-center gap-2">
             <div class="w-2 h-2 rounded-full bg-green-500"></div>
-            <span class="text-slate-900 font-medium">{{plantStore.plant.temperatureThreshold}}°C</span>
+            <span class="text-slate-900 font-medium">{{props.plant.temperatureThreshold}}°C</span>
           </div>
         </div>
       </div>
@@ -83,11 +89,11 @@ const wellnessStates : Record<number,string> = {
       <div class="mt-4 flex flex-col gap-2">
         <div class="flex flex-row items-center justify-between">
           <p class="text-sm text-slate-500">Added at:</p>
-          <span class="text-slate-900 font-medium">{{plantStore.plant.createdAt}}</span>
+          <span class="text-slate-900 font-medium">{{props.plant.createdAt}}</span>
         </div>
         <div class="flex flex-row items-center justify-between">
           <p class="text-sm text-slate-500">Last Updated:</p>
-          <span class="text-slate-900 font-medium">{{plantStore.plant.updatedAt}}</span>
+          <span class="text-slate-900 font-medium">{{props.plant.updatedAt}}</span>
         </div>
       </div>
     </div>

@@ -6,20 +6,38 @@ import {PlantAssembler} from "../../domain/plant-assembler.ts";
 const plantService = new PlantService();
 export const usePlantStore = defineStore("plant", {
     state:() => ({
-        plant: PlantResponse,
+        plant: null as PlantResponse | null,
         plants: [] as PlantResponse[],
     }),
     actions: {
         async createPlant(plantRequest:any){
-            const request =PlantAssembler.toRequest(plantRequest);
-            await plantService.createPlant(request).then(()=> {
-                 this.getPlantsByUserId(request.userId);
+            // Pasar el request directamente - el servicio maneja el mapeo
+            await plantService.createPlant(plantRequest).then(()=> {
+                 this.getPlantsByUserId(plantRequest.userId);
             });
         },
 
         async getPlantsByUserId(userId: number){
             const response = await plantService.getPlantsByUserId(userId);
             return this.plants= response.data.map((plant: any) => PlantAssembler.toResponse(plant));
+        },
+
+        async getPlantById(plantId: number) {
+            const response = await plantService.getPlantById(plantId);
+            this.plant = PlantAssembler.toResponse(response.data);
+            return this.plant;
+        },
+
+        // Método optimizado para seleccionar una planta de la lista existente
+        selectPlant(plant: PlantResponse) {
+            this.plant = plant;
+        },
+
+        // Método para obtener datos frescos solo cuando sea necesario
+        async refreshPlantData(plantId: number) {
+            const response = await plantService.getPlantById(plantId);
+            this.plant = PlantAssembler.toResponse(response.data);
+            return this.plant;
         },
 
         async editPlant(plantId: number, plantRequest: any) {
@@ -31,6 +49,11 @@ export const usePlantStore = defineStore("plant", {
         async deletePlant(plantId: number) {
             await plantService.deletePlant(plantId)
             this.plants = this.plants.filter(plant => plant.id !== plantId);
+            
+            // Si la planta eliminada era la seleccionada, limpiar la selección
+            if (this.plant?.id === plantId) {
+                this.plant = null;
+            }
         }
     }
 })

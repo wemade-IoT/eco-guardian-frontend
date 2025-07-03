@@ -11,6 +11,7 @@ export class PlantResponse{
     createdAt:Date;
     updatedAt:Date;
     wellnessStateId:number;
+    imageUrl:string;
 
     constructor(
         id:number,
@@ -24,7 +25,8 @@ export class PlantResponse{
         ligthThreshold:number,
         createdAt:Date,
         updatedAt:Date,
-        wellnessStateId:number
+        wellnessStateId:number,
+        imageUrl:string
     ){
         this.id = id;
         this.name = name;
@@ -38,6 +40,7 @@ export class PlantResponse{
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.wellnessStateId =wellnessStateId;
+        this.imageUrl = imageUrl;
     }
 
 }

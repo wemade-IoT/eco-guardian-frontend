@@ -89,9 +89,12 @@ function deletePlant(){
 
 function viewPlantInformation(plant:PlantResponse){
   console.log('Viewing plant information:', plant);
+  
+  // Usar el método optimizado del store
+  plantStore.selectPlant(plant);
+  
+  // Navegar a la página de información
   router.push('/info-panel');
-  //TODO: Add navigation to analytics page
-  //Correction theres a page for the plant information specifically, analytics may be for comparing data across multiple plants
 }
 
 function onProceedDelete(id:number) {
@@ -107,11 +110,13 @@ async function submitForm(updatedValues: any) {
     Object.assign(domesticValues.value, updatedValues);
   }
 
-  const request = PlantAssembler.toRequest(authStore.isEnterprise ? enterpriseValues.value : domesticValues.value);
+  // Pasar directamente updatedValues para mantener la imagen
   if (updatedValues.id !== 0) {
+    const request = PlantAssembler.toRequest(updatedValues);
     await plantStore.editPlant(updatedValues.id, request);
   } else {
-    await plantStore.createPlant(request);
+    // Para crear, pasar updatedValues directamente
+    await plantStore.createPlant(updatedValues);
   }
 
   visible.value = false;
