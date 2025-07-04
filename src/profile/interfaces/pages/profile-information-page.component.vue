@@ -113,9 +113,31 @@
 </template>
 
 <script setup>
-import { ref, h } from 'vue'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
+import { ref, onMounted, computed } from 'vue';
+import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
+import { ProfileStore } from '../store/profile-store';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+
+const authStore = useAuthStore();
+const profileStore = ProfileStore();
+
+const planNames = {
+  1: 'Domestic',
+  2: 'Pro',
+  3: 'Enterprise',
+  4: 'Specialist',
+  5: 'Admin',
+};
+
+const profile = computed(() => profileStore.profile);
+const planName = computed(() => planNames[profile.value?.subscriptionId] || 'Unknown');
+
+onMounted(async () => {
+  if (authStore.user && authStore.user.email) {
+    await profileStore.getProfileByEmail(authStore.user.email);
+  }
+});
 
 const payments = ref([
   {
