@@ -77,6 +77,7 @@ import { useSubscriptionStore } from '../store/subscription-store';
 import { getPlanId } from '../../../public/utils/helpers/subscription';
 import { SubscriptionAssembler } from '../../domain/assembler/subscription-assembler';
 import { PaymentAssembler } from '../../domain/assembler/payment-assembler';
+import { ProfileStore } from '../../../profile/interfaces/store/profile-store';
 
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 const dialogRef = inject<any>('dialogRef');
@@ -125,6 +126,7 @@ const paymentStore = usePaymentStore();
 const subscriptionStore = useSubscriptionStore();
 const paymentAssembler = new PaymentAssembler();
 const subscriptionAssembler = new SubscriptionAssembler();
+const profileStore = ProfileStore();
 
 onBeforeMount(async () => {
   await loadStripe(stripeKey);
@@ -150,6 +152,7 @@ async function handleSubmit() {
     console.error("Stripe instance not loaded");
     return;
   }
+
 
   console.log("dialogData", dialogData?.planSelected);
   console.log("planSelectedId", getPlanId(dialogData?.planSelected));
@@ -192,6 +195,32 @@ async function handleSubmit() {
   console.log("paymentRequest", paymentRequest);
 
   await paymentStore.createPayment(paymentRequest);
+
+  // --- Create Profile after user and subscription are created ---
+  // try {
+  //   // Use a default avatar if not provided
+  //   let avatarFile;
+  //   if (dialogData.avatarUrl && dialogData.avatarUrl instanceof File) {
+  //     avatarFile = dialogData.avatarUrl;
+  //   } else {
+  //     // Fetch a default avatar from public folder
+  //     const response = await fetch('/placeholder-avatar.jpg');
+  //     const blob = await response.blob();
+  //     avatarFile = new File([blob], 'avatar.jpg', { type: blob.type });
+  //   }
+  //   await profileStore.createProfile({
+  //     name: dialogData.name || authStore.userData?.name || '',
+  //     username: dialogData.email?.split('@')[0] || '',
+  //     email: dialogData.email || authStore.userData?.email || '',
+  //     address: dialogData.countryName || '',
+  //     avatarUrl: avatarFile,
+  //     userId: user.userId,
+  //     subscriptionId: subscription.id
+  //   });
+  //   console.log('Profile created');
+  // } catch (e) {
+  //   console.error('Error creating profile:', e);
+  // }
 
   await elements.submit();
   const { error } = await stripeInstance.confirmPayment({
