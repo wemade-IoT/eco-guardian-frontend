@@ -18,6 +18,7 @@ export class ProfileService extends HttpService{
     }
 
     async getProfileByEmail(email: string) {
-        return await this.http.get(`/profiles/${email}`);
+        // Use query param instead of path param for email
+        return await this.http.get(`/profiles`, { params: { email } });
     }
 }
