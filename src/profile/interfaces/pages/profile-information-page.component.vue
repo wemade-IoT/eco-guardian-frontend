@@ -7,20 +7,18 @@
         <!-- Profile Card -->
         <div class="bg-white rounded-2xl shadow border border-gray-200 p-7 flex flex-col gap-6">
           <div class="flex items-center gap-6">
-            <img src="https://avatars.githubusercontent.com/u/129230632?v=4" alt="Profile"
+            <img :src="profile?.avatarUrl || 'https://avatars.githubusercontent.com/u/129230632?v=4'" alt="Profile"
               class="w-24 h-24 rounded-full object-cover border-4 border-emerald-100 shadow" />
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-1.5">
                 <span class="uppercase text-xs text-gray-400 tracking-widest">User Profile</span>
                 <span
-                  class="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-0.5 rounded">Domestic</span>
+                  class="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-0.5 rounded">{{ planName }}</span>
               </div>
-              <h3 class="text-xl font-bold text-gray-800 mb-2">Sebastian Hotman</h3>
+              <h3 class="text-xl font-bold text-gray-800 mb-2">{{ profile?.name }} {{ profile?.userName }}</h3>
               <div class="flex flex-col gap-1.5 text-gray-700 text-sm">
-                <span><span class="font-medium">Email:</span> hotman@gmail.com</span>
-                <span><span class="font-medium">Country:</span> Peru</span>
-                <span><span class="font-medium">Age:</span> 29</span>
-                <span><span class="font-medium">User ID:</span> 1</span>
+                <span><span class="font-medium">Email:</span> {{ profile?.email }}</span>
+                <span><span class="font-medium">Address:</span> {{ profile?.address }}</span>
               </div>
             </div>
           </div>
@@ -47,22 +45,18 @@
           </div>
           <div class="flex flex-col gap-2 text-gray-700 text-sm leading-relaxed">
             <div>
-              <span class="font-medium">Plan:</span> Domestic Basic
+              <span class="font-medium">Plan:</span> {{ planName }}
             </div>
             <div>
-              <span class="font-medium">Plants Allowed:</span> 2 / 4
+              <span class="font-medium">Name:</span> {{ profile?.name }}
+            </div>
+            <div>
+              <span class="font-medium">Last Name:</span> {{ profile?.lastName }}
             </div>
             <div>
               <span class="font-medium">Status:</span>
               <span
                 class="inline-block ml-1 px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-semibold text-xs">Active</span>
-            </div>
-            <div>
-              <span class="font-medium">Ends On:</span> 9/09/2025
-            </div>
-            <div>
-              <span class="font-medium">Automatic Renewal:</span> <span
-                class="text-emerald-700 font-semibold">Yes</span>
             </div>
           </div>
           <div class="bg-white border border-amber-200 rounded-xl p-5 mt-2 flex flex-col gap-2 shadow-sm">
@@ -90,12 +84,12 @@
           <DataTable :value="payments" class="p-datatable-sm custom-datatable" :rows="5" paginator
             responsiveLayout="scroll">
             <Column field="paymentIntentId" header="PaymentIntentID" class="min-w-[120px]" />
-            <Column field="paymentMethodId" header="Payment Method" :body="methodTemplate" class="min-w-[120px]" />
-            <Column field="amount" header="Amount" :body="amountTemplate" class="min-w-[80px]" />
+            <Column field="paymentMethodId" header="Payment Method" class="min-w-[120px]" />
+            <Column field="amount" header="Amount" class="min-w-[80px]" />
             <Column field="currency" header="Currency" class="min-w-[80px]" />
-            <Column field="paymentStatus" header="Status" :body="statusTemplate" class="min-w-[100px]" />
+            <Column field="paymentStatus" header="Status" class="min-w-[100px]" />
             <Column field="referenceId" header="Reference ID" class="min-w-[100px]" />
-            <Column field="referenceType" header="Type" :body="typeTemplate" class="min-w-[80px]" />
+            <Column field="referenceType" header="Type" class="min-w-[80px]" />
             <Column header="Actions" class="min-w-[80px] text-center">
               <template #body="{ data }">
                 <button
