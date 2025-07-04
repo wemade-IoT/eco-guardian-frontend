@@ -164,7 +164,7 @@ async function handleSubmit() {
   const user = await authStore.register({
     email: authStore.userData?.email || '',
     password: authStore.userData?.password || '',
-    roleId: getPlanId(dialogData?.planSelected)
+    roleId: getPlanId(dialogData?.planSelected),
   });
 
   console.log("user", user);
@@ -196,38 +196,35 @@ async function handleSubmit() {
 
   await paymentStore.createPayment(paymentRequest);
 
-  // --- Create Profile after user and subscription are created ---
-  // try {
-  //   // Use a default avatar if not provided
-  //   let avatarFile;
-  //   if (dialogData.avatarUrl && dialogData.avatarUrl instanceof File) {
-  //     avatarFile = dialogData.avatarUrl;
-  //   } else {
-  //     // Fetch a default avatar from public folder
-  //     const response = await fetch('/placeholder-avatar.jpg');
-  //     const blob = await response.blob();
-  //     avatarFile = new File([blob], 'avatar.jpg', { type: blob.type });
-  //   }
-  //   await profileStore.createProfile({
-  //     name: dialogData.name || authStore.userData?.name || '',
-  //     username: dialogData.email?.split('@')[0] || '',
-  //     email: dialogData.email || authStore.userData?.email || '',
-  //     address: dialogData.countryName || '',
-  //     avatarUrl: avatarFile,
-  //     userId: user.userId,
-  //     subscriptionId: subscription.id
-  //   });
-  //   console.log('Profile created');
-  // } catch (e) {
-  //   console.error('Error creating profile:', e);
-  // }
+  //Logica de creacion de perfil
+
+
+  const profileToLoad = {
+    Name: authStore.userData?.name || '',
+    UserId: user.userId || 0,
+    LastName: authStore.userData?.lastName || '',
+    Email: authStore.userData?.email || '',
+    Address: dialogData.countryName || '',
+    AvatarUrl: authStore.userData?.avatarUrl || null, // Se inicia como null
+    SubscriptionId: authStore.userData.subscriptionId
+  };
+  console.log("Creating profile for user", user.userId,  "with subscription", authStore.userData.subscriptionId);
+
+  await profileStore.createProfile(profileToLoad)
+    .then(() => {
+      console.log("Profile pipeline completed successfully");
+    })
+    .catch((error) => {
+      console.error("Error creating profile:", error);
+    });
+
 
   await elements.submit();
   const { error } = await stripeInstance.confirmPayment({
     elements,
     clientSecret: dialogData.clientSecret,
     confirmParams: {
-      return_url: `${import.meta.env.VITE_BASE_URL}payment-succeded`,
+      return_url: `${import.meta.env.VITE_BASE_URL}/payment-succeded`,
       payment_method_data: {
         billing_details: {
           name: authStore.userData?.name || 'GUEST',

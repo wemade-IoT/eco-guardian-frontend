@@ -128,6 +128,7 @@ async function submitForm(updatedValues: any) {
 
   // Pasar directamente updatedValues para mantener la imagen
   if (updatedValues.id !== 0) {
+    //Se pasa a assembler para crear el request
     const request = PlantAssembler.toRequest(updatedValues);
     await plantStore.editPlant(updatedValues.id, request);
   } else {

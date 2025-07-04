@@ -36,7 +36,6 @@ export class PlantAssembler{
         );
     }
 
-    // Nuevo método para crear request con FormData
     static toFormDataRequest(request: any): FormData {
         const formDataRequest = new FormData();
         formDataRequest.append("Name", request.name);
@@ -55,6 +54,16 @@ export class PlantAssembler{
         } else {
             // Si no hay imagen, agregar un campo vacío para evitar problemas en el backend
             formDataRequest.append("Image", "");
+        }
+
+        //Log para depuración
+
+        for (let [key, value] of formDataRequest.entries()) {
+            if (value instanceof File) {
+                console.log(`${key}: File(${value.name}, ${value.size} bytes, ${value.type})`);
+            } else {
+                console.log(`${key}: ${value}`);
+            }
         }
 
         return formDataRequest;

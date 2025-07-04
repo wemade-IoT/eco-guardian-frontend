@@ -1,18 +1,18 @@
 export class ProfileRequest{
-    name: string;
-    username: string;
-    email: string;
-    address: string;
-    avatarUrl: File
-    userId: number;
-    subscriptionId: number;
-    constructor(name: string, username: string, email: string, address: string, avatarUrl: File, userId: number, subscriptionId: number) {
-        this.name = name;
-        this.username = username;
-        this.email = email;
-        this.address = address;
-        this.avatarUrl = avatarUrl;
-        this.userId = userId;
-        this.subscriptionId = subscriptionId;
+    Name: string;
+    LastName: string;
+    Email: string;
+    Address: string;
+    AvatarUrl: File
+    UserId: number;
+    SubscriptionId: number;
+    constructor(name: string, lastName: string, email: string, address: string, avatarUrl: File, userId: number, subscriptionId: number) {
+        this.Name = name;
+        this.LastName = lastName;
+        this.Email = email;
+        this.Address = address;
+        this.AvatarUrl = avatarUrl;
+        this.UserId = userId;
+        this.SubscriptionId = subscriptionId;
     }
 }

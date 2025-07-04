@@ -71,6 +71,30 @@
                 <i :class="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'" class="text-sm"></i>
               </button>
             </div>
+            
+            <!-- Password Requirements -->
+            <div class="mt-2 space-y-1">
+              <p class="text-xs text-gray-600">Password must contain:</p>
+              <div class="grid grid-cols-2 gap-1 text-xs">
+                <div :class="passwordChecks.minLength ? 'text-green-600' : 'text-gray-400'" class="flex items-center">
+                  <i :class="passwordChecks.minLength ? 'pi pi-check' : 'pi pi-circle'" class="mr-1 text-xs"></i>
+                  6+ characters
+                </div>
+                <div :class="passwordChecks.hasUppercase ? 'text-green-600' : 'text-gray-400'" class="flex items-center">
+                  <i :class="passwordChecks.hasUppercase ? 'pi pi-check' : 'pi pi-circle'" class="mr-1 text-xs"></i>
+                  Uppercase letter
+                </div>
+                <div :class="passwordChecks.hasNumber ? 'text-green-600' : 'text-gray-400'" class="flex items-center">
+                  <i :class="passwordChecks.hasNumber ? 'pi pi-check' : 'pi pi-circle'" class="mr-1 text-xs"></i>
+                  Number
+                </div>
+                <div :class="passwordChecks.hasSpecialChar ? 'text-green-600' : 'text-gray-400'" class="flex items-center">
+                  <i :class="passwordChecks.hasSpecialChar ? 'pi pi-check' : 'pi pi-circle'" class="mr-1 text-xs"></i>
+                  Special character
+                </div>
+              </div>
+            </div>
+            
             <span v-if="passwordError" class="text-red-500 font-sans text-sm pt-1">{{ passwordError }}</span>
           </div>
 
@@ -142,7 +166,7 @@
 import Input from 'primevue/inputtext'
 import ProgressSpinner from 'primevue/progressspinner'
 import { useField, useForm } from 'vee-validate'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import signUpSchema from '../../../public/schemas/sign-up-schema'
 import { createModal } from '../../../public/utils/helpers/create-modal'
 import CustomDialog from '../../../shared/components/ui/custom-dialog.component.vue'
@@ -175,6 +199,17 @@ const { value: lastName, errorMessage: lastNameError } = useField<string>('lastN
 const { value: email, errorMessage: emailError } = useField<string>('email')
 const { value: password, errorMessage: passwordError } = useField<string>('password')
 const { value: confirmPassword, errorMessage: confirmPasswordError } = useField<string>('confirmPassword')
+
+// Password strength checks
+const passwordChecks = computed(() => {
+  const pwd = password.value || '';
+  return {
+    minLength: pwd.length >= 6,
+    hasUppercase: /[A-Z]/.test(pwd),
+    hasNumber: /[0-9]/.test(pwd),
+    hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(pwd)
+  };
+});
 
 const handleRegister = async () => {
 
@@ -210,9 +245,12 @@ const handleRegister = async () => {
 
   try {
     authStore.setUserData({
-      name : firstName.value + ' ' + lastName.value,
+      name : firstName.value,
+      lastName: lastName.value,
       email: email.value,
       password: password.value,
+      avatarUrl: null, // Assuming no avatar is uploaded during registration
+      subscriptionId: 0 // Default to 0, will be updated after plan selection
     });
     router.push('/choose-plan');
   } catch (error) {

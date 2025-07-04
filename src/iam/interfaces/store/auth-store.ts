@@ -36,9 +36,11 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
+    //Evitar que se registre si el proceso de registro de perfil falla
     async register({ email, password, roleId }: { email: string; password: string; roleId: number }): Promise<any> {
       try {
         const response = await authService.signUp(email, password, roleId);
+        await this.login(email, password);
         return response.data;
       } catch (error) {
         console.error("Error during signup:", error);

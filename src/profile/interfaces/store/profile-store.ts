@@ -9,8 +9,21 @@ export const ProfileStore = defineStore("profile",{
         profile: ProfileResponse as any,
     }),
     actions: {
+
+        async updateProfile(id: number, data: any) {
+            const request = ProfileAssembler.toRequestForm(data);
+            console.log("Data from the assembler:", data);
+            try {
+                return await profileService.updateProfile(id, request);
+            } catch (error) {
+                console.error("Error updating profile:", error);
+                throw error;
+            }
+        },
+
         async createProfile(data: any) {
             const request = ProfileAssembler.toRequest(data);
+            console.log("Data from the assembler:", data);
             try {
                 return await profileService.createProfile(request);
             } catch (error) {

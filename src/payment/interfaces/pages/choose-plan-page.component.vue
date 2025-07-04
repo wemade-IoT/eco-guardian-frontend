@@ -26,12 +26,30 @@ import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 
 const auth = useAuthStore();
 
-console.log('userData', auth.userData);
+console.log('userData after filling sign in', auth.userData);
+
 
 const planSelected = ref<PlanType | null>(null);
 const selectedPrice = ref<number>(0);
 
+const mapPlanToTypeId = (plan: PlanType): number => {
+  switch (plan) {
+    case 'DOMESTIC':
+      return 1;
+    case 'PRO':
+      return 2;
+    case 'ENTERPRISE':
+      return 3;
+    default:
+      return 0; // Default case if no match
+  }
+};
+
 const isPlanSelected = computed(() => {
+  if (auth.userData && planSelected.value) {
+  auth.userData.subscriptionId = mapPlanToTypeId(planSelected.value); // Ensure planId is initialized
+  console.log('userData with planId', auth.userData);
+}
   return planSelected.value !== null;
 });
 </script>

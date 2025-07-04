@@ -54,7 +54,7 @@
           @click="goToLogin"
           class="w-full bg-[#578257] hover:bg-[#467046] text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
         >
-          Ir al Login
+          Continuar
         </button>
         
         <button 
@@ -81,6 +81,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 
 const route = useRoute();
 const router = useRouter();
@@ -93,11 +94,15 @@ onMounted(() => {
 });
 
 function goToLogin() {
-  router.push('/login');
+  //Ys se autentica en el proceso de creacion de cuenta y perfil
+  //así que no es necesario redirigir a login, sino a home, en casi falle deberia redirigir a la pagina de elegir plan
+  router.push('/home');
 }
 
 function tryAgain() {
-  router.push('/choose-plan');
+  //Si falla se quita el token de autenticacion y se redirige a login, 
+  //[IMPORTANTE] el Backend NO deberia persistir el pago, ni el usuario , ni el perfil si es que encontro un error en este proceso
+  useAuthStore().logout();
 }
 </script>
 

@@ -1,5 +1,4 @@
 // src/crm/domain/services/question-assembler.service.ts
-import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import type { Question } from '../../domain/model/question.entity';
 
 // 🔧 DTO basado en la estructura REAL de tu API
@@ -25,7 +24,6 @@ export interface CreateQuestionFormRequest {
 }
 
 export class QuestionAssemblerService {
-  // 🔧 NEW: FROM FORM TO FORMDATA REQUEST (for multipart/form-data)
   static toFormDataRequest(request: CreateQuestionFormRequest): FormData {
 
     console.log('Creating FormData from request:', request);
@@ -40,28 +38,16 @@ export class QuestionAssemblerService {
     
     // Agregar imágenes si existen
     if (request.images && request.images.length > 0) {
-      console.log('🔧 Assembler: Processing images...');
       request.images.forEach((image, index) => {
-        console.log(`🔧 Assembler: Processing image ${index}:`, {
-          name: image.name,
-          size: image.size,
-          type: image.type,
-          isFile: image instanceof File
-        });
         //ImagesUrl is a list of images file so we append each image with the same key
         if (image instanceof File) {
           formData.append(`ImageUrls`, image, image.name);
-          console.log(`🔧 Assembler: Appended image ${index} to FormData`);
         } else {
-          console.warn(`🔧 Assembler: Image ${index} is not a File instance:`, typeof image);
         }
       });
     } else {
-      console.log('🔧 Assembler: No images to process');
     }
     
-    // Log final FormData contents
-    console.log('🔧 Assembler: Final FormData entries:');
     for (let [key, value] of formData.entries()) {
       if (value instanceof File) {
         console.log(`${key}: File(${value.name}, ${value.size} bytes, ${value.type})`);
@@ -91,7 +77,6 @@ export class QuestionAssemblerService {
   // 🔧 FROM API ARRAY TO DOMAIN ARRAY
   static toDomainModelArray(dtos: QuestionApiDTO[]): Question[] {
     if (!Array.isArray(dtos)) {
-      console.warn('Expected array but received:', typeof dtos);
       return [];
     }
     
