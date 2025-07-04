@@ -30,7 +30,6 @@
                     v-for="question in displayedQueries" 
                     :key="question.id"
                     :question="question"
-                    :is-specialist="false"
                 />
     </div>
   </div>

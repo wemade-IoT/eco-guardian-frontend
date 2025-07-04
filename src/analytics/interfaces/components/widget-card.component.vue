@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 
+
 defineProps({
   icon: { type: String, required: true },
   title: { type: String, required: true },
@@ -12,9 +13,9 @@ defineProps({
 <template>
   <div v-tooltip.bottom="description" class="widget-card bg-gray-100 border-[#A4D39A] rounded p-3 flex flex-col">
     
-    <h3 class="text-[12px] font-semibold text-gray-700"><span> <i :class="icon" class="text-[12px] text-gray-500 mr-1"></i> </span>{{ title }}</h3>
-    <p class="text-[32px] text-gray-800 font-bold">{{ value }}</p>
-    <p class="text-[13px] text-gray-500">{{ description }}</p>
+    <h3 class="text-[1rem] font-semibold text-gray-700"><span> <i :class="icon" class="text-[12px] text-gray-500 mr-1"></i> </span>{{ title }}</h3>
+    <p class="text-[2rem] text-gray-800 font-bold">{{ value }}</p>
+    <p class="text-[0.5rem] text-gray-500">{{ description }}</p>
   </div>
 </template>
 
@@ -25,7 +26,7 @@ defineProps({
   flex-direction: column;
   align-items: flex-start;
   width: 30%;
-  height: 22vh;
+  height: 9rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border: 1px solid #e5e7eb;
   transition: all 0.3s ease;

@@ -4,9 +4,9 @@
       <widget-card
         v-for="(widget, index) in widgets"
         :key="index"
-        :icon="getIcon(widget.title)"
-        :title="widget.title"
-        :value="widget.value"
+        :icon="getIcon(widget.metricType)"
+        :title="widget.metricType"
+        :value="widget.metricValue"
         :description="widget.description"
       />
     </div>
@@ -24,19 +24,24 @@ const analyticsService = new AnalyticsService();
 const getIcon = (title: string): string => {
   const iconsMap: Record<string, string> = {
     'Water Consumption': 'fa fa-solid fa-droplet',
-    'Energy Consumption': 'fa fa-solid fa-bolt',
-    'Humidity Threshold': 'fa fa-solid fa-droplet',
-    'Light Level': 'fa fa-solid fa-lightbulb',
+    'Humidity': 'fa fa-solid fa-droplet',
+    'Light': 'fa fa-solid fa-lightbulb',
     'Temperature': 'fa fa-solid fa-temperature-half',
-    'Humidity': 'fa fa-solid fa-circle-info',
   };
   return iconsMap[title] || 'fa fa-solid fa-circle';
 };
 
+/*
+Descriptions 
+
+
+
+*/
+
 onMounted(async () => {
   try {
-    const data = await analyticsService.getWidgetAnalytics();
-    widgets.value = data;
+    const data = await analyticsService.getWidgetAnalytics(1);
+    widgets.value = data.metrics;
   } catch (error) {
     console.error('Error fetching widget analytics:', error);
   }

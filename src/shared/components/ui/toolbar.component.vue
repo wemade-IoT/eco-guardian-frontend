@@ -14,7 +14,7 @@
           <i class="pi pi-bell text-lg text-slate-50"></i>
         </figure>
         <button class="flex flex-row items-center px-3 gap-3 bg-slate-700 h-full">
-          <p class="text-gray-200 text-sm"><span class="text-white text-base font-normal mr-0.5">69</span> Alert</p>
+          <p class="text-gray-200 text-sm"><span class="text-white text-base font-normal mr-0.5">{{NotificationStore.notifications.length}}</span> Alert</p>
           <i class="pi pi-arrow-down text-xs rotate-235 text-slate-50"></i>
         </button>
       </div>
@@ -30,6 +30,13 @@
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
+import {useNotificationStore} from "../../../profile/interfaces/store/notification-store.ts";
+
+const NotificationStore = useNotificationStore();
+
+
+
+
 
 const route = useRoute();
 

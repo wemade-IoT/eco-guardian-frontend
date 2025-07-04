@@ -4,7 +4,7 @@
       
           <div class="dashboard-column flex flex-col gap-2">
             <div class="line-chart">
-                      <lines-chart></lines-chart>
+              <lines-chart></lines-chart>
             </div>
             <div class = "widgets">        
               <widgets-container></widgets-container>
@@ -137,6 +137,11 @@ onMounted(() => {
   .list-container {
   width: 100%;
   height: 50%;
+}
+
+.tips-container{
+  flex-direction: row;
+  width: 100%;
 }
 
 }

@@ -39,7 +39,7 @@ const analyticsService = new AnalyticsService();
 
 onMounted(async () => {
   try {
-    const data = await analyticsService.getAnalytics();
+    const data = await analyticsService.getAnalytics(1);
 
     chartData.value = {
       labels: data.labels,

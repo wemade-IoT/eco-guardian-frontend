@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-gray-100 h-full p-4 rounded-lg">
-    <h2 class="text-xl font-semibold mb-4">Notifications</h2>
-    <div v-if="notificationStore.notifications.length > 0" class="flex flex-col gap-4 flex-1">
+  <div class="h-full w-full px-4 pt-5 rounded-lg bg-gray-100">
+    <h2 class="text-xl font-semibold mb-4">Recent Notifications</h2>
+    <div v-if="recentNotifications.length > 0" class="flex flex-col gap-4 flex-1 h-full">
       <alert-card
-          v-for="(alert, index) in notificationStore.notifications"
+          v-for="(alert, index) in recentNotifications"
           :key="index"
           :title="alert.title"
           :content="alert.subject"
@@ -17,13 +17,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted} from 'vue';
+import { computed, onMounted} from 'vue';
 import AlertCard from './alert-card.component.vue';
 import {useNotificationStore} from "../../profile/interfaces/store/notification-store.ts";
 import {useAuthStore} from "../../iam/interfaces/store/auth-store.ts";
 
 const notificationStore = useNotificationStore();
 const authStore = useAuthStore();
+
+const recentNotifications = computed(() => {
+  return [...notificationStore.notifications].reverse().slice(0, 2);
+});
 
 onMounted(async () => {
   try {
@@ -35,4 +39,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+
+
+</style>
