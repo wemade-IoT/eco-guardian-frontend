@@ -47,7 +47,7 @@ export class ProfileAssembler {
         return new ProfileResponse(
             response.id,
             response.name,
-            response.username,
+            response.lastName,
             response.email,
             response.address,
             response.avatarUrl,

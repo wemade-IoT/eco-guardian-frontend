@@ -46,11 +46,16 @@ export class MetricDataAssembler {
 
     // For handling multiple analytics entries (array)
     static toResponse(analyticsData: AnalyticsEntry[]): metricData[] {
-        return analyticsData.map(entry => this.toSingleResponse(entry));
+        console.log('MetricDataAssembler.toResponse input:', analyticsData);
+        const result = analyticsData.map(entry => this.toSingleResponse(entry));
+        console.log('MetricDataAssembler.toResponse output:', result);
+        return result;
     }
 
     // For handling single analytics entry (object)
     static toSingleResponse(analyticsData: AnalyticsEntry): metricData {
+        console.log('MetricDataAssembler.toSingleResponse input:', analyticsData);
+        
         const metrics = analyticsData.metrics.map(metric => ({
             id: metric.id,
             metricValue: metric.metricValue,
@@ -59,12 +64,15 @@ export class MetricDataAssembler {
             description: this.descripionConverter(metric.metricTypesId)
         }));
         
-        return new metricData(
+        const result = new metricData(
             analyticsData.createdAt,
             analyticsData.deviceId,
             analyticsData.id,
             metrics
         );
+        
+        console.log('MetricDataAssembler.toSingleResponse output:', result);
+        return result;
     }
 
 }

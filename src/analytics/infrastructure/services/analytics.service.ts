@@ -6,12 +6,20 @@ import type { metricData } from "../../domain/data-response.ts";
 export class AnalyticsService extends HttpService {
 
 //
-  public async getAnalytics(deviceId: number): Promise<any> {
+  public async getAnalytics(plantId: number, time:string): Promise<metricData[]> {
     try {
       // The mehod returns historic analytics data
+      
+      const device = await this.http.get(`devices`,{
+        params: {
+          plantId: plantId,
+        }
+      });
+      
       const response = await this.http.get(`metric-registry`,{
         params: {
-          deviceId: deviceId
+          deviceId: device.data[0].id, // Assuming the first device is the one we want
+          period: time
         }
       });
       console.log("Analytics data:", response.data);
