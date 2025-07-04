@@ -224,7 +224,7 @@ async function handleSubmit() {
     elements,
     clientSecret: dialogData.clientSecret,
     confirmParams: {
-      return_url: `${import.meta.env.VITE_BASE_URL}/payment-succeded`,
+      return_url: `${import.meta.env.VITE_BASE_URL}payment-succeded`,
       payment_method_data: {
         billing_details: {
           name: authStore.userData?.name || 'GUEST',
