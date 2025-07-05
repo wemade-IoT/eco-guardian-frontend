@@ -38,7 +38,7 @@ export class QuestionAssemblerService {
     
     // Agregar imágenes si existen
     if (request.images && request.images.length > 0) {
-      request.images.forEach((image, index) => {
+      request.images.forEach((image) => {
         //ImagesUrl is a list of images file so we append each image with the same key
         if (image instanceof File) {
           formData.append(`ImageUrls`, image, image.name);

@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-gray-100 p-4 w-full">
+  <section class="bg-gray-100 p-4 w-full h-full flex-1 chart-data">
     <div class="flex flex-col">
       <div class="w-full flex flex-row items-center justify-between">
         <h2 v-if="authStore.isEnterprise" class="font-sans">Plantation Statistics over time</h2>
@@ -7,12 +7,8 @@
         <Select v-model="selectedOption" :options="options" optionLabel="label" optionValue="value" placeholder="Select time period"
           class="flex flex-row items-center -space-x-2 tracking-wide rounded-md text-sm h-8" />
       </div>
-      <div class="mt-2.5 relative before:absolute after:absolute before:bg-[#8fbf8f] 
-        after:bg-[#cde6cd] before:left-0 before:top-0 before:h-[1.5px] 
-        before:w-6 after:left-8 after:right-0 after:top-0 after:h-[1.5px]">
-      </div>
-      <div class="mt-6 w-full translate-x-1.5">
-        <Chart class="responsive-trick h-70" type="line" :data="chartData || {}" :options="chartOptions" />
+      <div class="mt-1 w-full translate-x-1.5">
+        <Chart class="responsive-trick h-60" type="line" :data="chartData || {}" :options="chartOptions" />
       </div>
     </div>
   </section>
@@ -203,7 +199,7 @@ const processAnalyticsForChart = (analyticsData: metricData[]) => {
     1: { name: 'Humidity', color: '#3B82F6' },      // Blue
     2: { name: 'Light', color: '#EAB308' },         // Yellow
     3: { name: 'Temperature', color: '#EF4444' },   // Red
-    4: { name: 'Water Consumption', color: '#10B981' } // Green
+    4: { name: 'Water Usage', color: '#10B981' } // Green
   };
 
   // Create datasets for each metric type
@@ -290,4 +286,10 @@ const processAnalyticsForChart = (analyticsData: metricData[]) => {
 .responsive-trick {
   width: 99% !important;
 }
+
+.line-chart {
+  width: 100%;
+  height: 100%;
+}
+
 </style>

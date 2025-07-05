@@ -27,7 +27,6 @@ export class PaymentAssembler {
       paymentResponse.paymentStatus,
       paymentResponse.userId,
       paymentResponse.referenceId,
-      paymentResponse.referenceType
     );
   }
 }

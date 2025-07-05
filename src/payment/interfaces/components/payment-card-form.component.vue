@@ -70,20 +70,13 @@ import { inject, onBeforeMount, onMounted, ref, toRaw } from 'vue';
 import { StripeElements, StripeElement } from "vue-stripe-js";
 import { loadStripe, type StripeElementsOptionsMode, type StripePaymentElementOptions, } from "@stripe/stripe-js"
 import Button from 'primevue/button';
-import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import { convertAmountByCountry, getCountryCodeByName, getCurrencySymbolByCountry } from '../../../public/utils/helpers/currency';
-import { usePaymentStore } from '../store/payment-store';
-import { useSubscriptionStore } from '../store/subscription-store';
-import { getPlanId } from '../../../public/utils/helpers/subscription';
-import { SubscriptionAssembler } from '../../domain/assembler/subscription-assembler';
-import { PaymentAssembler } from '../../domain/assembler/payment-assembler';
-import { ProfileStore } from '../../../profile/interfaces/store/profile-store';
+
 
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 const dialogRef = inject<any>('dialogRef');
 const dialogData = dialogRef.value.data;
 const convertedAmount = ref<number | null>(null);
-
 const stripeLoaded = ref(false);
 const stripeOptions: StripeElementsOptionsMode = {
   clientSecret: dialogData.clientSecret,
@@ -121,12 +114,6 @@ const paymentElementOptions = ref<StripePaymentElementOptions>({
 const elementsComponent = ref();
 const paymentComponent = ref();
 const processing = ref(false);
-const authStore = useAuthStore();
-const paymentStore = usePaymentStore();
-const subscriptionStore = useSubscriptionStore();
-const paymentAssembler = new PaymentAssembler();
-const subscriptionAssembler = new SubscriptionAssembler();
-const profileStore = ProfileStore();
 
 onBeforeMount(async () => {
   await loadStripe(stripeKey);
@@ -145,80 +132,17 @@ onMounted(async () => {
 });
 
 async function handleSubmit() {
+  processing.value = true;
+  
+
   const stripeInstance = await elementsComponent.value?.instance;
   const elements = await elementsComponent.value?.elements;
 
   if (!stripeInstance) {
     console.error("Stripe instance not loaded");
+    processing.value = false;
     return;
   }
-
-
-  console.log("dialogData", dialogData?.planSelected);
-  console.log("planSelectedId", getPlanId(dialogData?.planSelected));
-
-  console.log("userData", authStore.userData?.email, authStore.userData?.password, getPlanId(dialogData?.planSelected));
-
-  // todo esta wea de los create deberia hacerse luego de validado el pago, pero por mientras 
-  // se hace asi para que evitar un bug
-  const user = await authStore.register({
-    email: authStore.userData?.email || '',
-    password: authStore.userData?.password || '',
-    roleId: getPlanId(dialogData?.planSelected),
-  });
-
-  console.log("user", user);
-
-  const subscriptionRequest = subscriptionAssembler.toRequest({
-    userId: user.userId || '',
-    subscriptionTypeId: getPlanId(dialogData?.planSelected),
-    subscriptionStateId: 1,
-    currency: dialogData?.currency || 'usd',
-    amount: dialogData?.amount || 0,
-  });
-
-  const subscription = await subscriptionStore.createSubscription(subscriptionRequest);
-
-  console.log("subscription", subscription);
-
-  const paymentRequest = paymentAssembler.toRequest({
-    paymentIntentId: toRaw(dialogData)?.clientSecret || '',
-    paymentMethodId: "1",
-    amount: dialogData?.amount || 0,
-    currency: dialogData?.currency || 'usd',
-    paymentStatus: 'completed', // Cambiado a completed ya que el pago fue validado
-    userId: user.userId || 0,
-    referenceId: subscription.id,
-    referenceType: 1
-  });
-
-  console.log("paymentRequest", paymentRequest);
-
-  await paymentStore.createPayment(paymentRequest);
-
-  //Logica de creacion de perfil
-
-
-  const profileToLoad = {
-    Name: authStore.userData?.name || '',
-    UserId: user.userId || 0,
-    LastName: authStore.userData?.lastName || '',
-    Email: authStore.userData?.email || '',
-    Address: dialogData.countryName || '',
-    AvatarUrl: authStore.userData?.avatarUrl || null, // Se inicia como null
-    SubscriptionId: authStore.userData.subscriptionId
-  };
-  console.log("Creating profile for user", user.userId,  "with subscription", authStore.userData.subscriptionId);
-
-  await profileStore.createProfile(profileToLoad)
-    .then(() => {
-      console.log("Profile pipeline completed successfully");
-    })
-    .catch((error) => {
-      console.error("Error creating profile:", error);
-    });
-
-
   await elements.submit();
   const { error } = await stripeInstance.confirmPayment({
     elements,
@@ -227,7 +151,7 @@ async function handleSubmit() {
       return_url: `${import.meta.env.VITE_BASE_URL}payment-succeded`,
       payment_method_data: {
         billing_details: {
-          name: authStore.userData?.name || 'GUEST',
+          name: dialogData?.name || 'GUEST', 
           email: dialogData?.email,
           address: {
             country: getCountryCodeByName(dialogData?.countryName) || 'US',
@@ -239,15 +163,21 @@ async function handleSubmit() {
 
   if (error) {
     console.error("Payment error:", error);
+    processing.value = false;
     dialogRef.value.close();
     return;
   }
-
+  console.log("Payment successful");
+  processing.value = false;
   dialogRef.value.close();
 }
 
+
+
 const handleClose = () => {
-  dialogRef.value.close();
+  dialogRef.value.close({
+    type: 'payment-cancelled'
+  });
 };
 
 </script>

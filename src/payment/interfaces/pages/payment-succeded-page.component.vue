@@ -81,17 +81,112 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { usePaymentStore } from '../store/payment-store';
+import { useSubscriptionStore } from '../store/subscription-store';
+import { SubscriptionAssembler } from '../../domain/assembler/subscription-assembler';
+import { PaymentAssembler } from '../../domain/assembler/payment-assembler';
+import { ProfileStore } from '../../../profile/interfaces/store/profile-store';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
-
+const auth = useAuthStore();
 const route = useRoute();
 const router = useRouter();
 const status = ref('');
 const paymentIntent = ref('');
+const paymentStore = usePaymentStore();
+const subscriptionStore = useSubscriptionStore();
+const subscriptionAssembler = new SubscriptionAssembler();
+const paymentAssembler = new PaymentAssembler();
+const profileStore = ProfileStore();
+console.log('userData after payment', auth.userData);
 
 onMounted(() => {
   status.value = route.query.redirect_status as string || '';
   paymentIntent.value = route.query.payment_intent as string || '';
+  
+  if (status.value === 'succeeded') {
+    registerUser();
+  }
 });
+
+async function registerUser() {
+  try {
+    console.log('Starting user registration process...');
+    
+    // Leer datos de localStorage
+    const paymentDataStr = localStorage.getItem('paymentData') || localStorage.getItem('registerInfo');
+    if (!paymentDataStr) {
+      console.error('No payment data found in localStorage');
+      status.value = 'failed';
+      return;
+    }
+    
+    const paymentData = JSON.parse(paymentDataStr);
+    console.log('Payment data from localStorage:', paymentData);
+    
+    //1. We register the user since the payment supposedly has been successful we register all
+    const user = await auth.register({
+      email: paymentData.userEmail || paymentData.email || '',
+      password: paymentData.userPassword || '',
+      roleId: paymentData.planSelected || 1, // Default to roleId 1 if not provided
+    });
+    console.log('User registered successfully:', user);
+
+  // ==================
+  // 2. We register the subscription
+  const subscriptionRequest = subscriptionAssembler.toRequest({
+    userId: user.userId,
+    subscriptionTypeId: paymentData.planSelected,
+    subscriptionStateId: 1, //The payment was done successfully so we set it to active
+    currency: paymentData.currency || 'usd',
+    amount: paymentData.amount || 0,
+  });
+  const subscription = await subscriptionStore.createSubscription(subscriptionRequest);
+  console.log("Subscription created successfully:", subscription);
+  // ==================
+
+  // 3. We create the payment to be stored in the database
+  const paymentRequest = paymentAssembler.toRequest({
+    paymentIntentId: paymentIntent.value || '',
+    paymentMethodId: "1",
+    currency: paymentData.currency || 'usd',
+    amount: paymentData.amount || 0,
+    paymentStatus: 'completed', // Cambiado a completed ya que el pago fue validado
+    userId: user.userId || 0,
+    referenceId: 1, // We know its a subscription
+  });
+  console.log("Creating payment record:", paymentRequest);
+  await paymentStore.createPayment(paymentRequest);
+
+  // 4. We create the profile for the user
+   //==============
+  //Profile Logic must be moved to a separate component or service
+  const profileToLoad = {
+    Name: paymentData.firstName || '',
+    UserId: user.userId || 0, //This user Id must be retrieved from the authStore after registration 
+    // This could have been done in the backend but we are doing it here for simplicity, IAM moment)
+    LastName: paymentData.lastName || '',
+    Email: paymentData.userEmail || paymentData.email || '',
+    Address: paymentData.country || 'please add your address for installations',
+    AvatarUrl: null, // Initialize with null
+    SubscriptionId: paymentData.planSelected
+  };
+  await profileStore.createProfile(profileToLoad)
+
+  console.log("Profile created successfully", profileToLoad);
+
+  localStorage.removeItem('paymentData');
+  console.log('localStorage cleaned after successful registration');
+
+  //==============
+  } catch (error) {
+    console.error("Error during registration process:", error);
+    status.value = 'failed'; // Actualizar el estado visual
+    // No limpiar localStorage si hay error, para debugging
+    throw error;
+  }
+}
+
+
 
 function goToLogin() {
   //Ys se autentica en el proceso de creacion de cuenta y perfil
@@ -102,6 +197,11 @@ function goToLogin() {
 function tryAgain() {
   //Si falla se quita el token de autenticacion y se redirige a login, 
   //[IMPORTANTE] el Backend NO deberia persistir el pago, ni el usuario , ni el perfil si es que encontro un error en este proceso
+  
+  // Limpiar localStorage en caso de error
+  localStorage.removeItem('paymentData');
+  localStorage.removeItem('registerInfo');
+  
   useAuthStore().logout();
 }
 </script>

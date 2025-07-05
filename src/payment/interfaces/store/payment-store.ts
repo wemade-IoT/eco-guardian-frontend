@@ -10,8 +10,15 @@ const paymentAssembler = new PaymentAssembler();
 export const usePaymentStore = defineStore("payment", {
   state: () => ({
     payments: [] as PaymentResponse[],
+    paymentRequest: {} as PaymentRequest,
   }),
+  getters: {
 
+    getPaymentRequest: (state) => {
+      return state.paymentRequest;
+    }
+
+  },
   actions: {
     async createPaymentIntent(data: IPaymentIntent): Promise<any> {
       try {
@@ -22,6 +29,13 @@ export const usePaymentStore = defineStore("payment", {
         throw error;
       }
     },
+
+    setPaymentFinancialData(amount: number,currency: string = "usd") {
+      this.paymentRequest.amount = amount;
+      this.paymentRequest.currency = currency;
+    },
+
+
 
     async createPayment(req: PaymentRequest) {
       try {

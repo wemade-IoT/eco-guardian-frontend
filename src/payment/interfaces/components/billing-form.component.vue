@@ -87,7 +87,7 @@ import Select from 'primevue/select'
 import Input from 'primevue/inputtext'
 import Checkbox from 'primevue/checkbox'
 import { countries } from '../../../public/utils/consts/countries';
-import { ref } from 'vue';
+import { ref, toRaw } from 'vue';
 import { useField, useForm } from 'vee-validate';
 import billingDetailSchema from '../../../public/schemas/billing-detail.schema';
 import { useDialog, useToast } from 'primevue';
@@ -102,6 +102,10 @@ const props = defineProps<{
   isPlanSelected: boolean;
   amount: number;
   planSelected: PlanType | null;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  password?: string;
 }>();
 
 const { handleSubmit, errors } = useForm({
@@ -149,6 +153,32 @@ const onSubmitBillingForm = handleSubmit(async (values) => {
 
   const clientSecret = response?.clientSecret || '';
 
+  paymentStore.setPaymentFinancialData(convertedAmount, getCurrencyByCountry(values.country as CountryName));
+  console.log('Payment Process so Far:', paymentStore.getPaymentRequest);
+  // Handle emits from PaymentCardForm via dialog events
+
+  //Convert plant Selected to a number for the subscriptionTypeId
+
+  const planSelectedId = props.planSelected ? props.planSelected : 'DOMESTIC';
+  const planSelectedTypeId = planSelectedId === 'DOMESTIC' ? 1
+    : planSelectedId === 'PRO' ? 2
+    : planSelectedId === 'ENTERPRISE' ? 3
+    : 0; // Default case if no match
+
+  // Guardar datos en localStorage antes del pago para recovery en payment-succeded
+  localStorage.setItem('paymentData', JSON.stringify({
+    userEmail: props.email,
+    userPassword: props.password || '',
+    firstName: props.firstName || '',
+    lastName: props.lastName || '',
+    country: values.country,
+    amount: convertedAmount,
+    currency: getCurrencyByCountry(values.country as CountryName),
+    planSelected: planSelectedTypeId,
+    referenceId: 1, // In this process we know its an subscription, so we can set a reference ID
+  }));
+  
+
   dialog.open(PaymentCardForm, {
     props: {
       modal: true,
@@ -156,6 +186,10 @@ const onSubmitBillingForm = handleSubmit(async (values) => {
       closable: false,
     },
     data: {
+      firstName: props.firstName || '',
+      lastName: props.lastName || '',
+      userEmail: props.email || '',
+      userPassword: props.password || '',
       email: values.email,
       country: values.country,
       discountCode: values.discountCode,
@@ -163,13 +197,15 @@ const onSubmitBillingForm = handleSubmit(async (values) => {
       amount: props.amount,
       currency: getCurrencyByCountry(values.country as CountryName),
       countryName: values.country,
-      planSelected: props.planSelected as PlanType,
-    },
-    onClose: () => {
-      console.log("Dialog closed");
-    },
+      referenceId: 1, // In this process we know its an subscription, so we can set a reference ID
+    }
   });
+
+  
+
 });
+
+
 
 </script>
 

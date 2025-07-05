@@ -190,13 +190,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onBeforeMount, inject, onMounted, toRaw } from 'vue'
 import ProgressSpinner from 'primevue/progressspinner'
 import { simulateRequest } from '../../../public/utils/helpers/sleep'
 import { createModal } from '../../../public/utils/helpers/create-modal'
 import CustomDialog from '../../../shared/components/ui/custom-dialog.component.vue';
 import { useDialog } from 'primevue';
-
+import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
+import { usePaymentStore } from '../../../payment/interfaces/store/payment-store';
+import { PaymentAssembler } from '../../../payment/domain/assembler/payment-assembler';
+import { ProfileStore } from '../../../profile/interfaces/store/profile-store';
+import { StripeElements, StripeElement } from "vue-stripe-js";
+import { loadStripe, type StripeElementsOptionsMode, type StripePaymentElementOptions, } from "@stripe/stripe-js"
+import { convertAmountByCountry, getCountryCodeByName } from '../../../public/utils/helpers/currency';
 // Types
 interface ValidationErrors {
   email?: string
@@ -209,6 +215,70 @@ const country = ref<string>('')
 const isLoading = ref<boolean>(false)
 const errors = reactive<ValidationErrors>({})
 const dialog = useDialog();
+
+const elementsComponent = ref();
+const paymentComponent = ref();
+const processing = ref(false);
+const authStore = useAuthStore();
+const paymentStore = usePaymentStore();
+const paymentAssembler = new PaymentAssembler();
+const profileStore = ProfileStore();
+const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+const dialogRef = inject<any>('dialogRef');
+const dialogData = dialogRef.value.data;
+const convertedAmount = ref<number | null>(null);
+
+
+
+const stripeLoaded = ref(false);
+const stripeOptions: StripeElementsOptionsMode = {
+  clientSecret: dialogData.clientSecret,
+};
+console.log(dialogData.amount)
+const elementsOptions = ref<StripeElementsOptionsMode>({
+  mode: "payment",
+  amount: dialogData.amount * 100,
+  currency: dialogData.currency || 'usd',
+  appearance: {
+    theme: "flat",
+  },
+})
+
+const paymentElementOptions = ref<StripePaymentElementOptions>({
+  readOnly: false,
+  layout: "tabs",
+  defaultValues: {
+    billingDetails: {
+      name: dialogData?.name || 'GUEST',
+      address: {
+        country: getCountryCodeByName(dialogData?.countryName) || 'US',
+      }
+    }
+  },
+  fields: {
+    billingDetails: {
+      address: {
+        country: 'auto'
+      }
+    },
+  }
+})
+
+onBeforeMount(async () => {
+  await loadStripe(stripeKey);
+  stripeLoaded.value = true;
+});
+
+onMounted(async () => {
+  try {
+    convertedAmount.value = await convertAmountByCountry(
+      dialogData?.amount,
+      dialogData?.countryName,
+    );
+  } catch (error) {
+    convertedAmount.value = 0;
+  }
+});
 
 // Validation functions
 /* const validateEmail = (email: string): string | null => {
@@ -250,30 +320,59 @@ const validateForm = (): boolean => {
   return Object.keys(errors).length === 0
 } */
 
-const handleSubmit = async (): Promise<void> => {
 
-  try {
-    isLoading.value = true
-    await simulateRequest(2000)
+async function handleSubmit() {
+  //This submit handles payment, maybe emit in further iteraions to separte the payment logic from the registration logic
+  const stripeInstance = await elementsComponent.value?.instance;
+  const elements = await elementsComponent.value?.elements;
 
-    //We add the remaining steps to order once the payment is successful
-    
-
-    createModal(
-      dialog,
-      CustomDialog,
-      {
-        title: '¡Pago realizado correctamente!',
-        subtitle: 'Tu pedido ha sido procesado con éxito. Puedes revisar los detalles y el estado de tu nuevo pedido en el panel de administración. ¡Gracias por confiar en Eco Guardian!',
-        type: 'success',
-        severity: 'success',
-        redirectionPath: '/home'
-      }
-    );
-  } catch (error) {
-    console.error('Error en el pago:', error)
-  } finally {
-    isLoading.value = false
+  if (!stripeInstance) {
+    console.error("Stripe instance not loaded");
+    return;
   }
+
+  const paymentRequest = paymentAssembler.toRequest({
+    paymentIntentId: toRaw(dialogData)?.clientSecret || '',
+    paymentMethodId: "1",
+    amount: dialogData?.amount || 0,
+    currency: dialogData?.currency || 'usd',
+    paymentStatus: 'completed', // Cambiado a completed ya que el pago fue validado
+    userId: useAuthStore().id || 0,
+    referenceId: 0,
+  });
+
+  console.log("paymentRequest", paymentRequest);
+
+  await paymentStore.createPayment(paymentRequest);
+
+  await elements.submit();
+  const { error } = await stripeInstance.confirmPayment({
+    elements,
+    clientSecret: dialogData.clientSecret,
+    confirmParams: {
+      return_url: `${import.meta.env.VITE_BASE_URL}payment-succeded`,
+      payment_method_data: {
+        billing_details: {
+          name: authStore.userData?.name || 'GUEST',
+          email: dialogData?.email,
+          address: {
+            country: getCountryCodeByName(dialogData?.countryName) || 'US',
+          },
+        },
+      },
+    },
+  });
+
+  if (error) {
+    console.error("Payment error:", error);
+    dialogRef.value.close();
+    return;
+  }
+
+  dialogRef.value.close();
 }
+
+const handleClose = () => {
+  dialogRef.value.close();
+};
 </script>

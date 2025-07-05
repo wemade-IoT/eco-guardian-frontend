@@ -11,7 +11,11 @@
         @select="planSelected = $event" @price="selectedPrice = $event"></plan-card>
     </div>
     <billing-form :amount="selectedPrice" :is-plan-selected="isPlanSelected"
-      :plan-selected="planSelected"></billing-form>
+      :plan-selected="planSelected" 
+      :email="auth.userData.email" 
+      :first-name="auth.userData.name" 
+      :last-name="auth.userData.lastName" 
+      :password="auth.userData.password"></billing-form>
   </div>
   <!-- <confirm-payment-modal></confirm-payment-modal> -->
 </template>
@@ -24,7 +28,10 @@ import PlanCard from '../components/plan-card.component.vue';
 import BillingForm from '../components/billing-form.component.vue';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 
+
+
 const auth = useAuthStore();
+
 
 console.log('userData after filling sign in', auth.userData);
 

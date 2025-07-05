@@ -13,13 +13,13 @@ defineProps({
 <template>
   <div v-tooltip.bottom="description" class="widget-card bg-white border border-gray-200 rounded-lg p-4 flex flex-col justify-between h-full">
     
-    <h3 class="text-sm w-full flex justify-between font-semibold text-gray-700 mb-2">
+    <h3 class="text-sm w-full flex justify-between font-semibold text-gray-700 mb-2 wrap-anywhere">
       {{ title }} 
       <span> 
         <i :class="icon" class="text-lg text-gray-500"></i> 
       </span>
     </h3>
-    <p class="text-2xl text-gray-800 font-bold mb-1">{{ value }}</p>
+    <p class="text-2xl text-gray-800 font-bold mb-1 wrap-break-word">{{ value }}</p>
     <p class="text-xs text-gray-500 leading-tight desc-text">{{ description }}</p>
   </div>
 </template>
@@ -29,7 +29,7 @@ defineProps({
 .widget-card {
   display: flex;
   flex-direction: column;
-  min-height: 30%;
+  min-height: 35%;
   max-height: 40%;
   max-width: 30%;
   width: 100%;
@@ -53,7 +53,7 @@ defineProps({
 }
 
 /* Responsive design */
-@media (max-width: 1024px) {
+@media (max-width: 1060px) {
   .widget-card {
     min-height: 100px;
     max-height: 120px;

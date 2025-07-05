@@ -214,7 +214,7 @@ const mainText = {
     
     .questions-section {
         flex: 1;
-        min-height: 400px;
+        width: 100%;
     }
 }
 
@@ -230,25 +230,6 @@ const mainText = {
     
     .main-content {
         gap: 20px;
-    }
-}
-
-@media (max-width: 640px) {
-    .consulting-page {
-        padding: 12px;
-        gap: 16px;
-    }
-    
-    .page-header h1 {
-        font-size: 1.5rem;
-    }
-    
-    .page-description {
-        font-size: 0.9rem;
-    }
-    
-    .main-content {
-        gap: 16px;
     }
 }
 </style>

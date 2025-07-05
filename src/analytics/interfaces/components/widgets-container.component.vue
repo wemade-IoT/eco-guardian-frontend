@@ -40,8 +40,8 @@ const getValue = (value: number,type: string): string => {
     'Humidity': `${value}%`,
     'Light': `${value} Lux`,
     'Temperature': `${value}°C`,
-    'Plant Type': value.toString(), // Assuming value is a string for Plant Type
-    'Added On': value.toString()// Format to be 00/00/0000
+    'Plant Type': `${value}`, // Assuming value is a string for Plant Type
+    'Added On': `${value}`// Format to be 00/00/0000
   };
   return valueMap[type] || "N/A";
 };
@@ -84,6 +84,7 @@ onMounted(async () => {
   align-items: flex-start;
   width: 100%;
   gap: 0.5rem;
+  flex:1;
 }
 
 </style>
