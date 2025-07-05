@@ -102,10 +102,13 @@ console.log('userData after payment', auth.userData);
 onMounted(() => {
   status.value = route.query.redirect_status as string || '';
   paymentIntent.value = route.query.payment_intent as string || '';
+  if (status.value === 'succeeded' && localStorage.getItem('paymentData')) {
+      registerUser();
+    }
+  else if (status.value === 'succeeded') {
+      registerDevice();
+    }
   
-  if (status.value === 'succeeded') {
-    registerUser();
-  }
 });
 
 async function registerUser() {
@@ -186,6 +189,13 @@ async function registerUser() {
   }
 }
 
+async function registerDevice() {
+  
+    console.log('Starting device registration process...');
+
+
+
+}
 
 
 function goToLogin() {

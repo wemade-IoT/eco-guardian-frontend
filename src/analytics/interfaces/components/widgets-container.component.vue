@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
-    <div class="widgets-container">
-      <widget-card
+    <div v-if="widgets.length > 0" class="widgets-container">
+      <widget-card 
         v-for="(widget, index) in widgets"
         :key="index"
         :icon="getIcon(widget.metricType)"
@@ -9,6 +9,10 @@
         :value="getValue(widget.metricValue, widget.metricType)"
         :description="widget.description"
       />
+    </div>
+    <div v-else>
+      <p class="text-center text-gray-500">No analytics data available.</p>
+      <p class="text-center text-gray-500">If you have already registered a plant and you can read this message <br><strong>Call our support team.</strong></p>
     </div>
   </div>
 </template>
