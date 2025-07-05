@@ -11,10 +11,18 @@ export const ProfileStore = defineStore("profile",{
     actions: {
 
         async updateProfile(id: number, data: any) {
-            const request = ProfileAssembler.toRequestForm(data);
-            console.log("Data from the assembler:", data);
+            // Always build FormData here
+            const formData = new FormData();
+            formData.append("Name", data.Name);
+            formData.append("LastName", data.LastName);
+            formData.append("Address", data.Address);
+            if (data.AvatarUrl) {
+                formData.append("AvatarUrl", data.AvatarUrl);
+            } else {
+                formData.append("AvatarUrl", "");
+            }
             try {
-                return await profileService.updateProfile(id, request);
+                return await profileService.updateProfile(id, formData);
             } catch (error) {
                 console.error("Error updating profile:", error);
                 throw error;
