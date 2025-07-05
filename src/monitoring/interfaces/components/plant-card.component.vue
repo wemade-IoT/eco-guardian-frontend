@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { defineProps, ref, onMounted, onUnmounted } from 'vue';
+import Dropdown from 'primevue/dropdown';
 
 defineProps({
   name: { type: String, required: true },
@@ -18,7 +19,8 @@ const emit = defineEmits({
 
 const showDropdown = ref(false);
 
-const toggleDropdown = () => {
+const toggleDropdown = (event: Event) => {
+  event.stopPropagation();
   showDropdown.value = !showDropdown.value;
 };
 
@@ -69,6 +71,7 @@ const statusDescriptions: Record<number, string> = {
   2: "Unhealthy",
   3: "Warning",
 };
+
 </script>
 
 <template>
@@ -78,27 +81,29 @@ const statusDescriptions: Record<number, string> = {
     'border-yellow-500': status === 3,
   }">
     <div class="flex items-center gap-2 card-header">
-      <div class="title-plant-card" >
-      <div class="w-[12px] h-[12px] rounded-full " :style="{ backgroundColor: stateColors[state] }"></div>
-      <p class="text-[18px] font-semibold text-gray-800">{{ name }}</p>
-       </div>
-       <!-- Dropdown menu -->
-       <div class="flex justify-end relative dropdown-container">
+      <div class="title-plant-card">
+        <div class="w-[12px] h-[12px] rounded-full" :style="{ backgroundColor: stateColors[state] }"></div>
+        <p class="text-[18px] font-semibold text-gray-800">{{ name }}</p>
+      </div>
+      
+      <!-- Dropdown menu -->
+      <div class="flex justify-end relative dropdown-container">
         <!-- Botón de opciones -->
         <button 
           type="button" 
-          class="cursor-pointer flex items-center justify-center bg-gray-300/50 w-10 h-10 rounded-md group hover:bg-slate-700 transition-all duration-300 ease-in-out hover:text-white" 
+          class="cursor-pointer flex items-center justify-center bg-gray-300/50 w-8 h-8 rounded-md group hover:bg-slate-700 transition-all duration-300 ease-in-out hover:text-white" 
           @click="toggleDropdown"
         >
-          <i class="pi pi-ellipsis-v"></i>
+          <i class="pi pi-ellipsis-h text-sm"></i>
         </button>
-      </div>  
-       <div v-if="showDropdown" class="absolute top-12 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[150px]">
+        
+        <!-- Dropdown menu -->
+        <div v-if="showDropdown" class="absolute top-10 right-0 bg-white border border-gray-200 rounded-lg shadow-xl z-50 min-w-[150px]">
           <div class="py-1">
             <button 
               type="button"
               class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors duration-200"
-              @click="view"
+              @click.stop="view"
             >
               <i class="pi pi-eye text-blue-500"></i>
               Ver información
@@ -106,7 +111,7 @@ const statusDescriptions: Record<number, string> = {
             <button 
               type="button"
               class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors duration-200"
-              @click="editPlant"
+              @click.stop="editPlant"
             >
               <i class="pi pi-pencil text-green-500"></i>
               Editar
@@ -115,13 +120,14 @@ const statusDescriptions: Record<number, string> = {
             <button 
               type="button"
               class="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors duration-200"
-              @click="() => deletePlant(id)"
+              @click.stop="() => deletePlant(id)"
             >
               <i class="pi pi-trash text-red-500"></i>
               Eliminar
             </button>
           </div>
         </div>
+      </div>
     </div>
     <div class="flex justify-between gap-2">
       <div class="flex justify-start items-center gap-2">
@@ -143,6 +149,19 @@ const statusDescriptions: Record<number, string> = {
 <style scoped>
 .plant-card {
   transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.plant-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Cuando el dropdown está abierto, elevar la tarjeta */
+.plant-card:has(.dropdown-container .absolute) {
+  z-index: 1000;
 }
 
 .plant-card:hover {
@@ -153,12 +172,24 @@ const statusDescriptions: Record<number, string> = {
 .card-header {
   display: flex;
   justify-content: space-between;
-  flex-direction: row;
+  align-items: center;
+  width: 100%;
 }
 
-.title-plant-card{
+.title-plant-card {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1;
+}
+
+.dropdown-container {
+  position: relative;
+  z-index: 100;
+}
+
+/* Asegurar que el dropdown esté por encima de todo */
+.dropdown-container .absolute {
+  z-index: 9999 !important;
 }
 </style>

@@ -33,7 +33,7 @@ import { usePlantStore } from '../stores/plant-store.ts';
 import PlantsListComponent from '../components/plants-list.component.vue';
 import QuestionListComponent from '../../../crm/interfaces/components/question-list.component.vue';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store.ts';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { CrmService } from '../../../crm/infrastructure/services/crm.service.ts';
 
 const crmService = new CrmService();
@@ -76,6 +76,20 @@ onMounted(() => {
     }
     return;
 });
+
+// Watcher para actualizar las preguntas cuando cambie la planta seleccionada
+watch(
+    () => plantStore.plant,
+    (newPlant) => {
+        if (newPlant && newPlant.id !== undefined) {
+            fetchPlantQuestions(newPlant.id);
+        } else {
+            // Si no hay planta seleccionada, limpiar las preguntas
+            plantQuestions.value = [];
+        }
+    },
+    { immediate: false } // No ejecutar inmediatamente ya que onMounted ya maneja el caso inicial
+);
 
 // Maneja el clic en una pregunta
 const handleQuestionClick = (question: any) => {

@@ -32,22 +32,20 @@ const routes = [
         props: true,
       },
       {
-        path: "/consulting",
-        component: ConsultingPageComponent,
-        props: true,
-      },
-      {
         path: "/installation",
+        name: "Installation",
         component: InstallationPreferenceSelectionPage,
         props: true,
       },
       {
         path: "/order-planning",
+        name: "Schedule Installation",
         component: OrderPlanningPage,
         props: true,
       },
       {
         path: "/order-payment",
+        name: "Order Payment",
         component: OrderPaymentPage,
         props: true,
       },
@@ -61,21 +59,6 @@ const routes = [
         path: "/consulting",
         name: "Consulting",
         component: ConsultingPageComponent, // Asegúrate de que esta sea la página correcta
-        props: true,
-      },
-      {
-        path: "/installation",
-        component: InstallationPreferenceSelectionPage,
-        props: true,
-      },
-      {
-        path: "/order-planning",
-        component: OrderPlanningPage,
-        props: true,
-      },
-      {
-        path: "/order-payment",
-        component: OrderPaymentPage,
         props: true,
       },
       {

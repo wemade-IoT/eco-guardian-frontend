@@ -7,12 +7,27 @@ import {OrderRequest} from "../../domain/order-request.ts";
 const orderService = new OrderService();
 const orderAssembler = new OrderAssembler();
 
-export const useOrderStore = defineStore("plant",{
+export const useOrderStore = defineStore("order",{
     state: () => ({
         order: OrderResponse,
         orders: [] as OrderResponse[],
+        // Estado para crear nueva orden
+        // Se va agregando paso a paso cada valor
+        newOrder: {} as OrderRequest,
     }),
+    getters: {
+        getSelectedInstallationDateTime: (state) => {
+            if (!state.newOrder.installationDate || state.newOrder.installationDate === null) {
+                return null;
+            }
+            return state.newOrder.installationDate;
+        },
+        isOrderDataComplete: (state) => {
+            return state.newOrder.installationDate !== null;
+        }
+    },
     actions: {
+        // Acciones existentes
         async createOrder(request: OrderRequest) {
             await orderService.createOrder(request).then(() => {
                 this.getOrdersByUserId(request.consumerId);
@@ -28,5 +43,18 @@ export const useOrderStore = defineStore("plant",{
             await orderService.updateOrder(orderId, request);
             await this.getOrdersByUserId(request.consumerId);
         },
+
+        // Nuevas acciones para manejar la creación de orden
+        setInstallationDate(date: Date) {
+            this.newOrder.installationDate = date;
+        },
+
+        setAction(action: string) {
+            this.newOrder.action = action;
+        },
+
+        clearNewOrder() {
+            this.newOrder = {} as OrderRequest;
+        }
     }
 })

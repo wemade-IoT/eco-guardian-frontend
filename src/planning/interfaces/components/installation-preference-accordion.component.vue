@@ -5,6 +5,7 @@ import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
 import Button from 'primevue/button';
 import { useRouter } from 'vue-router';
+import { useOrderStore } from '../stores/order-store';
 
 const router = useRouter();
 
@@ -13,12 +14,16 @@ const router = useRouter();
 const handleAssitedInstallation = () => {
   // Navigate to the order planning page for assisted installation
   console.log('Assisted installation selected');
+
+  useOrderStore().setAction('AssistedInstallation');
+
   router.push('/order-planning');
 };
 
 const handleSelfInstallation = () => {
   // Navigate to the order planning page for self installation
   console.log('Self installation selected');
+  useOrderStore().setAction('SelfInstallation');
   router.push('/order-planning');
 };
 

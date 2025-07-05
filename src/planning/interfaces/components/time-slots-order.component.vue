@@ -1,31 +1,38 @@
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits } from 'vue';
+import { ref, watch, defineProps, defineEmits, onMounted } from 'vue';
 
 const props = defineProps<{ modelValue: number }>();
 const emit = defineEmits(['update:modelValue']);
 
-const timeSlots = [
-  '9:00 am - 10:00 am',
-  '10:00 am - 11:00 am',
-  '11:00 am - 12:00 pm',
-  '12:00 pm - 1:00 pm',
-  '1:00 pm - 2:00 pm',
-  '2:00 pm - 3:00 pm',
-  '3:00 pm - 4:00 pm',
-];
 
-const selectedSlot = ref(props.modelValue ?? 0);
+// Estos Timeslots ahora usan la hora como key (formato 24h) y el string como value
+const timeSlots = {
+  9 : '09:00 - 10:00',
+  10: '10:00 - 11:00',
+  11: '11:00 - 12:00',
+  12: '12:00 - 1:00',
+  13: '1:00 - 2:00',
+  14: '2:00 - 3:00',
+  15: '3:00 - 4:00',
+  16: '4:00 - 5:00',
+};
 
-function selectSlot(idx: number) {
-  selectedSlot.value = idx;
+const selectedSlot = ref(props.modelValue || 9); // Default a las 9 AM
+
+function selectSlot(hour: number) {
+  selectedSlot.value = hour;
 }
 
+// Sincronizar con el store cuando cambie el slot
 watch(selectedSlot, (val) => {
   emit('update:modelValue', val);
 });
+
+// Sincronizar con props
 watch(() => props.modelValue, (val) => {
   selectedSlot.value = val;
 });
+
 </script>
 
 <template>
@@ -37,23 +44,23 @@ watch(() => props.modelValue, (val) => {
     
     <div class="slots-grid">
       <div
-        v-for="(slot, idx) in timeSlots"
-        :key="slot"
+        v-for="(slot, hour) in timeSlots"
+        :key="hour"
         class="time-slot-card"
-        :class="{ 'selected': selectedSlot === idx }"
-        @click="selectSlot(idx)"
+        :class="{ 'selected': selectedSlot === Number(hour) }"
+        @click="selectSlot(Number(hour))"
       >
         <div class="slot-content">
           <div class="radio-wrapper">
             <input
               type="radio"
-              :id="`slot-${idx}`"
-              :value="idx"
+              :id="`slot-${hour}`"
+              :value="hour"
               v-model="selectedSlot"
               class="radio-input"
             />
             <div class="radio-custom">
-              <div class="radio-dot" v-if="selectedSlot === idx"></div>
+              <div class="radio-dot" v-if="selectedSlot === Number(hour)"></div>
             </div>
           </div>
           
@@ -64,7 +71,7 @@ watch(() => props.modelValue, (val) => {
           
           <div class="slot-indicator">
             <svg 
-              v-if="selectedSlot === idx" 
+              v-if="selectedSlot === Number(hour)" 
               class="check-icon" 
               viewBox="0 0 20 20" 
               fill="currentColor"
@@ -81,23 +88,27 @@ watch(() => props.modelValue, (val) => {
 <style scoped>
 .time-slot-picker {
   width: 100%;
-  margin: 0 auto;
-  padding: 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex:1;
+  padding: 1rem;
   background-color: white;
   border-radius: 16px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .header {
+  display: flex;
+  flex-direction: column;
   text-align: start;
-  margin-bottom: 2rem;
+  align-items: start;
 }
 
 .title {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #1f2937;
-  margin-bottom: 0.5rem;
   background: linear-gradient(135deg, #426138 0%, #54D12B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -111,17 +122,21 @@ watch(() => props.modelValue, (val) => {
 }
 
 .slots-grid {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  justify-content: space-between;
+  overflow: wrap;
 }
 
 .time-slot-card {
   background: white;
   border: 2px solid #e5e7eb;
   border-radius: 12px;
-  padding: 1rem;
+  padding: 0.5rem;
+  width: 45%;
   cursor: pointer;
+  display: flex;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -216,7 +231,7 @@ watch(() => props.modelValue, (val) => {
 }
 
 .slot-time {
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #1f2937;
   transition: color 0.3s ease;
@@ -244,7 +259,7 @@ watch(() => props.modelValue, (val) => {
   flex-shrink: 0;
   width: 24px;
   height: 24px;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
 }
@@ -259,6 +274,7 @@ watch(() => props.modelValue, (val) => {
 
 @keyframes checkScale {
   to {
+
     transform: scale(1);
   }
 }

@@ -5,6 +5,7 @@ export class OrderService extends HttpService{
         return await this.http.get(`orders?userId=${userId}`);
     }
 
+    //Orders is always used for plant installation...
     async createOrder(request: any): Promise<boolean> {
         try {
             const response = await this.http.post("orders", request);
