@@ -1,28 +1,36 @@
 <template>
-  <Dialog :visible="visible" @update:visible="val => emit('update:visible', val)" modal header="Edit Profile" :style="{ width: '400px' }" @hide="onClose">
-    <form @submit.prevent="onSubmit" class="flex flex-col gap-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-        <InputText v-model="form.name" class="w-full" required />
+  <Dialog :visible="visible" @update:visible="val => emit('update:visible', val)" modal header="Edit Profile"
+    :style="{ width: '420px', maxWidth: '95vw', padding: 0 }" @hide="onClose" class="custom-profile-dialog">
+    <form @submit.prevent="onSubmit" class="flex flex-col gap-5 p-6">
+      <div class="flex flex-col items-center gap-2">
+        <div class="relative group">
+          <img :src="avatarPreview || '/placeholder-avatar.jpg'" alt="Avatar Preview"
+            class="w-20 h-20 rounded-full object-cover border-2 border-emerald-200 shadow" />
+          <label class="absolute bottom-0 right-0 bg-emerald-600 text-white rounded-full p-2 cursor-pointer shadow-lg hover:bg-emerald-700 transition-all flex items-center justify-center"
+            style="width: 2.5rem; height: 2.5rem;">
+            <i class="pi pi-camera text-base"></i>
+            <input type="file" accept="image/*" @change="onFileChange" class="hidden" />
+          </label>
+        </div>
+        <span class="text-xs text-gray-500">Upload a new profile photo</span>
       </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-        <InputText v-model="form.lastName" class="w-full" required />
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
-        <InputText v-model="form.address" class="w-full" required />
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Avatar</label>
-        <input type="file" accept="image/*" @change="onFileChange" class="w-full" />
-        <div v-if="avatarPreview" class="mt-2">
-          <img :src="avatarPreview" alt="Avatar Preview" class="w-16 h-16 rounded-full object-cover border" />
+      <div class="flex flex-col gap-3">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <InputText v-model="form.name" class="w-full" required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+          <InputText v-model="form.lastName" class="w-full" required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+          <InputText v-model="form.address" class="w-full" required />
         </div>
       </div>
-      <div v-if="errorMessage" class="text-red-600 text-sm mb-2">{{ errorMessage }}</div>
+      <div v-if="errorMessage" class="text-red-600 text-sm mb-2 text-center">{{ errorMessage }}</div>
       <div class="flex justify-end gap-2 mt-4">
-        <Button label="Cancel" type="button" severity="secondary" @click="onClose" />
+        <Button label="Cancel" type="button" severity="secondary" @click="onClose" outlined />
         <Button label="Save" type="submit" :loading="loading" />
       </div>
     </form>
@@ -109,3 +117,21 @@ async function onSubmit() {
   }
 }
 </script>
+
+<style scoped>
+.custom-profile-dialog .p-dialog-header {
+  display: none !important;
+}
+.custom-profile-dialog .p-dialog-content {
+  padding: 0 !important;
+}
+@media (max-width: 600px) {
+  .custom-profile-dialog form {
+    padding: 1rem !important;
+  }
+  .custom-profile-dialog .w-20 {
+    width: 4.5rem !important;
+    height: 4.5rem !important;
+  }
+}
+</style>
