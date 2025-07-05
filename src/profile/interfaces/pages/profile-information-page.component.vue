@@ -1,9 +1,9 @@
 <template>
   <div class="min-h-screen pt-5">
     <h2 class="text-xl font-semibold mb-4 text-gray-800">Your Account Details</h2>
-    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,500px)_1fr] gap-6 mx-auto">
+    <div class="profile-grid grid grid-cols-1 lg:grid-cols-[minmax(0,500px)_1fr] gap-6 mx-auto flex-wrap lg:flex-nowrap">
       <!-- Profile & Subscription Column -->
-      <div class="flex flex-col gap-6 w-full max-w-[500px]">
+      <div class="flex flex-col gap-6 w-full max-w-[500px] flex-shrink-0">
         <!-- Profile Card -->
         <div class="bg-white rounded-2xl shadow border border-gray-200 p-7 flex flex-col gap-6">
           <div class="flex items-center gap-6">
@@ -33,7 +33,8 @@
         </div>
         <!-- Subscription Card -->
         <div
-          class="bg-gradient-to-br from-emerald-50 to-amber-50 rounded-2xl shadow border border-gray-200 p-7 flex flex-col gap-6">
+          class="bg-gradient-to-br from-emerald-50 to-amber-50 rounded-2xl shadow border border-gray-200 p-7 flex flex-col gap-6"
+        >
           <div class="flex items-center gap-4 mb-2">
             <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2"
               viewBox="0 0 24 24">
@@ -59,7 +60,8 @@
                 class="inline-block ml-1 px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-semibold text-xs">Active</span>
             </div>
           </div>
-          <div class="bg-white border border-amber-200 rounded-xl p-5 mt-2 flex flex-col gap-2 shadow-sm">
+          <div v-if="planName === 'Domestic'"
+            class="bg-white border border-amber-200 rounded-xl p-5 mt-2 flex flex-col gap-2 shadow-sm">
             <div class="flex items-center gap-2 mb-1">
               <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 12H9v-2h2v2zm0-4H9V6h2v4z" />
@@ -76,30 +78,89 @@
               now</button>
           </div>
         </div>
+        <!-- Notifications Widget (only if not Domestic) -->
+        <div v-if="planName !== 'Domestic'" class="bg-white rounded-2xl shadow border border-gray-200 p-5 flex flex-col gap-3 max-h-72 overflow-y-auto min-h-[120px]">
+          <div class="flex items-center gap-2 mb-2">
+            <i class="pi pi-bell text-emerald-600 text-lg"></i>
+            <h4 class="text-base font-semibold text-gray-800">Notifications</h4>
+          </div>
+          <div v-if="notifications.length === 0" class="text-gray-400 text-sm text-center py-4">No notifications</div>
+          <div v-else class="flex flex-col gap-2">
+            <div v-for="n in notifications" :key="n.id" class="border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 flex flex-col">
+              <span class="font-medium text-gray-700 text-sm truncate">{{ n.title }}</span>
+              <span class="text-xs text-gray-500 truncate">{{ n.subject }}</span>
+              <span class="text-[10px] text-gray-400 mt-1">{{ formatDate(n.createdAt) }}</span>
+            </div>
+          </div>
+        </div>
       </div>
       <!-- Payment History Column -->
-      <div class="w-full">
+      <div class="w-full flex-shrink-0">
         <div class="bg-white rounded-2xl shadow border border-gray-200 p-7">
           <h3 class="text-xl font-bold mb-6 text-gray-800">Payment History</h3>
-          <DataTable :value="payments" class="p-datatable-sm custom-datatable" :rows="5" paginator
-            responsiveLayout="scroll">
-            <Column field="paymentIntentId" header="PaymentIntentID" class="min-w-[120px]" />
-            <Column field="paymentMethodId" header="Payment Method" class="min-w-[120px]" />
-            <Column field="amount" header="Amount" class="min-w-[80px]" />
-            <Column field="currency" header="Currency" class="min-w-[80px]" />
-            <Column field="paymentStatus" header="Status" class="min-w-[100px]" />
-            <Column field="referenceId" header="Reference ID" class="min-w-[100px]" />
-            <Column field="referenceType" header="Type" class="min-w-[80px]" />
-            <Column header="Actions" class="min-w-[80px] text-center">
-              <template #body="{ data }">
-                <button
-                  class="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors duration-200 border border-blue-200 hover:border-blue-300 mx-auto"
-                  title="View Details" @click="console.log('View details for:', data.paymentIntentId)">
-                  <i class="pi pi-eye text-base"></i>
-                </button>
-              </template>
-            </Column>
-          </DataTable>
+          <!-- Desktop Table -->
+          <div class="responsive-table-wrapper hidden sm:block">
+            <DataTable :value="payments" class="p-datatable-sm custom-datatable min-w-[600px]" :rows="5" paginator
+              responsiveLayout="scroll">
+              <Column field="paymentIntentId" header="PaymentIntentID" class="min-w-[120px]" />
+              <Column field="paymentMethodId" header="Payment Method" class="min-w-[120px]" />
+              <Column field="amount" header="Amount" class="min-w-[80px]" />
+              <Column field="currency" header="Currency" class="min-w-[80px]" />
+              <Column field="paymentStatus" header="Status" class="min-w-[100px]" />
+              <Column field="referenceId" header="Reference ID" class="min-w-[100px]" />
+              <Column field="referenceType" header="Type" class="min-w-[80px]" />
+              <Column header="Actions" class="min-w-[80px] text-center">
+                <template #body="{ data }">
+                  <button
+                    class="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors duration-200 border border-blue-200 hover:border-blue-300 mx-auto"
+                    title="View Details" @click="console.log('View details for:', data.paymentIntentId)">
+                    <i class="pi pi-eye text-base"></i>
+                  </button>
+                </template>
+              </Column>
+            </DataTable>
+          </div>
+          <!-- Mobile Card List -->
+          <div class="sm:hidden flex flex-col gap-4">
+            <div v-for="payment in payments" :key="payment.paymentIntentId" class="border rounded-xl p-4 shadow-sm bg-gray-50">
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-semibold text-gray-700">{{ payment.paymentIntentId }}</span>
+                <span class="text-xs px-2 py-0.5 rounded font-semibold"
+                  :class="{
+                    'bg-emerald-100 text-emerald-700': payment.paymentStatus === 'Succeeded',
+                    'bg-yellow-100 text-yellow-700': payment.paymentStatus === 'Pending',
+                    'bg-red-100 text-red-700': payment.paymentStatus === 'Failed',
+                    'bg-gray-100 text-gray-700': !['Succeeded','Pending','Failed'].includes(payment.paymentStatus)
+                  }"
+                >{{ payment.paymentStatus }}</span>
+              </div>
+              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Method:</span> {{ payment.paymentMethodId }}</div>
+              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Amount:</span> ${{ (payment.amount/100).toFixed(2) }}</div>
+              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Currency:</span> {{ payment.currency }}</div>
+              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Reference ID:</span> {{ payment.referenceId }}</div>
+              <div class="text-sm text-gray-600 mb-2"><span class="font-medium">Type:</span> {{ payment.referenceType }}</div>
+              <button
+                class="flex items-center gap-2 text-blue-600 text-xs font-semibold hover:underline mt-1"
+                @click="console.log('View details for:', payment.paymentIntentId)">
+                <i class="pi pi-eye"></i> View Details
+              </button>
+            </div>
+          </div>
+          <!-- Notifications Widget (if Domestic, show here below table) -->
+          <div v-if="planName === 'Domestic'" class="mt-8 bg-white rounded-2xl shadow border border-gray-200 p-5 flex flex-col gap-3 max-h-72 overflow-y-auto min-h-[120px]">
+            <div class="flex items-center gap-2 mb-2">
+              <i class="pi pi-bell text-emerald-600 text-lg"></i>
+              <h4 class="text-base font-semibold text-gray-800">Notifications</h4>
+            </div>
+            <div v-if="notifications.length === 0" class="text-gray-400 text-sm text-center py-4">No notifications</div>
+            <div v-else class="flex flex-col gap-2">
+              <div v-for="n in notifications" :key="n.id" class="border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 flex flex-col">
+                <span class="font-medium text-gray-700 text-sm truncate">{{ n.title }}</span>
+                <span class="text-xs text-gray-500 truncate">{{ n.subject }}</span>
+                <span class="text-[10px] text-gray-400 mt-1">{{ formatDate(n.createdAt) }}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -113,12 +174,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, h } from 'vue';
+import { ref, onMounted, computed, h, watch } from 'vue';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import { ProfileStore } from '../store/profile-store';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import EditProfileDialog from '../components/edit-profile-dialog.component.vue';
+import { NotificationResponse } from '../../domain/notification-response';
+import axios from 'axios';
 
 const authStore = useAuthStore();
 const profileStore = ProfileStore();
@@ -133,12 +196,6 @@ const planNames = {
 
 const profile = computed(() => profileStore.profile);
 const planName = computed(() => planNames[profile.value?.subscriptionId] || 'Unknown');
-
-onMounted(async () => {
-  if (authStore.user && authStore.user.email) {
-    await profileStore.getProfileByEmail(authStore.user.email);
-  }
-});
 
 const payments = ref([
   {
@@ -183,14 +240,57 @@ const payments = ref([
   }
 ])
 
+// Remove TS generic from ref for Vue SFC compatibility
+const notifications = ref([]);
+
+async function fetchNotifications() {
+  if (!profile.value?.id) return;
+  try {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/notifications`, {
+      params: { profileId: profile.value.id }
+    });
+    notifications.value = res.data.map(function(n) {
+      return {
+        id: n.id,
+        title: n.title,
+        subject: n.subject,
+        createdAt: n.createdAt,
+        profileId: n.profileId
+      };
+    });
+  } catch (e) {
+    notifications.value = [];
+  }
+}
+
+onMounted(async () => {
+  if (authStore.user && authStore.user.email) {
+    await profileStore.getProfileByEmail(authStore.user.email);
+    await fetchNotifications();
+  }
+});
+
+watch(profile, async (val) => {
+  if (val?.id) await fetchNotifications();
+});
+
 const showEditDialog = ref(false);
 
 function handleEditProfile() {
   showEditDialog.value = true;
 }
 
-function handleProfileUpdated() {
-  // Optionally reload profile or show a toast
+async function handleProfileUpdated() {
+  // Reload profile after update to refresh avatar and info
+  if (authStore.user && authStore.user.email) {
+    await profileStore.getProfileByEmail(authStore.user.email);
+  }
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '';
+  return date.toLocaleString();
 }
 
 function amountTemplate(row) {
@@ -285,5 +385,70 @@ function actionTemplate(row) {
 
 :deep(.p-datatable .p-datatable-tbody > tr) {
   transition: background-color 0.2s ease !important;
+}
+
+.profile-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-grid > div {
+  min-width: 0;
+}
+
+.bg-white, .bg-gradient-to-br {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 1024px) {
+  .profile-grid {
+    display: grid;
+    grid-template-columns: minmax(0,500px) 1fr;
+    flex-direction: unset;
+  }
+}
+
+.responsive-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.custom-datatable {
+  min-width: 600px;
+}
+
+@media (max-width: 1024px) {
+  .profile-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .max-w-[500px] {
+    max-width: 100% !important;
+  }
+  .responsive-table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+  }
+  .custom-datatable {
+    min-width: 600px;
+  }
+}
+@media (max-width: 640px) {
+  .p-7 {
+    padding: 1.25rem !important;
+  }
+  .rounded-2xl {
+    border-radius: 1rem !important;
+  }
+  .shadow {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07) !important;
+  }
+  .flex-col {
+    gap: 1rem !important;
+  }
+  .custom-datatable {
+    min-width: 480px;
+  }
 }
 </style>
