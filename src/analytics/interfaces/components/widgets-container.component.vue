@@ -22,6 +22,7 @@ import { ref, onMounted } from 'vue';
 import { AnalyticsService } from '../../infrastructure/services/analytics.service';
 import WidgetCard from './widget-card.component.vue';
 import { usePlantStore } from '../../../monitoring/interfaces/stores/plant-store';
+import { useDeviceStore } from '../../../inventory/stores/device-store';
 
 const widgets = ref<any[]>([]);
 const analyticsService = new AnalyticsService();
@@ -59,7 +60,7 @@ Descriptions
 
 onMounted(async () => {
   try {
-    const data = await analyticsService.getWidgetAnalytics(1);
+    const data = await analyticsService.getWidgetAnalytics(useDeviceStore().getSelectedDeviceId);
     widgets.value = data.metrics;
     // Agregamos Plant Type y Cuando se agrego
     widgets.value.push({

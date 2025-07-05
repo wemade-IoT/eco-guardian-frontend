@@ -2,6 +2,7 @@ import {defineStore} from "pinia";
 import {PlantService} from "../../infrastructure/services/plant.service.ts";
 import {PlantResponse} from "../../domain/plant-response.ts";
 import {PlantAssembler} from "../../domain/plant-assembler.ts";
+import { useDeviceStore } from "../../../inventory/stores/device-store.ts";
 
 //This vew should also reference the deviceService
 
@@ -11,18 +12,36 @@ export const usePlantStore = defineStore("plant", {
         plant: null as PlantResponse | null,
         plants: [] as PlantResponse[],
     }),
+    getters:{
+        getSelectedPlantId: (state) => {
+            return state.plant?.id || null; // Devuelve null si no hay planta seleccionada
+        }
+    },
+
     actions: {
         async createPlant(plantRequest:any){
             // Pasar el request directamente - el servicio maneja el mapeo
             await plantService.createPlant(plantRequest).then(()=> {
                  this.getPlantsByUserId(plantRequest.userId);
             });
-        },
 
-        async getPlantsByUserId(userId: number){
+        },
+        async getPlantsByUserId(userId: number) {
             const response = await plantService.getPlantsByUserId(userId);
             console.log("Plants fetched:", response.data);
-            return this.plants= response.data.map((plant: any) => PlantAssembler.toResponse(plant));
+
+            // Map the response to PlantResponse[]
+            const plants = response.data.map((plant: any) => PlantAssembler.toResponse(plant));
+            this.plants = plants;
+
+            // Select the last plant if any exist
+            if (plants.length > 0) {
+            this.selectPlant(plants[plants.length - 1]);
+            } else {
+            this.plant = null;
+            }
+
+            return this.plants;
         },
 
         async getPlantById(plantId: number) {
@@ -33,7 +52,12 @@ export const usePlantStore = defineStore("plant", {
 
         // Método optimizado para seleccionar una planta de la lista existente
         selectPlant(plant: PlantResponse) {
+            console.log("Plant selected:", plant);
             this.plant = plant;
+            //Selecciona el dispositivo también si es necesario
+            useDeviceStore().getDevicesByPlantId(plant.id).then(() => {
+                console.log("Devices loaded for selected plant:", useDeviceStore().selectedDevice);
+            });
         },
 
         // Método para obtener datos frescos solo cuando sea necesario

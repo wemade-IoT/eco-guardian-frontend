@@ -192,14 +192,15 @@ async function registerUser() {
 async function registerDevice() {
   
     console.log('Starting device registration process...');
-
-
+    // The register process is done before the payment
+    // This is mainly because if the payment fails the order status remains in pending
+    // and we can retry the payment later
 
 }
 
 
 function goToLogin() {
-  //Ys se autentica en el proceso de creacion de cuenta y perfil
+  //Ya q se autentica en el proceso de creacion de cuenta y perfil
   //así que no es necesario redirigir a login, sino a home, en casi falle deberia redirigir a la pagina de elegir plan
   router.push('/home');
 }

@@ -27,6 +27,7 @@ import type {PeriodsValue} from "../../../public/utils/types/chart.ts";
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store.ts';
 import { metricData } from '../../domain/data-response.ts';
 import { usePlantStore } from '../../../monitoring/interfaces/stores/plant-store.ts';
+import { useDeviceStore } from '../../../inventory/stores/device-store.ts';
 
 const options = [
   { label: 'By Hours', value: 'hourly' },
@@ -70,7 +71,10 @@ const getAnalytics = async () => {
       return;
     }
     //We need to get the deviceId from the device Service once its implemented
-    const data = await analyticsService.getAnalytics(plantStore.plant?.id, time); //for now always 1, later will be dynamic
+
+    console.log('Selected device ID:', useDeviceStore().getSelectedDeviceId);
+
+    const data = await analyticsService.getAnalytics(useDeviceStore().getSelectedDeviceId, time); //for now always 1, later will be dynamic
     // Process the analytics data for Chart.js
     const processedData = processAnalyticsForChart(data);
     console.log('Processed data for chart:', processedData);

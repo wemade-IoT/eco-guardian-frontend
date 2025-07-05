@@ -143,6 +143,13 @@
           </div>
         </div>
 
+        <!-- Payment will be handled via dialog -->
+        <div class="mb-4">
+          <p class="text-sm text-gray-600 text-center">
+            Los datos de pago se ingresarán en la siguiente pantalla
+          </p>
+        </div>
+
         <!-- VAT Notice -->
         <div class="flex items-start gap-2 p-3 bg-blue-50 rounded-lg mb-4">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"
@@ -190,19 +197,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onBeforeMount, inject, onMounted, toRaw } from 'vue'
-import ProgressSpinner from 'primevue/progressspinner'
-import { simulateRequest } from '../../../public/utils/helpers/sleep'
-import { createModal } from '../../../public/utils/helpers/create-modal'
-import CustomDialog from '../../../shared/components/ui/custom-dialog.component.vue';
-import { useDialog } from 'primevue';
+import { ref, reactive } from 'vue'
+// Unused imports removed
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import { usePaymentStore } from '../../../payment/interfaces/store/payment-store';
+// PaymentAssembler removed - not needed for dialog approach
+// ProfileStore import removed - not needed
+// Stripe Elements removed - using PaymentCardForm dialog instead
+import { convertAmountByCountry, getCurrencyByCountry } from '../../../public/utils/helpers/currency';
+import type { CountryName } from '../../../public/utils/interfaces/country';
+import PaymentCardFormComponent from '../../../payment/interfaces/components/payment-card-form.component.vue';
+import { useDialog } from 'primevue';
 import { PaymentAssembler } from '../../../payment/domain/assembler/payment-assembler';
-import { ProfileStore } from '../../../profile/interfaces/store/profile-store';
-import { StripeElements, StripeElement } from "vue-stripe-js";
-import { loadStripe, type StripeElementsOptionsMode, type StripePaymentElementOptions, } from "@stripe/stripe-js"
-import { convertAmountByCountry, getCountryCodeByName } from '../../../public/utils/helpers/currency';
+import { usePlantStore } from '../../../monitoring/interfaces/stores/plant-store';
+import { DeviceService } from '../../../inventory/infrastructure/services/device.service';
+// Currency utilities removed - no longer needed
 // Types
 interface ValidationErrors {
   email?: string
@@ -214,165 +223,143 @@ const email = ref<string>('')
 const country = ref<string>('')
 const isLoading = ref<boolean>(false)
 const errors = reactive<ValidationErrors>({})
-const dialog = useDialog();
 
-const elementsComponent = ref();
-const paymentComponent = ref();
-const processing = ref(false);
 const authStore = useAuthStore();
 const paymentStore = usePaymentStore();
-const paymentAssembler = new PaymentAssembler();
-const profileStore = ProfileStore();
-const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-const dialogRef = inject<any>('dialogRef');
-const dialogData = dialogRef.value.data;
-const convertedAmount = ref<number | null>(null);
+const dialog = useDialog();
 
+// Stripe initialization removed - using PaymentCardForm dialog instead
 
-
-const stripeLoaded = ref(false);
-const stripeOptions: StripeElementsOptionsMode = {
-  clientSecret: dialogData.clientSecret,
-};
-console.log(dialogData.amount)
-const elementsOptions = ref<StripeElementsOptionsMode>({
-  mode: "payment",
-  amount: dialogData.amount * 100,
-  currency: dialogData.currency || 'usd',
-  appearance: {
-    theme: "flat",
-  },
-})
-
-const paymentElementOptions = ref<StripePaymentElementOptions>({
-  readOnly: false,
-  layout: "tabs",
-  defaultValues: {
-    billingDetails: {
-      name: dialogData?.name || 'GUEST',
-      address: {
-        country: getCountryCodeByName(dialogData?.countryName) || 'US',
-      }
-    }
-  },
-  fields: {
-    billingDetails: {
-      address: {
-        country: 'auto'
-      }
-    },
-  }
-})
-
-onBeforeMount(async () => {
-  await loadStripe(stripeKey);
-  stripeLoaded.value = true;
-});
-
-onMounted(async () => {
-  try {
-    convertedAmount.value = await convertAmountByCountry(
-      dialogData?.amount,
-      dialogData?.countryName,
-    );
-  } catch (error) {
-    convertedAmount.value = 0;
-  }
-});
-
-// Validation functions
-/* const validateEmail = (email: string): string | null => {
-  if (!email.trim()) {
-    return 'El email es requerido'
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(email)) {
-    return 'Por favor ingresa un email válido'
-  }
-
-  return null
-}
-
-const validateCountry = (country: string): string | null => {
-  if (!country.trim()) {
-    return 'Por favor selecciona un país'
-  }
-
-  return null
-}
-
-const validateForm = (): boolean => {
-  Object.keys(errors).forEach(key => {
-    delete errors[key as keyof ValidationErrors]
-  })
-
-  const emailError = validateEmail(email.value)
-  if (emailError) {
-    errors.email = emailError
-  }
-
-  const countryError = validateCountry(country.value)
-  if (countryError) {
-    errors.country = countryError
-  }
-
-  return Object.keys(errors).length === 0
-} */
-
+// Payment intent creation moved to handleSubmit function
 
 async function handleSubmit() {
-  //This submit handles payment, maybe emit in further iteraions to separte the payment logic from the registration logic
-  const stripeInstance = await elementsComponent.value?.instance;
-  const elements = await elementsComponent.value?.elements;
+  isLoading.value = true;
 
-  if (!stripeInstance) {
-    console.error("Stripe instance not loaded");
-    return;
-  }
+  try {
+    // Clear previous errors
+    errors.email = '';
+    errors.country = '';
 
-  const paymentRequest = paymentAssembler.toRequest({
-    paymentIntentId: toRaw(dialogData)?.clientSecret || '',
-    paymentMethodId: "1",
-    amount: dialogData?.amount || 0,
-    currency: dialogData?.currency || 'usd',
-    paymentStatus: 'completed', // Cambiado a completed ya que el pago fue validado
-    userId: useAuthStore().id || 0,
-    referenceId: 0,
-  });
+    // Validate email and country
+    if (!email.value.trim()) {
+      errors.email = 'El email es requerido';
+      isLoading.value = false;
+      return;
+    }
+    if (!country.value) {
+      errors.country = 'Por favor selecciona un país';
+      isLoading.value = false;
+      return;
+    }
 
-  console.log("paymentRequest", paymentRequest);
+    // Map country code to CountryName
+    const countryNameMap: Record<string, CountryName> = {
+      'PE': 'Peru',
+      'CO': 'Peru', // Using Peru as fallback for Colombia
+      'MX': 'United States', // Using US as fallback for Mexico
+      'AR': 'Peru', // Using Peru as fallback for Argentina
+      'CL': 'Peru', // Using Peru as fallback for Chile
+      'US': 'United States',
+      'ES': 'Spain',
+      'DE': 'Germany',
+    };
 
-  await paymentStore.createPayment(paymentRequest);
+    const countryName = countryNameMap[country.value] || 'Peru';
 
-  await elements.submit();
-  const { error } = await stripeInstance.confirmPayment({
-    elements,
-    clientSecret: dialogData.clientSecret,
-    confirmParams: {
-      return_url: `${import.meta.env.VITE_BASE_URL}payment-succeded`,
-      payment_method_data: {
-        billing_details: {
-          name: authStore.userData?.name || 'GUEST',
-          email: dialogData?.email,
-          address: {
-            country: getCountryCodeByName(dialogData?.countryName) || 'US',
-          },
-        },
+    // Calculate amount based on country (convert if needed)
+    const orderAmount = 36; // Fixed order amount
+    const convertedAmount = await convertAmountByCountry(orderAmount, countryName);
+
+    console.log('Converted Amount:', convertedAmount);
+
+    // Create payment intent
+    const response = await paymentStore.createPaymentIntent({
+      amount: convertedAmount,
+      currency: getCurrencyByCountry(countryName),
+      paymentMethodId: '',
+    });
+
+    const clientSecret = response?.clientSecret || '';
+
+    // Set payment financial data
+    paymentStore.setPaymentFinancialData(convertedAmount, getCurrencyByCountry(countryName));
+    console.log('Payment Process so Far:', paymentStore.getPaymentRequest);
+
+    // we create the device and payment
+    const paymentAssembler = new PaymentAssembler();
+
+    const paymentData={
+      paymentIntentId: response?.paymentIntentId || '',
+      paymentMethodId: response?.paymentMethodId || '',
+      amount: convertedAmount,
+      currency: getCurrencyByCountry(countryName),
+      paymentStatus: response?.paymentStatus || 'completed',
+      userId: authStore.id || '',
+      referenceId: 2, // Order reference ID (different from subscription)
+    }
+
+    const paymentResponse = await paymentAssembler.toRequest(paymentData);
+
+    console.log('Payment Response:', paymentResponse);
+    paymentStore.createPayment(paymentResponse);
+
+    //We create the device too
+
+    const deviceData = {
+      type: 'EcoGuardianKIT',
+      voltage: 5,
+      plantId: usePlantStore().getSelectedPlantId, // Assuming selectPlant is the ID of the plant
+    };
+
+    //Here the device is created
+    const deviceService = new DeviceService();
+    const deviceResponse = await deviceService.createDevice(deviceData);
+    console.log('Device Response:', deviceResponse);
+
+
+    /*
+    
+    paymentResponse.paymentIntentId,
+      paymentResponse.paymentMethodId,
+      paymentResponse.amount,
+      paymentResponse.currency,
+      paymentResponse.paymentStatus,
+      paymentResponse.userId,
+      paymentResponse.referenceId,
+
+    */
+
+
+
+
+    // Open payment dialog
+    dialog.open(PaymentCardFormComponent, {
+      props: {
+        modal: true,
+        style: { width: "500px" },
+        closable: false,
       },
-    },
-  });
+      data: {
+        firstName: authStore.userData?.name || 'GUEST',
+        lastName: '',
+        userEmail: email.value,
+        userPassword: '',
+        email: email.value,
+        country: countryName,
+        discountCode: '',
+        clientSecret: clientSecret,
+        amount: convertedAmount,
+        currency: getCurrencyByCountry(countryName),
+        countryName: countryName,
+        referenceId: 2, // Order reference ID (different from subscription)
+      }
+    });
 
-  if (error) {
-    console.error("Payment error:", error);
-    dialogRef.value.close();
-    return;
+  } catch (error) {
+    console.error('Error creating payment intent:', error);
+  } finally {
+    isLoading.value = false;
   }
-
-  dialogRef.value.close();
 }
-
-const handleClose = () => {
-  dialogRef.value.close();
-};
 </script>
+

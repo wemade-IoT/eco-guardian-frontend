@@ -10,15 +10,14 @@ export class AnalyticsService extends HttpService {
     try {
       // The mehod returns historic analytics data
       
-      const device = await this.http.get(`devices`,{
-        params: {
-          plantId: plantId,
-        }
-      });
+      console.log("Fetching analytics for plant ID:", plantId, "with time period:", time);
+
+
       
       const response = await this.http.get(`metric-registry`,{
         params: {
-          deviceId: device.data[0].id, // Assuming the first device is the one we want
+          deviceId: plantId, 
+          
           period: time
         }
       });
