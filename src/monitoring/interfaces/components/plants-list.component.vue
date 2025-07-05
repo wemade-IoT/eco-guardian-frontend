@@ -113,6 +113,17 @@ function viewPlantInformation(plant:PlantResponse){
   router.push('/info-panel');
 }
 
+
+function viewPlantInformationCard(plant:PlantResponse){
+  console.log('Viewing plant information card:', plant);
+  plantStore.selectPlant(plant);
+
+
+
+  
+}
+
+
 function onProceedDelete(id:number) {
   isProceed.value = true;
   visible.value = true;
@@ -177,6 +188,7 @@ async function submitForm(updatedValues: any) {
       <plant-card
           v-for="(plant, index) in plants"
           @view="viewPlantInformation(plant)"
+          @viewCard="viewPlantInformationCard(plant)"
           @delete="onProceedDelete(plant.id)"
           @edit="setEditMode(plant)"
           :key="index"
@@ -184,7 +196,8 @@ async function submitForm(updatedValues: any) {
           :type="plant.type"
           :status="plant.wellnessStateId"
           :state="plant.wellnessStateId"
-      />
+          :id="plant.id"
+          />
     </div>
     <div class="add-plant">
       <button

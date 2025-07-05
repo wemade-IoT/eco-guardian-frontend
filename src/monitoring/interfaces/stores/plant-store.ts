@@ -3,6 +3,8 @@ import {PlantService} from "../../infrastructure/services/plant.service.ts";
 import {PlantResponse} from "../../domain/plant-response.ts";
 import {PlantAssembler} from "../../domain/plant-assembler.ts";
 
+//This vew should also reference the deviceService
+
 const plantService = new PlantService();
 export const usePlantStore = defineStore("plant", {
     state:() => ({

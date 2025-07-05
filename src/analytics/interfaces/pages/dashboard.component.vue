@@ -119,6 +119,15 @@ onMounted(() => {
 
 }
 
+.widgets {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+
 
 @media (max-width: 1024px) {
 
@@ -143,7 +152,16 @@ onMounted(() => {
   flex-direction: row;
   width: 100%;
 }
+  
+}
 
+@media (max-width: 1024px) {
+
+
+.tips-container{
+  flex-direction: column;
+  width: 100%;
+}
 }
 
 </style>

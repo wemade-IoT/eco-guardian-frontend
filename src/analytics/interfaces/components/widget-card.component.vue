@@ -11,11 +11,16 @@ defineProps({
 </script>
 
 <template>
-  <div v-tooltip.bottom="description" class="widget-card bg-gray-100 border-[#A4D39A] rounded p-3 flex flex-col">
+  <div v-tooltip.bottom="description" class="widget-card bg-white border border-gray-200 rounded-lg p-4 flex flex-col justify-between h-full">
     
-    <h3 class="text-[1rem] font-semibold text-gray-700"><span> <i :class="icon" class="text-[12px] text-gray-500 mr-1"></i> </span>{{ title }}</h3>
-    <p class="text-[2rem] text-gray-800 font-bold">{{ value }}</p>
-    <p class="text-[0.5rem] text-gray-500">{{ description }}</p>
+    <h3 class="text-sm w-full flex justify-between font-semibold text-gray-700 mb-2">
+      {{ title }} 
+      <span> 
+        <i :class="icon" class="text-lg text-gray-500"></i> 
+      </span>
+    </h3>
+    <p class="text-2xl text-gray-800 font-bold mb-1">{{ value }}</p>
+    <p class="text-xs text-gray-500 leading-tight desc-text">{{ description }}</p>
   </div>
 </template>
 
@@ -24,19 +29,19 @@ defineProps({
 .widget-card {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: 30%;
-  height: 9rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e5e7eb;
+  min-height: 30%;
+  max-height: 40%;
+  max-width: 30%;
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
   transition: all 0.3s ease;
   user-select: none;
 }
 
 .widget-card:hover {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  background-color: #f8f9fa;
-  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 .custom-tooltip {
@@ -47,15 +52,26 @@ defineProps({
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-
-
+/* Responsive design */
 @media (max-width: 1024px) {
-  
   .widget-card {
-    width: 10rem;
-    height: 10rem;
-    min-height: 120px;
+    min-height: 100px;
+    max-height: 120px;
   }
+  .desc-text {
+    display: none; /* Hide description text on smaller screens */
+  } 
 }
+
+@media (max-width: 640px) {
+  .widget-card {
+    max-width: 45%;
+    font-size: 0.9rem;
+  }
+  .desc-text {
+    display: none; /* Hide description text on smaller screens */
+  } 
+}
+
 
 </style>

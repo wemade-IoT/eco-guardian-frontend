@@ -36,12 +36,12 @@ const getIcon = (title: string): string => {
 
 const getValue = (value: number,type: string): string => {
   const valueMap: Record<string, string> = {
-    'Water Consumption': `${value} L`,
-    'Humidity': `${value} %`,
+    'Water Consumption': `${value}L`,
+    'Humidity': `${value}%`,
     'Light': `${value} Lux`,
-    'Temperature': `${value} °C`,
+    'Temperature': `${value}°C`,
     'Plant Type': value.toString(), // Assuming value is a string for Plant Type
-    'Added On': value.toString(), // Assuming value is a date string for Added On
+    'Added On': value.toString()// Format to be 00/00/0000
   };
   return valueMap[type] || "N/A";
 };
@@ -60,12 +60,12 @@ onMounted(async () => {
     // Agregamos Plant Type y Cuando se agrego
     widgets.value.push({
       metricType: 'Plant Type',
-      metricValue: usePlantStore().plant?.type || 'Unknown',
+      metricValue: usePlantStore().plant?.type || 'N/A',
       description: 'Type of plant being monitored'
     });
     widgets.value.push({
       metricType: 'Added On',
-      metricValue: usePlantStore().plant?.createdAt || "N/A",
+      metricValue: usePlantStore().plant?.createdAt.toLocaleDateString('en-GB') || 'N/A',
       description: 'Date when the plant was added'
     });
   } catch (error) {
