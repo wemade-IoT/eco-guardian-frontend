@@ -85,6 +85,19 @@ async function confirmInstallation() {
 
     console.log('Fecha y hora de instalación:', orderStore.getSelectedInstallationDateTime );
 
+    //Aca deberia crearse la orden
+
+
+    //Aca el custom dialog debe darte la opcion de pagar o proceder a tu perfil donde se ve el estadop de tus ordenes (con estado pending due o algo asi)
+    // Entonces si decides continuar se deberia generar una 
+
+    // En la vista de especialista LA vista de KUNI q no esta porque le dije q lo iba a hacer poero el iam roto
+  
+    //EL especialista selecciona una orden y le cambia el estado, al hacer esto se le asigna su id de especialista a la orden
+    //En esa misma vita deberia de haber un boton para probar la conexion con el servidor edge o configurarlo (Osea a donde apunta en la red local.)
+    
+
+
     createModal(
       dialog,
       CustomDialog,

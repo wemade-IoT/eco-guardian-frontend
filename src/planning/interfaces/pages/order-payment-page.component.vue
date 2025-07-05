@@ -295,7 +295,7 @@ async function handleSubmit() {
       currency: getCurrencyByCountry(countryName),
       paymentStatus: response?.paymentStatus || 'completed',
       userId: authStore.id || '',
-      referenceId: 2, // Order reference ID (different from subscription)
+      referenceId: 0, 
     }
 
     const paymentResponse = await paymentAssembler.toRequest(paymentData);
@@ -304,6 +304,9 @@ async function handleSubmit() {
     paymentStore.createPayment(paymentResponse);
 
     //We create the device too
+
+    //Esta logica de device deberia ir cuando se escoge la fecha
+
 
     const deviceData = {
       type: 'EcoGuardianKIT',
@@ -315,20 +318,6 @@ async function handleSubmit() {
     const deviceService = new DeviceService();
     const deviceResponse = await deviceService.createDevice(deviceData);
     console.log('Device Response:', deviceResponse);
-
-
-    /*
-    
-    paymentResponse.paymentIntentId,
-      paymentResponse.paymentMethodId,
-      paymentResponse.amount,
-      paymentResponse.currency,
-      paymentResponse.paymentStatus,
-      paymentResponse.userId,
-      paymentResponse.referenceId,
-
-    */
-
 
 
 
