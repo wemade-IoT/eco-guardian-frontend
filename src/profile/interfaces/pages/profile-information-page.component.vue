@@ -27,8 +27,8 @@
               class="bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-emerald-800 transition">Manage
               Subscription</button>
             <button
-              class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-xs font-semibold border border-gray-300 hover:bg-gray-200 transition">Edit
-              Profile</button>
+              class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-xs font-semibold border border-gray-300 hover:bg-gray-200 transition"
+              @click="handleEditProfile">Edit Profile</button>
           </div>
         </div>
         <!-- Subscription Card -->
@@ -103,15 +103,22 @@
         </div>
       </div>
     </div>
+    <EditProfileDialog
+      :visible="showEditDialog"
+      :profile="profile"
+      @update:visible="showEditDialog = $event"
+      @updated="handleProfileUpdated"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, h } from 'vue';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import { ProfileStore } from '../store/profile-store';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import EditProfileDialog from '../components/edit-profile-dialog.component.vue';
 
 const authStore = useAuthStore();
 const profileStore = ProfileStore();
@@ -119,7 +126,7 @@ const profileStore = ProfileStore();
 const planNames = {
   1: 'Domestic',
   2: 'Pro',
-  3: 'Enterprise',
+  3: 'Business',
   4: 'Specialist',
   5: 'Admin',
 };
@@ -175,6 +182,16 @@ const payments = ref([
     referenceType: 'Order'
   }
 ])
+
+const showEditDialog = ref(false);
+
+function handleEditProfile() {
+  showEditDialog.value = true;
+}
+
+function handleProfileUpdated() {
+  // Optionally reload profile or show a toast
+}
 
 function amountTemplate(row) {
   return `$${(row.amount / 100).toFixed(2)}`
