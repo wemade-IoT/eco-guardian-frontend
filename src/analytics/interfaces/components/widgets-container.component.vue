@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { AnalyticsService } from '../../infrastructure/services/analytics.service';
 import WidgetCard from './widget-card.component.vue';
 import { usePlantStore } from '../../../monitoring/interfaces/stores/plant-store';
@@ -58,7 +58,7 @@ Descriptions
 
 */
 
-onMounted(async () => {
+const getWidgetAnalytics = async () => {
   try {
     const data = await analyticsService.getWidgetAnalytics(useDeviceStore().getSelectedDeviceId);
     widgets.value = data.metrics;
@@ -76,7 +76,20 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error fetching widget analytics:', error);
   }
+};
+
+onMounted(async () => {
+  await getWidgetAnalytics();
 });
+
+// Watcher to update widgets when device changes
+watch(() => useDeviceStore().getSelectedDeviceId, async (newDeviceId, oldDeviceId) => {
+  console.log('Device ID changed from:', oldDeviceId, 'to:', newDeviceId);
+  widgets.value = []; // Clear previous widgets
+  if (newDeviceId) {
+    await getWidgetAnalytics();
+  }
+}, { immediate: false });
 </script>
 
 <style>

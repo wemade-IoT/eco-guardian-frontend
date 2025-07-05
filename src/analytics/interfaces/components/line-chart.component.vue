@@ -8,7 +8,25 @@
           class="flex flex-row items-center -space-x-2 tracking-wide rounded-md text-sm h-8" />
       </div>
       <div class="mt-1 w-full translate-x-1.5">
-        <Chart class="responsive-trick h-60" type="line" :data="chartData || {}" :options="chartOptions" />
+        <Chart v-if="chartData && chartData.datasets && chartData.datasets.length > 0" 
+               class="responsive-trick h-60" 
+               type="line" 
+               :data="chartData" 
+               :options="chartOptions" />
+        
+        <!-- No data message -->
+        <div v-else class="flex flex-col items-center justify-center h-60 bg-white rounded-lg border border-gray-200">
+          <div class="text-center">
+            <i class="fa fa-solid fa-chart-line text-gray-400 text-4xl mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No hay datos disponibles</h3>
+            <p class="text-sm text-gray-500 mb-1">
+              No se encontraron métricas para esta planta en el período seleccionado.
+            </p>
+            <p class="text-xs text-gray-400">
+              Si acabas de registrar la planta, los datos pueden tardar unos minutos en aparecer.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -68,6 +86,7 @@ const getAnalytics = async () => {
     const plantStore = usePlantStore();
     if (!plantStore.plant) {
       console.error('No plant selected');
+      chartData.value = null;
       return;
     }
     //We need to get the deviceId from the device Service once its implemented
@@ -75,13 +94,30 @@ const getAnalytics = async () => {
     console.log('Selected device ID:', useDeviceStore().getSelectedDeviceId);
 
     const data = await analyticsService.getAnalytics(useDeviceStore().getSelectedDeviceId, time); //for now always 1, later will be dynamic
+    
+    // Check if we have data
+    if (!data || data.length === 0) {
+      console.log('No analytics data available for this plant');
+      chartData.value = null;
+      return;
+    }
+    
     // Process the analytics data for Chart.js
     const processedData = processAnalyticsForChart(data);
     console.log('Processed data for chart:', processedData);
+    
+    // Check if processed data has any datasets with data
+    if (!processedData || !processedData.datasets || processedData.datasets.length === 0) {
+      console.log('No valid datasets after processing');
+      chartData.value = null;
+      return;
+    }
+    
     chartData.value = processedData;
 
   } catch (error) {
     console.error('Error fetching analytics data:', error);
+    chartData.value = null;
   }
 };
 
@@ -94,6 +130,17 @@ watch(selectedOption, async (newValue) => {
   console.log('Selected option changed:', newValue);
   await getAnalytics();
 });
+
+// Watcher to update chartData when device changes
+watch(() => useDeviceStore().getSelectedDeviceId, async (newDeviceId, oldDeviceId) => {
+  console.log('Device ID changed from:', oldDeviceId, 'to:', newDeviceId);
+  if (newDeviceId) {
+    await getAnalytics();
+  }
+  else {
+    chartData.value = null; // Clear chart data if no device is selected
+  }
+}, { immediate: false });
 
 // Function to process analytics data for Chart.js
 const processAnalyticsForChart = (analyticsData: metricData[]) => {
