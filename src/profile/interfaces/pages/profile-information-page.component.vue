@@ -88,7 +88,7 @@
           <div v-else class="flex flex-col gap-2">
             <div v-for="n in notifications" :key="n.id" class="border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 flex flex-col">
               <span class="font-medium text-gray-700 text-sm truncate">{{ n.title }}</span>
-              <span class="text-xs text-gray-500 truncate">{{ n.subject }}</span>
+              <span class="text-xs text-gray-500 truncate">{{ n.subject }} {{ profile?.name }}</span>
               <span class="text-[10px] text-gray-400 mt-1">{{ formatDate(n.createdAt) }}</span>
             </div>
           </div>
@@ -100,31 +100,42 @@
           <h3 class="text-xl font-bold mb-6 text-gray-800">Payment History</h3>
           <!-- Desktop Table -->
           <div class="responsive-table-wrapper hidden sm:block">
-            <DataTable :value="payments" class="p-datatable-sm custom-datatable min-w-[600px]" :rows="5" paginator
-              responsiveLayout="scroll">
-              <Column field="paymentIntentId" header="PaymentIntentID" class="min-w-[120px]" />
-              <Column field="paymentMethodId" header="Payment Method" class="min-w-[120px]" />
-              <Column field="amount" header="Amount" class="min-w-[80px]" />
-              <Column field="currency" header="Currency" class="min-w-[80px]" />
-              <Column field="paymentStatus" header="Status" class="min-w-[100px]" />
-              <Column field="referenceId" header="Reference ID" class="min-w-[100px]" />
-              <Column field="referenceType" header="Type" class="min-w-[80px]" />
-              <Column header="Actions" class="min-w-[80px] text-center">
-                <template #body="{ data }">
-                  <button
-                    class="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors duration-200 border border-blue-200 hover:border-blue-300 mx-auto"
-                    title="View Details" @click="console.log('View details for:', data.paymentIntentId)">
-                    <i class="pi pi-eye text-base"></i>
-                  </button>
-                </template>
-              </Column>
-            </DataTable>
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hour</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr v-for="payment in paginatedPayments" :key="payment.paymentIntentId">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${{ payment.amount }} {{ payment.currency }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <span :class="{
+                      'bg-emerald-100 text-emerald-700': payment.paymentStatus === 'Succeeded',
+                      'bg-yellow-100 text-yellow-700': payment.paymentStatus === 'Pending',
+                      'bg-red-100 text-red-700': payment.paymentStatus === 'Failed',
+                      'bg-gray-100 text-gray-700': !['Succeeded','Pending','Failed'].includes(payment.paymentStatus)
+                    }" class="px-2 py-0.5 rounded font-semibold text-xs">{{ payment.paymentStatus }}</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ formatDateOnly(payment.createdAt) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ formatHourOnly(payment.createdAt) }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="flex justify-end items-center gap-2 mt-4">
+              <button @click="goToPrevPage" :disabled="currentPage === 1" class="px-3 py-1 rounded border text-xs font-semibold bg-gray-50 hover:bg-gray-100 disabled:opacity-50">Previous</button>
+              <span class="text-sm">Page {{ currentPage }} of {{ totalPages }}</span>
+              <button @click="goToNextPage" :disabled="currentPage === totalPages" class="px-3 py-1 rounded border text-xs font-semibold bg-gray-50 hover:bg-gray-100 disabled:opacity-50">Next</button>
+            </div>
           </div>
           <!-- Mobile Card List -->
           <div class="sm:hidden flex flex-col gap-4">
             <div v-for="payment in payments" :key="payment.paymentIntentId" class="border rounded-xl p-4 shadow-sm bg-gray-50">
               <div class="flex justify-between items-center mb-2">
-                <span class="font-semibold text-gray-700">{{ payment.paymentIntentId }}</span>
+                <span class="font-semibold text-gray-700">{{ payment.paymentStatus }}</span>
                 <span class="text-xs px-2 py-0.5 rounded font-semibold"
                   :class="{
                     'bg-emerald-100 text-emerald-700': payment.paymentStatus === 'Succeeded',
@@ -134,16 +145,9 @@
                   }"
                 >{{ payment.paymentStatus }}</span>
               </div>
-              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Method:</span> {{ payment.paymentMethodId }}</div>
-              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Amount:</span> ${{ (payment.amount/100).toFixed(2) }}</div>
-              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Currency:</span> {{ payment.currency }}</div>
-              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Reference ID:</span> {{ payment.referenceId }}</div>
-              <div class="text-sm text-gray-600 mb-2"><span class="font-medium">Type:</span> {{ payment.referenceType }}</div>
-              <button
-                class="flex items-center gap-2 text-blue-600 text-xs font-semibold hover:underline mt-1"
-                @click="console.log('View details for:', payment.paymentIntentId)">
-                <i class="pi pi-eye"></i> View Details
-              </button>
+              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Amount:</span> ${{ (payment.amount).toFixed(2) }} {{ payment.currency }}</div>
+              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Date:</span> {{ formatDateOnly(payment.createdAt) }}</div>
+              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Hour:</span> {{ formatHourOnly(payment.createdAt) }}</div>
             </div>
           </div>
           <!-- Notifications Widget (if Domestic, show here below table) -->
@@ -177,14 +181,13 @@
 import { ref, onMounted, computed, h, watch } from 'vue';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import { ProfileStore } from '../store/profile-store';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
 import EditProfileDialog from '../components/edit-profile-dialog.component.vue';
-import { NotificationResponse } from '../../domain/notification-response';
+import { useNotificationStore } from '../../interfaces/store/notification-store';
 import axios from 'axios';
 
 const authStore = useAuthStore();
 const profileStore = ProfileStore();
+const notificationStore = useNotificationStore();
 
 const planNames = {
   1: 'Domestic',
@@ -196,82 +199,51 @@ const planNames = {
 
 const profile = computed(() => profileStore.profile);
 const planName = computed(() => planNames[profile.value?.subscriptionId] || 'Unknown');
+const notifications = computed(() => notificationStore.notifications);
 
-const payments = ref([
-  {
-    paymentIntentId: 'PAY-20240618-001',
-    paymentMethodId: 'Credit Card',
-    amount: 2500,
-    currency: 'USD',
-    paymentStatus: 'Succeeded',
-    userId: 1,
-    referenceId: 101,
-    referenceType: 'Subscription'
-  },
-  {
-    paymentIntentId: 'PAY-20240618-002',
-    paymentMethodId: 'Credit Card',
-    amount: 1800,
-    currency: 'USD',
-    paymentStatus: 'Succeeded',
-    userId: 1,
-    referenceId: 102,
-    referenceType: 'Order'
-  },
-  {
-    paymentIntentId: 'PAY-20240618-003',
-    paymentMethodId: 'Credit Card',
-    amount: 2200,
-    currency: 'USD',
-    paymentStatus: 'Pending',
-    userId: 1,
-    referenceId: 103,
-    referenceType: 'Order'
-  },
-  {
-    paymentIntentId: 'PAY-20240618-004',
-    paymentMethodId: 'Credit Card',
-    amount: 1500,
-    currency: 'USD',
-    paymentStatus: 'Failed',
-    userId: 1,
-    referenceId: 104,
-    referenceType: 'Order'
-  }
-])
+const payments = ref([]);
+const currentPage = ref(1);
+const pageSize = 5;
 
-// Remove TS generic from ref for Vue SFC compatibility
-const notifications = ref([]);
+const paginatedPayments = computed(() => {
+  const start = (currentPage.value - 1) * pageSize;
+  return payments.value.slice(start, start + pageSize);
+});
 
-async function fetchNotifications() {
-  if (!profile.value?.id) return;
+const totalPages = computed(() => Math.ceil(payments.value.length / pageSize));
+
+function goToPrevPage() {
+  if (currentPage.value > 1) currentPage.value--;
+}
+function goToNextPage() {
+  if (currentPage.value < totalPages.value) currentPage.value++;
+}
+
+async function fetchPayments() {
+  if (!profile.value?.userId) return;
   try {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/notifications`, {
-      params: { profileId: profile.value.id }
-    });
-    notifications.value = res.data.map(function(n) {
-      return {
-        id: n.id,
-        title: n.title,
-        subject: n.subject,
-        createdAt: n.createdAt,
-        profileId: n.profileId
-      };
-    });
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/payments/${profile.value.userId}`);
+    payments.value = res.data || [];
   } catch (e) {
-    notifications.value = [];
+    payments.value = [];
   }
 }
 
 onMounted(async () => {
   if (authStore.user && authStore.user.email) {
     await profileStore.getProfileByEmail(authStore.user.email);
-    await fetchNotifications();
+    if (profile.value?.id) {
+      await notificationStore.getNotifications(profile.value.id);
+    }
+    await fetchPayments();
   }
 });
 
 watch(profile, async (val) => {
-  if (val?.id) await fetchNotifications();
+  if (val?.id) {
+    await notificationStore.getNotifications(val.id);
+    await fetchPayments();
+  }
 });
 
 const showEditDialog = ref(false);
@@ -291,6 +263,18 @@ function formatDate(dateString) {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return '';
   return date.toLocaleString();
+}
+
+function formatDateOnly(dateString) {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '';
+  return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+}
+
+function formatHourOnly(dateString) {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '';
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 }
 
 function amountTemplate(row) {
@@ -358,6 +342,32 @@ function actionTemplate(row) {
       )
     ]
   )
+}
+
+function amountWithCurrencyTemplate(row) {
+  const symbols = { usd: '$', eur: '€', pen: 'S/' };
+  const symbol = symbols[(row.currency || '').toLowerCase()] || (row.currency ? row.currency.toUpperCase() : '');
+  return `${symbol}${(row.amount / 100).toFixed(2)}`;
+}
+
+function statusTextTemplate(row) {
+  // Capitalize first letter
+  if (!row.paymentStatus) return '';
+  return row.paymentStatus.charAt(0).toUpperCase() + row.paymentStatus.slice(1);
+}
+
+function dateOnlyTemplate(row) {
+  if (!row.createdAt) return '';
+  const date = new Date(row.createdAt);
+  if (isNaN(date.getTime())) return '';
+  return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+}
+
+function hourOnlyTemplate(row) {
+  if (!row.createdAt) return '';
+  const date = new Date(row.createdAt);
+  if (isNaN(date.getTime())) return '';
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 }
 </script>
 
