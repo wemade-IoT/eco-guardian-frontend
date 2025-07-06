@@ -1,6 +1,15 @@
 <template>
   <div class="min-h-screen pt-5">
-    <h2 class="text-xl font-semibold mb-4 text-gray-800">Your Account Details</h2>
+    <!-- Language Switcher -->
+    <div class="flex justify-end mb-2">
+      <button
+        class="px-3 py-1 rounded border text-xs font-semibold bg-gray-50 hover:bg-gray-100 border-gray-300 text-gray-700 flex items-center gap-2"
+        @click="toggleLanguage"
+      >
+        <span>{{ currentLocale === 'en' ? 'ES' : 'EN' }}</span>
+      </button>
+    </div>
+    <h2 class="text-xl font-semibold mb-4 text-gray-800">{{ t('yourAccountDetails') }}</h2>
     <div class="profile-grid grid grid-cols-1 lg:grid-cols-[minmax(0,500px)_1fr] gap-6 mx-auto flex-wrap lg:flex-nowrap">
       <!-- Profile & Subscription Column -->
       <div class="flex flex-col gap-6 w-full max-w-[500px] flex-shrink-0">
@@ -11,24 +20,23 @@
               class="w-24 h-24 rounded-full object-cover border-4 border-emerald-100 shadow" />
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-1.5">
-                <span class="uppercase text-xs text-gray-400 tracking-widest">User Profile</span>
+                <span class="uppercase text-xs text-gray-400 tracking-widest">{{ t('userProfile') }}</span>
                 <span
                   class="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-0.5 rounded">{{ planName }}</span>
               </div>
               <h3 class="text-xl font-bold text-gray-800 mb-2">{{ profile?.name }} {{ profile?.userName }}</h3>
               <div class="flex flex-col gap-1.5 text-gray-700 text-sm">
-                <span><span class="font-medium">Email:</span> {{ profile?.email }}</span>
-                <span><span class="font-medium">Address:</span> {{ profile?.address }}</span>
+                <span><span class="font-medium">{{ t('email') }}</span> {{ profile?.email }}</span>
+                <span><span class="font-medium">{{ t('address') }}</span> {{ profile?.address }}</span>
               </div>
             </div>
           </div>
           <div class="flex gap-2 mt-2">
             <button
-              class="bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-emerald-800 transition">Manage
-              Subscription</button>
+              class="bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-emerald-800 transition">{{ t('manageSubscription') }}</button>
             <button
               class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-xs font-semibold border border-gray-300 hover:bg-gray-200 transition"
-              @click="handleEditProfile">Edit Profile</button>
+              @click="handleEditProfile">{{ t('editProfile') }}</button>
           </div>
         </div>
         <!-- Subscription Card -->
@@ -42,22 +50,22 @@
                 d="M12 8c-1.657 0-3 1.343-3 3v1a3 3 0 1 0 6 0v-1c0-1.657-1.343-3-3-3z" />
               <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
             </svg>
-            <h3 class="text-lg font-bold text-gray-800">Current Subscription</h3>
+            <h3 class="text-lg font-bold text-gray-800">{{ t('currentSubscription') }}</h3>
           </div>
           <div class="flex flex-col gap-2 text-gray-700 text-sm leading-relaxed">
             <div>
-              <span class="font-medium">Plan:</span> {{ planName }}
+              <span class="font-medium">{{ t('plan') }}:</span> {{ planName }}
             </div>
             <div>
-              <span class="font-medium">Name:</span> {{ profile?.name }}
+              <span class="font-medium">{{ t('name') }}:</span> {{ profile?.name }}
             </div>
             <div>
-              <span class="font-medium">Last Name:</span> {{ profile?.lastName }}
+              <span class="font-medium">{{ t('lastName') }}:</span> {{ profile?.lastName }}
             </div>
             <div>
-              <span class="font-medium">Status:</span>
+              <span class="font-medium">{{ t('status') }}:</span>
               <span
-                class="inline-block ml-1 px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-semibold text-xs">Active</span>
+                class="inline-block ml-1 px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-semibold text-xs">{{ t('active') }}</span>
             </div>
           </div>
           <div v-if="planName === 'Domestic'"
@@ -66,25 +74,24 @@
               <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 12H9v-2h2v2zm0-4H9V6h2v4z" />
               </svg>
-              <span class="font-bold text-amber-700">Upgrade to Domestic Pro</span>
+              <span class="font-bold text-amber-700">{{ t('upgradeToDomesticPro') }}</span>
             </div>
             <ul class="list-disc list-inside text-gray-700 text-sm mb-2 space-y-1">
-              <li>All features from your current plan</li>
-              <li>Up to 8 Plants</li>
-              <li>5 extra tips from our specialists</li>
+              <li>{{ t('allFeaturesFromCurrentPlan') }}</li>
+              <li>{{ t('upTo8Plants') }}</li>
+              <li>{{ t('extraTipsFromSpecialists') }}</li>
             </ul>
             <button
-              class="bg-amber-500 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-amber-600 transition w-fit">Upgrade
-              now</button>
+              class="bg-amber-500 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-amber-600 transition w-fit">{{ t('upgradeNow') }}</button>
           </div>
         </div>
         <!-- Notifications Widget (only if not Domestic) -->
         <div v-if="planName !== 'Domestic'" class="bg-white rounded-2xl shadow border border-gray-200 p-5 flex flex-col gap-3 max-h-72 overflow-y-auto min-h-[120px]">
           <div class="flex items-center gap-2 mb-2">
             <i class="pi pi-bell text-emerald-600 text-lg"></i>
-            <h4 class="text-base font-semibold text-gray-800">Notifications</h4>
+            <h4 class="text-base font-semibold text-gray-800">{{ t('notifications') }}</h4>
           </div>
-          <div v-if="notifications.length === 0" class="text-gray-400 text-sm text-center py-4">No notifications</div>
+          <div v-if="notifications.length === 0" class="text-gray-400 text-sm text-center py-4">{{ t('noNotifications') }}</div>
           <div v-else class="flex flex-col gap-2">
             <div v-for="n in notifications" :key="n.id" class="border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 flex flex-col">
               <span class="font-medium text-gray-700 text-sm truncate">{{ n.title }}</span>
@@ -97,16 +104,16 @@
       <!-- Payment History Column -->
       <div class="w-full flex-shrink-0">
         <div class="bg-white rounded-2xl shadow border border-gray-200 p-7">
-          <h3 class="text-xl font-bold mb-6 text-gray-800">Payment History</h3>
+          <h3 class="text-xl font-bold mb-6 text-gray-800">{{ t('paymentHistory') }}</h3>
           <!-- Desktop Table -->
           <div class="responsive-table-wrapper hidden sm:block">
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hour</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('amount') }}</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('status') }}</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('date') }}</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ t('hour') }}</th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
@@ -126,9 +133,9 @@
               </tbody>
             </table>
             <div class="flex justify-end items-center gap-2 mt-4">
-              <button @click="goToPrevPage" :disabled="currentPage === 1" class="px-3 py-1 rounded border text-xs font-semibold bg-gray-50 hover:bg-gray-100 disabled:opacity-50">Previous</button>
-              <span class="text-sm">Page {{ currentPage }} of {{ totalPages }}</span>
-              <button @click="goToNextPage" :disabled="currentPage === totalPages" class="px-3 py-1 rounded border text-xs font-semibold bg-gray-50 hover:bg-gray-100 disabled:opacity-50">Next</button>
+              <button @click="goToPrevPage" :disabled="currentPage === 1" class="px-3 py-1 rounded border text-xs font-semibold bg-gray-50 hover:bg-gray-100 disabled:opacity-50">{{ t('previous') }}</button>
+              <span class="text-sm">{{ t('page') }} {{ currentPage }} {{ t('of') }} {{ totalPages }}</span>
+              <button @click="goToNextPage" :disabled="currentPage === totalPages" class="px-3 py-1 rounded border text-xs font-semibold bg-gray-50 hover:bg-gray-100 disabled:opacity-50">{{ t('next') }}</button>
             </div>
           </div>
           <!-- Mobile Card List -->
@@ -145,18 +152,18 @@
                   }"
                 >{{ payment.paymentStatus }}</span>
               </div>
-              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Amount:</span> ${{ (payment.amount).toFixed(2) }} {{ payment.currency }}</div>
-              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Date:</span> {{ formatDateOnly(payment.createdAt) }}</div>
-              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Hour:</span> {{ formatHourOnly(payment.createdAt) }}</div>
+              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">{{ t('amount') }}:</span> ${{ (payment.amount).toFixed(2) }} {{ payment.currency }}</div>
+              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">{{ t('date') }}:</span> {{ formatDateOnly(payment.createdAt) }}</div>
+              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">{{ t('hour') }}:</span> {{ formatHourOnly(payment.createdAt) }}</div>
             </div>
           </div>
           <!-- Notifications Widget (if Domestic, show here below table) -->
           <div v-if="planName === 'Domestic'" class="mt-8 bg-white rounded-2xl shadow border border-gray-200 p-5 flex flex-col gap-3 max-h-72 overflow-y-auto min-h-[120px]">
             <div class="flex items-center gap-2 mb-2">
               <i class="pi pi-bell text-emerald-600 text-lg"></i>
-              <h4 class="text-base font-semibold text-gray-800">Notifications</h4>
+              <h4 class="text-base font-semibold text-gray-800">{{ t('notifications') }}</h4>
             </div>
-            <div v-if="notifications.length === 0" class="text-gray-400 text-sm text-center py-4">No notifications</div>
+            <div v-if="notifications.length === 0" class="text-gray-400 text-sm text-center py-4">{{ t('noNotifications') }}</div>
             <div v-else class="flex flex-col gap-2">
               <div v-for="n in notifications" :key="n.id" class="border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 flex flex-col">
                 <span class="font-medium text-gray-700 text-sm truncate">{{ n.title }}</span>
@@ -171,6 +178,8 @@
     <EditProfileDialog
       :visible="showEditDialog"
       :profile="profile"
+      :current-locale="currentLocale"
+      :t="t"
       @update:visible="showEditDialog = $event"
       @updated="handleProfileUpdated"
     />
@@ -369,6 +378,80 @@ function hourOnlyTemplate(row) {
   if (isNaN(date.getTime())) return '';
   return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 }
+
+// i18n translations object
+const translations = {
+  en: {
+    yourAccountDetails: 'Your Account Details',
+    userProfile: 'User Profile',
+    manageSubscription: 'Manage Subscription',
+    editProfile: 'Edit Profile',
+    currentSubscription: 'Current Subscription',
+    plan: 'Plan',
+    name: 'Name',
+    lastName: 'Last Name',
+    status: 'Status',
+    active: 'Active',
+    upgradeToDomesticPro: 'Upgrade to Domestic Pro',
+    allFeaturesFromCurrentPlan: 'All features from your current plan',
+    upTo8Plants: 'Up to 8 Plants',
+    extraTipsFromSpecialists: '5 extra tips from our specialists',
+    upgradeNow: 'Upgrade now',
+    notifications: 'Notifications',
+    noNotifications: 'No notifications',
+    paymentHistory: 'Payment History',
+    amount: 'Amount',
+    previous: 'Previous',
+    next: 'Next',
+    page: 'Page',
+    of: 'of',
+    email: 'Email:',
+    address: 'Address:',
+    date: 'Date',
+    hour: 'Hour',
+    cancel: 'Cancel',
+    save: 'Save',
+    uploadPhoto: 'Upload a new profile photo',
+  },
+  es: {
+    yourAccountDetails: 'Detalles de tu cuenta',
+    userProfile: 'Perfil de usuario',
+    manageSubscription: 'Gestionar suscripción',
+    editProfile: 'Editar perfil',
+    currentSubscription: 'Suscripción actual',
+    plan: 'Plan',
+    name: 'Nombre',
+    lastName: 'Apellido',
+    status: 'Estado',
+    active: 'Activo',
+    upgradeToDomesticPro: 'Mejorar a Domestic Pro',
+    allFeaturesFromCurrentPlan: 'Todas las funciones de tu plan actual',
+    upTo8Plants: 'Hasta 8 plantas',
+    extraTipsFromSpecialists: '5 consejos extra de nuestros especialistas',
+    upgradeNow: 'Mejorar ahora',
+    notifications: 'Notificaciones',
+    noNotifications: 'Sin notificaciones',
+    paymentHistory: 'Historial de pagos',
+    amount: 'Monto',
+    previous: 'Anterior',
+    next: 'Siguiente',
+    page: 'Página',
+    of: 'de',
+    email: 'Correo:',
+    address: 'Dirección:',
+    date: 'Fecha',
+    hour: 'Hora',
+    cancel: 'Cancelar',
+    save: 'Guardar',
+    uploadPhoto: 'Sube una nueva foto de perfil',
+  }
+};
+
+const currentLocale = ref('en');
+function toggleLanguage() {
+  currentLocale.value = currentLocale.value === 'en' ? 'es' : 'en';
+}
+const t = (key) => translations[currentLocale.value][key];
 </script>
 
 <style scoped>
