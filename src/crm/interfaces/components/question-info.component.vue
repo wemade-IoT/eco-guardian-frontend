@@ -143,6 +143,7 @@ const fetchPlantDetails = async (plantId: number) => {
     }
     
     plant = response.data;
+    console.log('Plant Details Fetched', plant.value);
     console.log('Sending Plant Data', plant.value?.type);
     //emit plant title
     emit('plant-title', plant.value?.type || 'Unknown Plant');

@@ -12,7 +12,11 @@ export class PlantService extends HttpService {
 
   async getPlantById(id: number): Promise<any> {
     try {
-      return await this.http.get(`plants/${id}`);
+      console.log("Fetching plant with ID:", id);
+      const response = await this.http.get(`plants/${id}`);
+      console.log("Plant data received:", response.data);
+      return response.data;
+      
     } catch (error) {
       console.error("Error fetching plant by ID:", error);
       throw error;

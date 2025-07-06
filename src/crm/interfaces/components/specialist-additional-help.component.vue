@@ -56,7 +56,7 @@ let plantData = ref<ExternalPlantCareResponse | null>(null);
 const fetchPlantData = async (query: string) => {
   try {
     //Validate that it is already in cache or local database
-    
+
     const response = await externalApiService.searchPlants(query);
     plantData.value = response;
     console.log('Plant search data fetched successfully:', plantData.value);
