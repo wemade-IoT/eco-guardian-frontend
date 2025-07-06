@@ -35,13 +35,19 @@ export const useDeviceStore = defineStore("device", {
       try {
         const response = await deviceService.getDevicesByPlantId(plantId);
         this.devices = response.data.map(deviceAssembler.toResponse);
+        console.log("Devices fetched successfully:", this.devices);
+        //We select the first device if available
+        if (this.devices.length > 0) {
+            this.selectedDevice = this.devices[length - 1];
+            }
+        return this.devices;
       } catch (error) {
         console.error("Error fetching devices:", error);
         throw error;
       }
     },
 
-    // no se va a usar creo para eliminarlo luego
+    // no se va a usar creo para eliminarlo luego NEKODEMIERDA
     selectDevice(device: any) {
       console.log("Device selected:", device);
       this.selectedDevice = device;

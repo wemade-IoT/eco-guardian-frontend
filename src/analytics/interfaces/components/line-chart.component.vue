@@ -93,7 +93,7 @@ const getAnalytics = async () => {
 
     console.log('Selected device ID:', useDeviceStore().getSelectedDeviceId);
 
-    const data = await analyticsService.getAnalytics(useDeviceStore().getSelectedDeviceId, time); //for now always 1, later will be dynamic
+    const data = await analyticsService.getAnalytics(useDeviceStore().getSelectedDeviceId, time);
     
     // Check if we have data
     if (!data || data.length === 0) {
@@ -320,10 +320,6 @@ const processAnalyticsForChart = (analyticsData: metricData[]) => {
       spanGaps: true // Connect points across null values
     };
   });
-
-  console.log('Chart labels:', labels);
-  console.log('Chart datasets:', datasets);
-
   return {
     labels,
     datasets

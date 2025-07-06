@@ -48,7 +48,8 @@ const props = defineProps({
   visible: Boolean,
   profile: Object,
   currentLocale: Object,
-  t: Function
+  t: { type: Function, required: true }  //Translation function, e.g. i18n.t //THIS IS REQUIRED
+  
 });
 const emit = defineEmits(['update:visible', 'updated']);
 
@@ -99,7 +100,7 @@ async function onSubmit() {
   try {
     const store = ProfileStore();
     // Send a plain object, not FormData
-    await store.updateProfile(props.profile.id, {
+    await store.updateProfile(props.profile?.id, {
       Name: form.value.name,
       LastName: form.value.lastName,
       Address: form.value.address,

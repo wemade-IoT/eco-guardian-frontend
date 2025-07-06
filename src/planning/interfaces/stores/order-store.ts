@@ -53,7 +53,7 @@ export const useOrderStore = defineStore("order", {
       }
     },
 
-    async editOrder(orderId: number, request: OrderUpdateRequest) {
+    async editOrder(orderId: number, request: any) {
       try {
         const updateRequest = orderAssembler.toUpdateRequest(request);
         await orderService.updateOrder(orderId, updateRequest);

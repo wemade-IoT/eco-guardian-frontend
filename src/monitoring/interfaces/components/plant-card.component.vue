@@ -164,9 +164,10 @@ const statusDescriptions: Record<number, string> = {
   z-index: 1000;
 }
 
-.plant-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+.plant-card:active {
+    transform: translateY(-1px) scale(0.95);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .card-header {

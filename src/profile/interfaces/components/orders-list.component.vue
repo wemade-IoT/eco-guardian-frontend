@@ -11,7 +11,7 @@
               <p class="text-sm text-gray-600 mt-1">{{ order.action }}</p>
             </div>
             <span :class="getStatusBadgeClass(order.stateId)" class="px-3 py-1 rounded-full text-xs font-medium">
-              {{ getStatusText(order.stateId) }}
+              {{ getStatusText(order.stateId, order.specialistId ?? 0) }}
             </span>
           </div>
         </div>
@@ -100,7 +100,7 @@
                 <div>
                   <span class="text-gray-600">Status:</span>
                   <span :class="getStatusBadgeClass(selectedOrder.stateId)" class="ml-2 px-2 py-1 rounded text-xs">
-                    {{ getStatusText(selectedOrder.stateId) }}
+                    {{ getStatusText(selectedOrder.stateId, selectedOrder.specialistId ?? 0) }}
                   </span>
                 </div>
                 <div>
@@ -150,6 +150,8 @@
 
 <script setup lang="ts">
 import { ref, defineProps, defineEmits } from 'vue'
+import { useOrderStore } from '../../../planning/interfaces/stores/order-store'
+import { useAuthStore } from '../../../iam/interfaces/store/auth-store'
 
 interface OrderDetail {
   deviceId: number
@@ -192,7 +194,14 @@ const formatDate = (dateString: string): string => {
   })
 }
 
-const getStatusText = (stateId: number): string => {
+const getStatusText = (stateId: number, specialistId: number): string => {
+  
+  
+  if(stateId == 3 && specialistId == 0 ) {
+          return 'Awaiting Installation'
+          }
+  
+
   switch (stateId) {
     case 1: return 'Pending'
     case 2: return 'In Progress'
@@ -225,6 +234,10 @@ const closeDetailsModal = (): void => {
 }
 
 const takeOrder = (order: Order): void => {
+  console.log('Taking order:', order)
+  order.specialistId = useAuthStore().id // Assuming you have a way to get the current specialist ID
+  order.stateId = 2 // Set to "In Progress"
+  useOrderStore().editOrder(order.id, order)
   emit('takeOrder', order)
 }
 </script>

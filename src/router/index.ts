@@ -15,6 +15,7 @@ import ProfileInformationPageComponent from "../profile/interfaces/pages/profile
 import PlantInfoPageComponent from "../monitoring/interfaces/pages/plant-info-page.component.vue";
 import OrderPaymentSuccededPage from "../planning/interfaces/pages/order-payment-succeded.component.vue";
 
+
 const routes = [
   { path: '/', redirect: '/login' },
   { path: "/login", component: LoginPage },

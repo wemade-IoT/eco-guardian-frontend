@@ -1,7 +1,8 @@
 <template>
   <div class="min-h-screen pt-5">
-    <h2 class="text-xl font-semibold mb-4 text-gray-800">Your Account Details</h2>
-    <div class="profile-grid grid grid-cols-1 lg:grid-cols-[minmax(0,500px)_1fr] gap-6 mx-auto flex-wrap lg:flex-nowrap">
+
+    <h2 class="text-xl font-semibold mb-4 text-gray-800">{{ t('yourAccountDetails') }}</h2>
+        <div class="profile-grid grid grid-cols-1 lg:grid-cols-[minmax(0,500px)_1fr] gap-6 mx-auto flex-wrap lg:flex-nowrap">
       <!-- Profile & Subscription Column -->
       <div class="flex flex-col gap-6 w-full max-w-[500px] flex-shrink-0">
         <div class="bg-white rounded-2xl shadow border border-gray-200 p-7 flex flex-col gap-6">
@@ -10,9 +11,9 @@
               class="w-24 h-24 rounded-full object-cover border-4 border-emerald-100 shadow" />
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-1.5">
-                <span class="uppercase text-xs text-gray-400 tracking-widest">User Profile</span>
-                <span class="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-0.5 rounded">{{
-                  planName }}</span>
+                <span class="uppercase text-xs text-gray-400 tracking-widest">{{ t('userProfile') }}</span>
+                <span
+                  class="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-0.5 rounded">{{ planName }}</span>
               </div>
               <h3 class="text-xl font-bold text-gray-800 mb-2">{{ profile?.name }} {{ profile?.userName }}</h3>
               <div class="flex flex-col gap-1.5 text-gray-700 text-sm">
@@ -22,11 +23,24 @@
             </div>
           </div>
           <div class="flex gap-2 mt-2">
-            <button
-              class="bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-emerald-800 transition">{{ t('manageSubscription') }}</button>
-            <button
+           
+           <button
               class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-xs font-semibold border border-gray-300 hover:bg-gray-200 transition"
               @click="handleEditProfile">{{ t('editProfile') }}</button>
+              <button
+              class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-xs font-semibold border border-gray-300 hover:bg-gray-200 transition"
+              @click="toggleLanguage"
+              title="Switch language"
+              >
+              <p v-if="currentLocale === 'en'">
+                <i class="pi pi-globe text-sm mr-1"></i>
+                {{ t('ENG') }}
+              </p>
+              <p v-else>
+                <i class="pi pi-globe text-sm mr-1"></i>
+                {{ t('ES') }}
+              </p>
+            </button>
           </div>
         </div>
         <!-- Subscription Card -->
@@ -75,7 +89,7 @@
           </div>
         </div>
         <!-- Notifications Widget (only if not Domestic) -->
-        <div v-if="planName !== 'Domestic'"
+        <div v-if="authStore.isSpecialist"
           class="bg-white rounded-2xl shadow border border-gray-200 p-5 flex flex-col gap-3 max-h-72 overflow-y-auto min-h-[120px]">
           <div class="flex items-center gap-2 mb-2">
             <i class="pi pi-bell text-emerald-600 text-lg"></i>
@@ -96,11 +110,12 @@
       <div class="w-full flex-shrink-0">
         <div class="bg-white rounded-2xl shadow border border-gray-200 p-7">
           <div class="flex items-center justify-between mb-6">
-            <h3 class="text-xl font-bold text-gray-800">Payment History</h3>
+            <h3 v-if="!authStore.isSpecialist" class="text-xl font-bold text-gray-800">{{t('paymentHistory')}}</h3>
+            <h3 v-else class="text-xl font-bold text-gray-800">{{t('ordersHistory')}}</h3>
             <div class="relative">
               <button @click="showDropdown = !showDropdown"
                 class="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 transition-colors">
-                {{ selectedFilter }}
+                {{ t(selectedFilter) }}
                 <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': showDropdown }" fill="none"
                   stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -114,12 +129,12 @@
                   <button @click="selectFilter('Payments')"
                     class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                     :class="{ 'bg-emerald-50 text-emerald-700 font-medium': selectedFilter === 'Payments' }">
-                    Payments
+                    {{t('Payments')}}
                   </button>
                   <button @click="selectFilter('Orders')"
                     class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                     :class="{ 'bg-emerald-50 text-emerald-700 font-medium': selectedFilter === 'Orders' }">
-                    Orders
+                    {{t('Orders')}}
                   </button>
                 </div>
               </div>
@@ -127,42 +142,12 @@
           </div>
           <!-- Desktop Table -->
           <div>
-            <div v-if="authStore.role === 'Specialist'">
+            <div v-if="authStore.isSpecialist">
               <orders-list :orders="allOrders" />
             </div>
             <div v-else>
               <payments-table v-if="selectedFilter === 'Payments'" :payments="payments" />
               <orders-table v-else :orders="orders" />
-            </div>
-          </div>
-
-          <!-- Mobile Card List -->
-          <div class="sm:hidden flex flex-col gap-4">
-            <div v-for="payment in payments" :key="payment.paymentIntentId"
-              class="border rounded-xl p-4 shadow-sm bg-gray-50">
-              <div class="flex justify-between items-center mb-2">
-                <span class="font-semibold text-gray-700">{{ payment.paymentIntentId }}</span>
-                <span class="text-xs px-2 py-0.5 rounded font-semibold" :class="{
-                  'bg-emerald-100 text-emerald-700': payment.paymentStatus === 'Succeeded',
-                  'bg-yellow-100 text-yellow-700': payment.paymentStatus === 'Pending',
-                  'bg-red-100 text-red-700': payment.paymentStatus === 'Failed',
-                  'bg-gray-100 text-gray-700': !['Succeeded', 'Pending', 'Failed'].includes(payment.paymentStatus)
-                }">{{ payment.paymentStatus }}</span>
-              </div>
-              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Method:</span> {{
-                payment.paymentMethodId }}</div>
-              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Amount:</span> ${{
-                (payment.amount / 100).toFixed(2) }}</div>
-              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Currency:</span> {{ payment.currency }}
-              </div>
-              <div class="text-sm text-gray-600 mb-1"><span class="font-medium">Reference ID:</span> {{
-                payment.referenceId }}</div>
-              <div class="text-sm text-gray-600 mb-2"><span class="font-medium">Type:</span> {{ payment.referenceType }}
-              </div>
-              <button class="flex items-center gap-2 text-blue-600 text-xs font-semibold hover:underline mt-1"
-                @click="console.log('View details for:', payment.paymentIntentId)">
-                <i class="pi pi-eye"></i> View Details
-              </button>
             </div>
           </div>
           <!-- Notifications Widget (if Domestic, show here below table) -->
@@ -186,8 +171,10 @@
       </div>
     </div>
     <EditProfileDialog :visible="showEditDialog" :profile="profile" @update:visible="showEditDialog = $event"
-      @updated="handleProfileUpdated" />
+      @updated="handleProfileUpdated" :current-locale="currentLocale"
+      :t="t" />
   </div>
+  
 </template>
 
 <script setup>
@@ -203,6 +190,9 @@ import { usePaymentStore } from '../../../payment/interfaces/store/payment-store
 import { useOrderStore } from '../../../planning/interfaces/stores/order-store';
 import { PaymentResponse } from '../../../payment/domain/assembler/payment-response';
 import OrdersList from '../components/orders-list.component.vue';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import { useI18n } from '../../../shared/services/usei18n';
 
 const showDropdown = ref(false);
 const selectedFilter = ref('Payments');
@@ -225,8 +215,6 @@ const planNames = {
 
 const profile = computed(() => profileStore.profile);
 const planName = computed(() => planNames[profile.value?.subscriptionId] || 'Unknown');
-const notifications = computed(() => notificationStore.notifications);
-
 // Remove TS generic from ref for Vue SFC compatibility
 const notifications = ref([]);
 
@@ -388,79 +376,8 @@ function hourOnlyTemplate(row) {
   return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 }
 
-// i18n translations object
-const translations = {
-  en: {
-    yourAccountDetails: 'Your Account Details',
-    userProfile: 'User Profile',
-    manageSubscription: 'Manage Subscription',
-    editProfile: 'Edit Profile',
-    currentSubscription: 'Current Subscription',
-    plan: 'Plan',
-    name: 'Name',
-    lastName: 'Last Name',
-    status: 'Status',
-    active: 'Active',
-    upgradeToDomesticPro: 'Upgrade to Domestic Pro',
-    allFeaturesFromCurrentPlan: 'All features from your current plan',
-    upTo8Plants: 'Up to 8 Plants',
-    extraTipsFromSpecialists: '5 extra tips from our specialists',
-    upgradeNow: 'Upgrade now',
-    notifications: 'Notifications',
-    noNotifications: 'No notifications',
-    paymentHistory: 'Payment History',
-    amount: 'Amount',
-    previous: 'Previous',
-    next: 'Next',
-    page: 'Page',
-    of: 'of',
-    email: 'Email:',
-    address: 'Address:',
-    date: 'Date',
-    hour: 'Hour',
-    cancel: 'Cancel',
-    save: 'Save',
-    uploadPhoto: 'Upload a new profile photo',
-  },
-  es: {
-    yourAccountDetails: 'Detalles de tu cuenta',
-    userProfile: 'Perfil de usuario',
-    manageSubscription: 'Gestionar suscripción',
-    editProfile: 'Editar perfil',
-    currentSubscription: 'Suscripción actual',
-    plan: 'Plan',
-    name: 'Nombre',
-    lastName: 'Apellido',
-    status: 'Estado',
-    active: 'Activo',
-    upgradeToDomesticPro: 'Mejorar a Domestic Pro',
-    allFeaturesFromCurrentPlan: 'Todas las funciones de tu plan actual',
-    upTo8Plants: 'Hasta 8 plantas',
-    extraTipsFromSpecialists: '5 consejos extra de nuestros especialistas',
-    upgradeNow: 'Mejorar ahora',
-    notifications: 'Notificaciones',
-    noNotifications: 'Sin notificaciones',
-    paymentHistory: 'Historial de pagos',
-    amount: 'Monto',
-    previous: 'Anterior',
-    next: 'Siguiente',
-    page: 'Página',
-    of: 'de',
-    email: 'Correo:',
-    address: 'Dirección:',
-    date: 'Fecha',
-    hour: 'Hora',
-    cancel: 'Cancelar',
-    save: 'Guardar',
-    uploadPhoto: 'Sube una nueva foto de perfil',
-  }
-};
+const { t, toggleLanguage, currentLocale } = useI18n();
 
-const currentLocale = ref('en');
-function toggleLanguage() {
-  currentLocale.value = currentLocale.value === 'en' ? 'es' : 'en';
-}
-const t = (key) => translations[currentLocale.value][key];
 </script>
 
 <style scoped>

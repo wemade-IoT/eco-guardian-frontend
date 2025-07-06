@@ -11,7 +11,7 @@ export const usePlantStore = defineStore("plant", {
   state: () => ({
     plant: null as PlantResponse | null,
     plants: [] as PlantResponse[],
-    // para crear una planta para el proceso de order, que ratoneada pero q queda, te odio calculo
+    // para crear una planta para el proceso de order, que ratoneada pero q queda
     temporalPlant: {} as PlantResponse,
   }),
   getters: {

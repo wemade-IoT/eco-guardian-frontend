@@ -4,6 +4,7 @@ import { ref, computed } from 'vue';
 import type { Question } from '../../domain/model/question.entity';
 import { CrmService } from '../../infrastructure/services/crm.service';
 import type { CreateQuestionFormRequest } from '../../infrastructure/services/question-assembler.service';
+import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 
 export const useQuestionStore = defineStore('question', () => {
   // State
@@ -32,6 +33,9 @@ export const useQuestionStore = defineStore('question', () => {
     isLoading.value = true;
     error.value = null;
     
+    if(useAuthStore().isSpecialist) {
+    
+
     try {
       const response = await crmService.getConsulting();
       questions.value = Array.isArray(response) ? response : [];
@@ -42,6 +46,19 @@ export const useQuestionStore = defineStore('question', () => {
       questions.value = [];
     } finally {
       isLoading.value = false;
+    }
+  } else {
+      try {
+      const response = await crmService.getQuestionsByUserId(useAuthStore().id);
+      questions.value = Array.isArray(response) ? response : [];
+      console.log('Question store: Questions loaded successfully', questions.value.length);
+    } catch (err: any) {
+      error.value = err.message || 'Failed to load questions';
+      console.error('Question store: Error loading questions', err);
+      questions.value = [];
+    } finally {
+      isLoading.value = false;
+    }
     }
   };
 
