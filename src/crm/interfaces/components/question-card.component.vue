@@ -88,7 +88,7 @@ import type { Ref } from 'vue';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 
 let visible = ref(false);
-let expertResponse = ref('');
+//let expertResponse = ref('');
 const authStore = useAuthStore();
 
 interface QuestionResponse {

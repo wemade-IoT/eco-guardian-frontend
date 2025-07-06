@@ -119,7 +119,7 @@ const getStatusClass = (status: string): string => {
   }
 }
 
-const getCurrencyByCountry = (country: string): string => {
+/* const getCurrencyByCountry = (country: string): string => {
   const currencyMap: { [key: string]: string } = {
     'Peru': 'PEN',
     'United States': 'USD',
@@ -129,7 +129,7 @@ const getCurrencyByCountry = (country: string): string => {
   }
   return currencyMap[country] || 'USD'
 }
-
+ */
 const viewDetails = (payment: Payment): void => {
   
   emit('viewDetails', payment)

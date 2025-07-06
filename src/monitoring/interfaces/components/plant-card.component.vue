@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { defineProps, ref, onMounted, onUnmounted } from 'vue';
-import Dropdown from 'primevue/dropdown';
 
 defineProps({
   name: { type: String, required: true },

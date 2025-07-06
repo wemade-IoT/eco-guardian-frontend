@@ -3,7 +3,6 @@ import { OrderAssembler } from "../../domain/order-assembler.ts";
 import { defineStore } from "pinia";
 import { OrderResponse } from "../../domain/order-response.ts";
 import { OrderRequest } from "../../domain/order-request.ts";
-import type { OrderUpdateRequest } from "../../domain/order-update-request.ts";
 import type { NewOrder } from "../../../public/utils/interfaces/order.ts";
 
 const orderService = new OrderService();

@@ -5,7 +5,6 @@ import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
 import Button from 'primevue/button';
 import { useRouter } from 'vue-router';
-import { useOrderStore } from '../stores/order-store';
 
 const router = useRouter();
 

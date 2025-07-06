@@ -135,9 +135,9 @@ const isVisible = computed({
   set: (value) => emit('update:visible', value)
 });
 
-const dialogTitle = computed(() => {
+/* const dialogTitle = computed(() => {
   return props.plantData.isPlantation ? 'Plantation Preview' : 'Plant Preview';
-});
+}); */
 
 // Helper function to get wellness status class
 function getWellnessClass(stateId: number): string {

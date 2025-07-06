@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, onMounted } from 'vue';
+import { ref, watch, defineProps, defineEmits } from 'vue';
 
 const props = defineProps<{ modelValue: number }>();
 const emit = defineEmits(['update:modelValue']);

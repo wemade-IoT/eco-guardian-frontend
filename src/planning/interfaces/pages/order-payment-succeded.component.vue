@@ -80,9 +80,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { OrderAssembler } from '../../domain/order-assembler';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
-import { PaymentAssembler } from '../../../payment/domain/assembler/payment-assembler';
 import { useOrderStore } from '../stores/order-store';
 import { usePaymentStore } from '../../../payment/interfaces/store/payment-store';
 
@@ -93,7 +91,6 @@ const status = ref('');
 const paymentIntent = ref('');
 const paymentStore = usePaymentStore();
 const orderStore = useOrderStore();
-const paymentAssembler = new PaymentAssembler();
 //const orderAssembler = new OrderAssembler();
 
 onMounted(() => {

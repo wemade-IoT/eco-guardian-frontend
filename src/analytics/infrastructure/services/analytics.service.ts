@@ -1,4 +1,3 @@
-import { metrics } from "../../../assets/data/metrics.ts";
 import { HttpService } from "../../../shared/services/http-common.ts";
 import { MetricDataAssembler } from "../../domain/data-assembler.ts";
 import type { metricData } from "../../domain/data-response.ts";

@@ -12,7 +12,6 @@ import { useDialog } from 'primevue';
 import { usePlantStore } from '../../../monitoring/interfaces/stores/plant-store.ts';
 import { createObjectURL } from '../../../public/utils/helpers/plant.ts';
 import PlantPreviewInformation from '../components/plant-preview-information.component.vue';
-import { PlantAssembler } from '../../../monitoring/domain/plant-assembler.ts';
 import { DeviceAssembler } from '../../../inventory/domain/assembler/device-assembler.ts';
 import { OrderAssembler } from '../../domain/order-assembler.ts';
 import { useDeviceStore } from '../../../inventory/stores/device-store.ts';
@@ -24,7 +23,7 @@ const selectedDate = ref<Date | null>(null);
 const selectedSlot = ref<number>(9);
 const showPreviewDialog = ref<boolean>(false);
 const dialog = useDialog();
-const plantAssembler = new PlantAssembler();
+//const plantAssembler = new PlantAssembler();
 const deviceAssembler = new DeviceAssembler();
 const orderAssembler = new OrderAssembler();
 const paymentAssembler = new PaymentAssembler();
@@ -259,7 +258,7 @@ function showPreviewPlantInformtion() {
             <div class="card-content">
               <div class="plant-icon">
                 <img v-if="plantStore.temporalPlant.image"
-                  :src="createObjectURL(plantStore.temporalPlant.image as File)" alt="Plant image"
+                  :src="createObjectURL(plantStore.temporalPlant.image as unknown as File)" alt="Plant image"
                   class="plant-image rounded-full w-12 h-12 object-cover" />
                 <i v-else class="pi pi-rose text-green-600"></i>
               </div>

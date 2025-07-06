@@ -204,20 +204,14 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import { usePaymentStore } from '../../../payment/interfaces/store/payment-store';
-import { convertAmountByCountry, getCurrencyByCountry } from '../../../public/utils/helpers/currency';
+import { getCurrencyByCountry } from '../../../public/utils/helpers/currency';
 import type { CountryName } from '../../../public/utils/interfaces/country';
 import PaymentCardFormComponent from '../../../payment/interfaces/components/payment-card-form.component.vue';
 import { ProgressSpinner, useDialog } from 'primevue';
-import { PaymentAssembler } from '../../../payment/domain/assembler/payment-assembler';
-import { usePlantStore } from '../../../monitoring/interfaces/stores/plant-store';
-import { DeviceService } from '../../../inventory/infrastructure/services/device.service';
 import { useOrderStore } from '../stores/order-store';
-import { useDeviceStore } from '../../../inventory/stores/device-store';
-import type { OrderDetail } from '../../../public/utils/interfaces/order';
 import { createModal } from '../../../public/utils/helpers/create-modal';
 import CustomDialog from '../../../shared/components/ui/custom-dialog.component.vue';
 import { OrderAssembler } from '../../domain/order-assembler';
-import { useRoute } from 'vue-router';
 
 interface ValidationErrors {
   email?: string
@@ -233,9 +227,9 @@ const errors = reactive<ValidationErrors>({})
 const authStore = useAuthStore();
 const paymentStore = usePaymentStore();
 const dialog = useDialog();
-const route = useRoute();
+/* const route = useRoute();
 const plantStore = usePlantStore();
-const deviceStore = useDeviceStore();
+const deviceStore = useDeviceStore(); */
 const orderStore = useOrderStore();
 const orderAssembler = new OrderAssembler();
 

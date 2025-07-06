@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 import { useRouter } from 'vue-router';
