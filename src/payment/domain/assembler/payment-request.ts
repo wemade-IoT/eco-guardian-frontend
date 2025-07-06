@@ -6,6 +6,7 @@ export class PaymentRequest {
   paymentStatus: string;
   userId: number;
   referenceId: number;
+  referenceType: number;
 
   constructor(
     paymentIntentId: string,
@@ -14,7 +15,8 @@ export class PaymentRequest {
     currency: string,
     paymentStatus: string,
     userId: number,
-    referenceId: number
+    referenceId: number,
+    referenceType: number
   ) {
     this.paymentIntentId = paymentIntentId;
     this.paymentMethodId = paymentMethodId;
@@ -23,5 +25,6 @@ export class PaymentRequest {
     this.paymentStatus = paymentStatus;
     this.userId = userId;
     this.referenceId = referenceId;
+    this.referenceType = referenceType;
   }
 }

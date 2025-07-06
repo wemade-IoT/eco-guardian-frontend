@@ -2,7 +2,7 @@
   <section class="bg-gray-100 p-4 w-full h-full flex-1 chart-data">
     <div class="flex flex-col">
       <div class="w-full flex flex-row items-center justify-between">
-        <h2 v-if="authStore.isEnterprise" class="font-sans">Plantation Statistics over time</h2>
+        <h2 v-if="authStore.isEnterprise" class="text-xl font-sans">Plantation Statistics over time</h2>
         <h2 v-else class="font-sans">Plant Statistics over time</h2>
         <Select v-model="selectedOption" :options="options" optionLabel="label" optionValue="value" placeholder="Select time period"
           class="flex flex-row items-center -space-x-2 tracking-wide rounded-md text-sm h-8" />

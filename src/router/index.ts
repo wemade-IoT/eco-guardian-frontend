@@ -13,6 +13,7 @@ import OrderPaymentPage from "../planning/interfaces/pages/order-payment-page.co
 import ProfileInformationPage from "../profile/interfaces/pages/profile-information-page.component.vue";
 import ProfileInformationPageComponent from "../profile/interfaces/pages/profile-information-page.component.vue";
 import PlantInfoPageComponent from "../monitoring/interfaces/pages/plant-info-page.component.vue";
+import OrderPaymentSuccededPage from "../planning/interfaces/pages/order-payment-succeded.component.vue";
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -20,7 +21,7 @@ const routes = [
   { path: "/register", component: RegisterPage },
   { path: "/choose-plan", component: ChoosePlanPage },
   { path: "/payment-succeded", component: PaymentSuccededPage },
-
+  { path: "/payment-order-succeded", component: OrderPaymentSuccededPage },
   {
     path: "/",
     component: MainLayoutPage,

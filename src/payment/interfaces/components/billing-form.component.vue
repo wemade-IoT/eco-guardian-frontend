@@ -175,7 +175,8 @@ const onSubmitBillingForm = handleSubmit(async (values) => {
     amount: convertedAmount,
     currency: getCurrencyByCountry(values.country as CountryName),
     planSelected: planSelectedTypeId,
-    referenceId: 1, // In this process we know its an subscription, so we can set a reference ID
+    referenceId: 0, // In this process we know its an subscription, so we can set a reference ID
+    referenceType: 'subscription',
   }));
   
 
@@ -197,7 +198,8 @@ const onSubmitBillingForm = handleSubmit(async (values) => {
       amount: props.amount,
       currency: getCurrencyByCountry(values.country as CountryName),
       countryName: values.country,
-      referenceId: 1, // In this process we know its an subscription, so we can set a reference ID
+      referenceId: 0,
+      referenceType: 'subscription', // We know its a subscription
     }
   });
 

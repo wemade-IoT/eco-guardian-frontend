@@ -1,53 +1,65 @@
+import { DeviceAssembler } from "../domain/assembler/device-assembler";
+import type { DeviceRequest } from "../domain/assembler/device-request";
+import type { DeviceResponse } from "../domain/assembler/device-response";
+import type { DeviceUpdateRequest } from "../domain/assembler/device-update-request";
 import { DeviceService } from "../infrastructure/services/device.service";
-import {defineStore} from "pinia";
+import { defineStore } from "pinia";
 
-const deviceService = new DeviceService(); 
+const deviceService = new DeviceService();
+const deviceAssembler = new DeviceAssembler();
 export const useDeviceStore = defineStore("device", {
-    state: () => ({
-        devices: [] as any[],
-        selectedDevice: {} as any | null,
-    }),
-    
-    getters: {
-        getSelectedDeviceId: (state) => {
-            return state.selectedDevice?.id || null; // Returns null if no device is selected
+  state: () => ({
+    devices: [] as DeviceResponse[],
+    selectedDevice: {} as any | null,
+  }),
+
+  getters: {
+    getSelectedDeviceId: (state) => {
+      return state.selectedDevice?.id || null;
+    },
+  },
+
+  actions: {
+    async createDevice(deviceRequest: DeviceRequest) {
+      try {
+        const response = await deviceService.createDevice(deviceRequest);
+        console.log("Device created successfully:", response);
+        return response.data;
+      } catch (error) {
+        console.error("Error creating device:", error);
+        throw error;
+      }
+    },
+
+    async getDevicesByPlantId(plantId: number) {
+      try {
+        const response = await deviceService.getDevicesByPlantId(plantId);
+        this.devices = response.data.map(deviceAssembler.toResponse);
+      } catch (error) {
+        console.error("Error fetching devices:", error);
+        throw error;
+      }
+    },
+
+    // no se va a usar creo para eliminarlo luego
+    selectDevice(device: any) {
+      console.log("Device selected:", device);
+      this.selectedDevice = device;
+    },
+
+    async updateDevice(deviceId: number, deviceRequest: DeviceUpdateRequest) {
+        try {
+            const updateRequest = deviceAssembler.toUpdateRequest(deviceRequest);
+            await deviceService.updateDevice(deviceId, updateRequest);
+            console.log("Device updated successfully:");
+        } catch (error) {
+            console.error("Error updating device:", error);
+            throw error;
         }
     },
 
-    actions: {
-        async createDevice(deviceRequest: any) {
-            await deviceService.createDevice(deviceRequest);
-        },
-
-        async getDevicesByPlantId(plantId: number) {
-            const response = await deviceService.getDevicesByPlantId(plantId);
-            this.devices = response.data.map((device: any) => ({
-                id: device.id,
-                type: device.type,
-                voltage: device.voltage,
-                plantId: device.plantId,
-                createdAt: device.createdAt,
-                updatedAt: device.updatedAt,
-                activatedAt: device.activatedAt
-            }));
-            if (this.devices.length > 0) {
-                this.selectDevice(this.devices[0]);
-            } else {
-                this.selectedDevice = null;
-            }
-            return this.devices;
-        },
-
-        selectDevice(device: any) {
-            console.log("Device selected:", device);
-            this.selectedDevice = device;
-        },
-
-        async updateDevice( deviceId: number, deviceRequest: any) {
-            await deviceService.updateDevice(deviceId, deviceRequest);
-            // Optionally refresh the list of devices after update
-            await this.getDevicesByPlantId(deviceRequest.plantId);
-        }
-
+    clearSelectedDevice() {
+      this.selectedDevice = null;
     }
+  },
 });

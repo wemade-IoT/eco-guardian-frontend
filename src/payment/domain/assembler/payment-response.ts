@@ -7,7 +7,7 @@ export class PaymentResponse {
   paymentStatus: string;
   userId: number;
   referenceId: number;
-  referenceType: number;
+  referenceType: string;
   createdAt: Date;
   updatedAt: Date;
 
@@ -20,7 +20,7 @@ export class PaymentResponse {
     paymentStatus: string,
     userId: number,
     referenceId: number,
-    referenceType: number,
+    referenceType: string,
     createdAt: Date,
     updatedAt: Date
   ) {

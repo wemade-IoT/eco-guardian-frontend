@@ -1,4 +1,5 @@
 import { HttpService } from "../../../shared/services/http-common";
+import type { DeviceUpdateRequest } from "../../domain/assembler/device-update-request";
 
 export class DeviceService extends HttpService {
     async getDevicesByPlantId(plantId: number): Promise<any> {
@@ -17,9 +18,9 @@ export class DeviceService extends HttpService {
         }
     }
 
-    async updateDevice(deviceId: number, request: any): Promise<void> {
+    async updateDevice(deviceId: number, updateRequest: DeviceUpdateRequest): Promise<void> {
         try {
-            await this.http.put(`/devices/${deviceId}`, request);
+            await this.http.put(`/devices/${deviceId}`, updateRequest);
         } catch (error) {
             throw error;
         }

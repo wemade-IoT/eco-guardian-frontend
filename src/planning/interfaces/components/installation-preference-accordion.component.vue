@@ -9,21 +9,16 @@ import { useOrderStore } from '../stores/order-store';
 
 const router = useRouter();
 
-
-
+// XDDD pantalla de floro
 const handleAssitedInstallation = () => {
-  // Navigate to the order planning page for assisted installation
-  console.log('Assisted installation selected');
-
-  useOrderStore().setAction('AssistedInstallation');
-
+  // ??? todavia no se ha creado onde taras seteando
+  //useOrderStore().setAction('AssistedInstallation');
   router.push('/order-planning');
 };
 
 const handleSelfInstallation = () => {
-  // Navigate to the order planning page for self installation
-  console.log('Self installation selected');
-  useOrderStore().setAction('SelfInstallation');
+  // ??? todavia no se ha creado onde taras seteando
+  //useOrderStore().setAction('SelfInstallation');
   router.push('/order-planning');
 };
 

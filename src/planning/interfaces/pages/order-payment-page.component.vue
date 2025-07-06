@@ -15,7 +15,7 @@
             <div class="flex items-center gap-2">
               <div
                 class="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-600 rounded-lg flex items-center justify-center text-white group-hover:scale-105 transition-transform duration-200">
-                  <i class="fa fa-solid fa-temperature-half"></i>
+                <i class="fa fa-solid fa-temperature-half"></i>
               </div>
               <div>
                 <h3 class="text-sm font-semibold text-gray-800">Sensor de Temperatura</h3>
@@ -23,8 +23,8 @@
               </div>
             </div>
             <div class="text-right">
-              <span class="text-base font-bold text-emerald-600">$5.00</span>
-              <p class="text-xs text-gray-500">Qty: 1</p>
+              <span class="text-base font-bold text-emerald-600">${{ (5.00 * sensorQuantity).toFixed(2) }}</span>
+              <p class="text-xs text-gray-500">Qty: {{ sensorQuantity }}</p>
             </div>
           </div>
 
@@ -42,8 +42,8 @@
               </div>
             </div>
             <div class="text-right">
-              <span class="text-base font-bold text-emerald-600">$6.00</span>
-              <p class="text-xs text-gray-500">Qty: 1</p>
+              <span class="text-base font-bold text-emerald-600">${{ (6.00 * sensorQuantity).toFixed(2) }}</span>
+              <p class="text-xs text-gray-500">Qty: {{ sensorQuantity }}</p>
             </div>
           </div>
 
@@ -53,7 +53,7 @@
             <div class="flex items-center gap-2">
               <div
                 class="w-8 h-8 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg flex items-center justify-center text-white group-hover:scale-105 transition-transform duration-200">
-               <i class="fa fa-solid fa-droplet"></i>
+                <i class="fa fa-solid fa-droplet"></i>
               </div>
               <div>
                 <h3 class="text-sm font-semibold text-gray-800">Sensor de Humedad</h3>
@@ -61,8 +61,8 @@
               </div>
             </div>
             <div class="text-right">
-              <span class="text-base font-bold text-emerald-600">$5.00</span>
-              <p class="text-xs text-gray-500">Qty: 1</p>
+              <span class="text-base font-bold text-emerald-600">${{ (5.00 * sensorQuantity).toFixed(2) }}</span>
+              <p class="text-xs text-gray-500">Qty: {{ sensorQuantity }}</p>
             </div>
           </div>
         </div>
@@ -71,7 +71,7 @@
         <div class="bg-gray-50 rounded-lg p-4">
           <div class="flex justify-between items-center mb-2 text-sm">
             <span class="text-gray-700">Subtotal</span>
-            <span class="font-medium">$16.00</span>
+            <span class="font-medium">${{ sensorsSubtotal.toFixed(2) }}</span>
           </div>
           <div class="flex justify-between items-center mb-3 text-sm">
             <span class="text-gray-700">Costo de instalación</span>
@@ -80,7 +80,7 @@
           <div
             class="flex justify-between items-center text-base font-bold text-emerald-600 pt-2 border-t border-gray-200">
             <span>Total</span>
-            <span>$36.00</span>
+            <span>${{ totalAmount.toFixed(2) }}</span>
           </div>
         </div>
       </div>
@@ -133,7 +133,7 @@
               Código de Descuento <span class="text-gray-500 font-normal">(Opcional)</span>
             </label>
             <div class="flex gap-2">
-              <input type="text" id="discount" placeholder="ECOGUAR2025"
+              <input type="text" id="discount" placeholder="TOTO2025"
                 class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition-all duration-200" />
               <button type="button"
                 class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold text-sm hover:bg-emerald-700 transition-colors duration-200">
@@ -194,25 +194,31 @@
       </div>
     </div>
   </div>
+  <div v-if="isLoading" class="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
+    <ProgressSpinner style="width: 50px; height: 50px; color: #578257;" strokeWidth="5" fill="transparent"
+      animationDuration=".5s" aria-label="Custom ProgressSpinner" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-// Unused imports removed
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import { usePaymentStore } from '../../../payment/interfaces/store/payment-store';
-// PaymentAssembler removed - not needed for dialog approach
-// ProfileStore import removed - not needed
-// Stripe Elements removed - using PaymentCardForm dialog instead
 import { convertAmountByCountry, getCurrencyByCountry } from '../../../public/utils/helpers/currency';
 import type { CountryName } from '../../../public/utils/interfaces/country';
 import PaymentCardFormComponent from '../../../payment/interfaces/components/payment-card-form.component.vue';
-import { useDialog } from 'primevue';
+import { ProgressSpinner, useDialog } from 'primevue';
 import { PaymentAssembler } from '../../../payment/domain/assembler/payment-assembler';
 import { usePlantStore } from '../../../monitoring/interfaces/stores/plant-store';
 import { DeviceService } from '../../../inventory/infrastructure/services/device.service';
-// Currency utilities removed - no longer needed
-// Types
+import { useOrderStore } from '../stores/order-store';
+import { useDeviceStore } from '../../../inventory/stores/device-store';
+import type { OrderDetail } from '../../../public/utils/interfaces/order';
+import { createModal } from '../../../public/utils/helpers/create-modal';
+import CustomDialog from '../../../shared/components/ui/custom-dialog.component.vue';
+import { OrderAssembler } from '../../domain/order-assembler';
+import { useRoute } from 'vue-router';
+
 interface ValidationErrors {
   email?: string
   country?: string
@@ -227,20 +233,66 @@ const errors = reactive<ValidationErrors>({})
 const authStore = useAuthStore();
 const paymentStore = usePaymentStore();
 const dialog = useDialog();
+const route = useRoute();
+const plantStore = usePlantStore();
+const deviceStore = useDeviceStore();
+const orderStore = useOrderStore();
+const orderAssembler = new OrderAssembler();
 
-// Stripe initialization removed - using PaymentCardForm dialog instead
+onMounted(() => {
+  if (!paymentStore.temporalPaymentId) {
+    createModal(
+      dialog,
+      CustomDialog,
+      {
+        title: 'Error de Pago',
+        subtitle: 'No se pudo procesar el pago. Por favor, intenta nuevamente.',
+        type: 'error',
+        severity: 'danger',
+        redirectionPath: '/home'
+      }
+    );
+  }
 
-// Payment intent creation moved to handleSubmit function
+  if (!orderStore.newOrder || Object.keys(orderStore.newOrder).length === 0) {
+    createModal(
+      dialog,
+      CustomDialog,
+      {
+        title: 'No hay orden disponible',
+        subtitle: 'No se encontró una orden pendiente de pago. Puedes revisar tu historial de órdenes en tu perfil para completar el pago de órdenes anteriores.',
+        type: 'error',
+        severity: 'warning',
+        redirectionPath: '/profile'
+      }
+    );
+  }
+});
+
+const sensorQuantity = computed(() => {
+  return orderStore.newOrder?.details?.length || 0;
+});
+
+const sensorsSubtotal = computed(() => {
+  const quantity = sensorQuantity.value;
+  return (5.00 * quantity) + (6.00 * quantity) + (5.00 * quantity);
+});
+
+const installationCost = computed(() => {
+  return 20.00;
+});
+
+const totalAmount = computed(() => {
+  return sensorsSubtotal.value + installationCost.value;
+});
 
 async function handleSubmit() {
   isLoading.value = true;
 
   try {
-    // Clear previous errors
     errors.email = '';
     errors.country = '';
 
-    // Validate email and country
     if (!email.value.trim()) {
       errors.email = 'El email es requerido';
       isLoading.value = false;
@@ -252,76 +304,66 @@ async function handleSubmit() {
       return;
     }
 
-    // Map country code to CountryName
     const countryNameMap: Record<string, CountryName> = {
-      'PE': 'Peru',
-      'CO': 'Peru', // Using Peru as fallback for Colombia
-      'MX': 'United States', // Using US as fallback for Mexico
-      'AR': 'Peru', // Using Peru as fallback for Argentina
-      'CL': 'Peru', // Using Peru as fallback for Chile
+      'PE': 'United States',
+      'CO': 'United States',
+      'MX': 'United States',
+      'AR': 'United States',
+      'CL': 'United States',
       'US': 'United States',
-      'ES': 'Spain',
-      'DE': 'Germany',
+      'ES': 'United States',
+      'DE': 'United States',
     };
 
-    const countryName = countryNameMap[country.value] || 'Peru';
+    const countryName = countryNameMap[country.value] || 'United States';
 
-    // Calculate amount based on country (convert if needed)
-    const orderAmount = 36; // Fixed order amount
-    const convertedAmount = await convertAmountByCountry(orderAmount, countryName);
+    const orderAmount = orderStore.newOrder?.details?.reduce((total: number, detail: any) => {
+      return total + (detail.quantity * detail.unitPrice);
+    }, 0) || 0;
 
-    console.log('Converted Amount:', convertedAmount);
+    console.log('Converted Amount:', orderAmount);
 
     // Create payment intent
     const response = await paymentStore.createPaymentIntent({
-      amount: convertedAmount,
+      amount: orderAmount,
       currency: getCurrencyByCountry(countryName),
-      paymentMethodId: '',
+      paymentMethodId: '1',
     });
 
     const clientSecret = response?.clientSecret || '';
 
-    // Set payment financial data
-    paymentStore.setPaymentFinancialData(convertedAmount, getCurrencyByCountry(countryName));
+    paymentStore.setPaymentFinancialData(orderAmount, getCurrencyByCountry(countryName));
     console.log('Payment Process so Far:', paymentStore.getPaymentRequest);
 
-    // we create the device and payment
-    const paymentAssembler = new PaymentAssembler();
-
-    const paymentData={
-      paymentIntentId: response?.paymentIntentId || '',
-      paymentMethodId: response?.paymentMethodId || '',
-      amount: convertedAmount,
+    localStorage.setItem('paymentOrderData', JSON.stringify({
+      paymentId: paymentStore.temporalPaymentId || 0,
+      userEmail: email.value,
+      userPassword: '',
+      firstName: authStore.userData?.name || 'GUEST',
+      lastName: '',
+      country: countryName,
+      amount: orderAmount,
       currency: getCurrencyByCountry(countryName),
-      paymentStatus: response?.paymentStatus || 'completed',
-      userId: authStore.id || '',
-      referenceId: 0, 
-    }
+      referenceId: orderStore.newOrder?.id || 0, // ID de la orden
+      referenceType: 'order',
+    }));
 
-    const paymentResponse = await paymentAssembler.toRequest(paymentData);
+    const orderUpdateRequest = orderAssembler.toUpdateRequest({
+      action: "Order Completed",
+      stateId: 3, // este es el estado de orden completada :v
+      consumerId: Number(authStore.id) || 0,
+      specialistId: 0,
+      installationDate: orderStore.newOrder?.installationDate || new Date().toISOString()
+    });
 
-    console.log('Payment Response:', paymentResponse);
-    paymentStore.createPayment(paymentResponse);
+    console.log('Order Request:', orderUpdateRequest);
 
-    //We create the device too
+    // Guardar en localStorage en lugar de actualizar inmediatamente
+    localStorage.setItem('orderUpdateRequest', JSON.stringify({
+      orderId: orderStore.newOrder.id,
+      updateData: orderUpdateRequest
+    }));
 
-    //Esta logica de device deberia ir cuando se escoge la fecha
-
-
-    const deviceData = {
-      type: 'EcoGuardianKIT',
-      voltage: 5,
-      plantId: usePlantStore().getSelectedPlantId, // Assuming selectPlant is the ID of the plant
-    };
-
-    //Here the device is created
-    const deviceService = new DeviceService();
-    const deviceResponse = await deviceService.createDevice(deviceData);
-    console.log('Device Response:', deviceResponse);
-
-
-
-    // Open payment dialog
     dialog.open(PaymentCardFormComponent, {
       props: {
         modal: true,
@@ -337,10 +379,11 @@ async function handleSubmit() {
         country: countryName,
         discountCode: '',
         clientSecret: clientSecret,
-        amount: convertedAmount,
+        amount: orderAmount,
         currency: getCurrencyByCountry(countryName),
         countryName: countryName,
-        referenceId: 2, // Order reference ID (different from subscription)
+        referenceId: orderStore.newOrder?.id || 0,
+        referenceType: "order",
       }
     });
 
@@ -351,4 +394,3 @@ async function handleSubmit() {
   }
 }
 </script>
-
