@@ -1,10 +1,10 @@
 <template>
    <div class="question-card" @click="handleClick">
         <div class="flex flex-row justify-between items-center">
-            <h3 class="text-lg font-bold">{{ displayQuestion.displayTitle }}</h3>
+            <h3 class="question-title text-lg font-bold">{{ displayQuestion.displayTitle }}</h3>
             <span class="status-badge" :class="`status-${question.status.toLowerCase()}`">{{ formatStatus(question.status) }}</span>
         </div>
-        <p class="text-sm">{{ question.content }}</p>
+        <p class="question-content text-sm">{{ question.content }}</p>
         <div class="flex items-center gap-2 mt-2">
             <span class="text-sm font-medium">Created:</span>
             <span class="text-sm">{{ displayQuestion.formattedDate }}</span>
@@ -27,11 +27,9 @@
           </p>
             <span class="text-sm text-gray-600">Created: {{ displayQuestion.formattedDate }}</span>
 
-        <!-- 🔧 IMAGES SECTION MEJORADA -->
         <div v-if="question.image_urls && question.image_urls.length > 0" class="images-section mb-6">
           <h4 class="images-title">Attached Images</h4>
           
-          <!-- Grid responsivo para imágenes -->
           <div class="images-grid">
             <div v-for="(imageUrl, index) in question.image_urls" :key="index" class="image-wrapper">
               <Image alt="Question Image" preview class="custom-image">
@@ -60,62 +58,19 @@
             </div>
           </div>
         </div>
-
         <!-- No images state -->
         <div v-else class="no-images-state mb-6">
           <p class="text-gray-500 text-sm">No images attached to this question</p>
         </div>
-
-
-        
-
-        <div v-if="isSpecialist && question.status === 'pending'" class="images-section">
+        <!-- Specialist response section -->
+        <div class="specialist-section">
           <div class="specialist-header mb-4">
-            <h4 class="specialist-title">Expert Response</h4>
-            <p class="specialist-subtitle">Share your knowledge to help solve this issue</p>
+            <h4 class="specialist-title">The question is currently: {{ question.status.toUpperCase() }}</h4>
           </div>
-          
-          <div class="response-form">
-            <FloatLabel variant="on" class="w-full">
-              <Textarea 
-                id="expert_response"  
-                v-model="expertResponse"
-                rows="4" 
-                class="w-full resize-none" 
-                :maxlength="500"
-              />
-              <label for="expert_response">Provide detailed guidance and solution...</label>
-            </FloatLabel>
-            
-            <div class="character-count">
-              {{ expertResponse?.length || 0 }}/500 characters
-            </div>
-            
-            <div class="response-actions">
-              <Button 
-                type="button" 
-                label="Cancel" 
-                severity="secondary" 
-                @click="cancelResponse"
-                class="flex-1"
-              />
-              <Button 
-                type="button" 
-                label="Submit Response" 
-                @click="submitResponse"
-                :disabled="!expertResponse || expertResponse.trim().length < 10"
-                class="flex-1"
-              />
-            </div>
-          </div>
+          <div v-if="questionAnswer" class="answer-content"><h2>{{ questionAnswer.answerText }}</h2>
+          <p v-if="questionAnswer.createdAt">Created at: {{ questionAnswer.createdAt }}</p>
         </div>
-        <div v-else-if="isSpecialist && question.status !== 'Closed'" class="specialist-section">
-          <div class="specialist-header mb-4">
-            <h4 class="specialist-title">You can still review the issue!</h4>
-            <p class="specialist-subtitle">This question already has an answer.</p>
-          </div>
-          <h2>{{ questionAnswer.answerText }}</h2>
-          <p>Created at: {{ questionAnswer.createdAt }}</p>
+          
 
         </div>
       </div>
@@ -126,16 +81,15 @@
 import { defineEmits, defineProps, ref } from 'vue';
 import type { Question } from '../../../crm/domain/model/question.entity';
 import { QuestionAssemblerService } from '../../infrastructure/services/question-assembler.service';
-import { Button } from 'primevue';
 import {Dialog} from 'primevue';
-import {Textarea} from 'primevue';
-import {FloatLabel} from 'primevue';
 import {Image} from 'primevue';
 import { CrmService } from '../../infrastructure/services/crm.service';
 import type { Ref } from 'vue';
+import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 
 let visible = ref(false);
 let expertResponse = ref('');
+const authStore = useAuthStore();
 
 interface QuestionResponse {
   specialistId: number;
@@ -155,7 +109,6 @@ const emit = defineEmits<{
 }>();
 const props = defineProps<{
   question: Question;
-  isSpecialist?: boolean; // Optional prop to indicate if the user is a specialist
 }>();
 
 const getImageSrc = (url: string) => {
@@ -190,11 +143,9 @@ const getQuestionAnswer = (questionId: number): QuestionResponse => {
 
   consultingService.getAnswersByQuestionId(questionId)
     .then((response) => {
-      console.log('🔥 Question answer fetched:', response);
       // You may want to update a ref or emit an event here instead of returning
       questionAnswer.value = response;
       questionAnswer.value.createdAt = new Date(response.createdAt).toLocaleString();
-      console.log('🔥 Question answer updated:', questionAnswer.value);
     })
     .catch((error) => {
       console.error('Error fetching question answer:', error);
@@ -205,31 +156,17 @@ const getQuestionAnswer = (questionId: number): QuestionResponse => {
 };
 
 const handleClick = () => {  
-  visible.value = true;
   emit('click', props.question);
-  if (props.isSpecialist && props.question.status !== 'pending') {
+  if(authStore.isSpecialist){
+    return props.question;
+  }
+  visible.value = true;
+  if (props.question.status !== 'PENDING') {
     getQuestionAnswer(props.question.id);
   }
 
 };
 
-// 🔧 AGREGAR: Debug en submitResponse
-const submitResponse = () => {
-  console.log('🔥 Submit clicked');
-  console.log('🔥 expertResponse value:', expertResponse.value);
-  
-  
-    console.log('🔥 Emitting response...');
-    emit('expertResponse', props.question.id, expertResponse.value);
-    visible.value = false;
-    expertResponse.value = '';
-  
-};
-
-const cancelResponse = () => {
-  expertResponse.value = '';
-  visible.value = false;
-};
 
 const formatStatus = (status: string): string => {
   switch (status) {
@@ -246,7 +183,7 @@ const formatStatus = (status: string): string => {
 
 </script>
 
-<style scoped>
+<style>
 @import url('../../../style.css');
 .question-card {
     background-color: #ffffff;
@@ -256,8 +193,14 @@ const formatStatus = (status: string): string => {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     border: 1px solid #e5e7eb;
     transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
+.p-dialog{
+    max-width: 60%;
+}
 
 .status-badge {
     padding: 0.25rem 0.5rem;
@@ -282,9 +225,17 @@ const formatStatus = (status: string): string => {
     color: #f4422a;
 }
 
+.answer-content {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f0f9ff;
+    border-radius: 0.5rem;
+    border: 1px solid #dbeafe;
+}
+
 .question-card:hover {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    background-color: #f8f9fa;
+    background-color: var(--color-gray-100);
     transform: translateY(-1px);
     cursor: pointer;
 }
@@ -297,6 +248,7 @@ const formatStatus = (status: string): string => {
 
 .question-dialog {
   --dialog-padding: 1.5rem;
+  max-width: 70%; 
 }
 
 .dialog-content {
@@ -304,16 +256,27 @@ const formatStatus = (status: string): string => {
   flex-direction: column;
   gap: 1rem;
   max-height: 70vh;
-  min-width: 40vw;
   overflow-y: auto;
   padding: 0.5rem 0;
 }
 
-.question-info {
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid var(--primary-color, #059669);
+.question-title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 70%; /* or any width you prefer */
+}
+
+
+
+.question-content {
+  margin-top: 0.5rem;
+  color: #4b5563; /* Tailwind gray-700 */
+  font-size: 0.875rem; /* Tailwind text-sm */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 80%; /* or any width you prefer */
 }
 
 .question-meta {
@@ -342,14 +305,6 @@ const formatStatus = (status: string): string => {
   gap: 0.5rem;
 }
 
-/* 🔧 GRID RESPONSIVO */
-.images-grid {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: center;
-}
 
 
 
@@ -378,7 +333,6 @@ const formatStatus = (status: string): string => {
   object-fit: contain;
 }
 
-/* 🔧 IMAGE DETAILS */
 .image-details {
   background: white;
   border-radius: 4px;
@@ -409,7 +363,6 @@ const formatStatus = (status: string): string => {
   border-top: 1px solid #e5e7eb;
 }
 
-/* 🔧 NO IMAGES STATE */
 .no-images-state {
   text-align: center;
   padding: 2rem;
@@ -419,7 +372,6 @@ const formatStatus = (status: string): string => {
 }
 
 
-/* 🔧 SPECIALIST SECTION */
 .specialist-section {
   border-top: 2px solid #e5e7eb;
   padding-top: 1.5rem;

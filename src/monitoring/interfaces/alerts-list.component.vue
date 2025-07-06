@@ -1,35 +1,45 @@
 <template>
-  <div class="bg-gray-100 h-full p-4">
-    <h2 class="text-xl font-semibold mb-4">Notifications</h2>
-    <div class="flex flex-col gap-4">
+  <div class="h-full w-full px-4 pt-5 rounded-lg bg-gray-100">
+    <h2 class="text-xl font-semibold mb-4">Recent Notifications</h2>
+    <div v-if="recentNotifications.length > 0" class="flex flex-col gap-4 flex-1 h-full">
       <alert-card
-          v-for="(alert, index) in alerts"
+          v-for="(alert, index) in recentNotifications"
           :key="index"
           :title="alert.title"
-          :content="alert.content"
-          :date="alert.created_at"
+          :content="alert.subject"
+          :date="alert.createdAt"
       />
+    </div>
+    <div v-else class="text-center text-gray-500">
+      <p>It appears that there are no notifications yet.</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted} from 'vue';
 import AlertCard from './alert-card.component.vue';
-import {NotificationService} from "../../profile/infrastructure/services/notification.service.ts";
+import {useNotificationStore} from "../../profile/interfaces/store/notification-store.ts";
+import {useAuthStore} from "../../iam/interfaces/store/auth-store.ts";
 
-const alertsService = new NotificationService();
+const notificationStore = useNotificationStore();
+const authStore = useAuthStore();
 
-const alerts = ref<any[]>([]);
+const recentNotifications = computed(() => {
+  return [...notificationStore.notifications].reverse().slice(0, 2);
+});
 
 onMounted(async () => {
   try {
-    const response = await alertsService.getNotifications();
-    alerts.value = response;
+    const id = authStore.id;
+    await notificationStore.getNotifications(id);
   } catch (error) {
     console.error('Error fetching alerts:', error);
   }
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+
+
+</style>

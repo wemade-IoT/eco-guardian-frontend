@@ -9,3 +9,15 @@ export function getPlanId(planType: PlanType): number {
 
   return planIdMap[planType];
 }
+
+export function getPlanName(subscriptionId: number): string {
+  const planNameMap: Record<number, string> = {
+    1: 'Domestic',
+    2: 'Pro',
+    3: 'Business',
+    4: 'Specialist',
+    5: 'Admin'
+  };
+
+  return planNameMap[subscriptionId];
+}

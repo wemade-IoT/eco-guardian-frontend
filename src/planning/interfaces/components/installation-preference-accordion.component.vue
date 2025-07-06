@@ -5,8 +5,24 @@ import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
 import Button from 'primevue/button';
 import { useRouter } from 'vue-router';
+import { useOrderStore } from '../stores/order-store';
 
 const router = useRouter();
+
+// XDDD pantalla de floro
+const handleAssitedInstallation = () => {
+  // ??? todavia no se ha creado onde taras seteando
+  //useOrderStore().setAction('AssistedInstallation');
+  router.push('/order-planning');
+};
+
+const handleSelfInstallation = () => {
+  // ??? todavia no se ha creado onde taras seteando
+  //useOrderStore().setAction('SelfInstallation');
+  router.push('/order-planning');
+};
+
+
 </script>
 
 <template>
@@ -68,7 +84,7 @@ const router = useRouter();
                 @click="router.push('/home')">
                 Cancel
               </Button>
-              <Button class="confirm-button px-8 py-2.5" @click="router.push('/order-planning')">
+              <Button class="confirm-button px-8 py-2.5" @click="handleAssitedInstallation">
                 <i class="pi pi-check mr-2"></i>
                 Confirm Installation Service
               </Button>
@@ -96,7 +112,7 @@ const router = useRouter();
                   </h3>
                   <p class="text-gray-600 leading-relaxed">
                     Save on installation costs and set up your device at your own pace. We provide detailed
-                    instructions, video tutorials, and customer support to guide you through the process.
+                    instructions and customer support to guide you through the process.
                   </p>
                 </div>
 
@@ -119,7 +135,7 @@ const router = useRouter();
                   @click="router.push('/home')">
                   Cancel
                 </Button>
-                <Button class="confirm-button px-8 py-2.5" @click="router.push('/order-planning')">
+                <Button class="confirm-button px-8 py-2.5" @click="handleSelfInstallation">
                   <i class="pi pi-check mr-2"></i>
                   Confirm Self Installation
                 </Button>

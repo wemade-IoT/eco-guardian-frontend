@@ -6,15 +6,23 @@
       </figure>
       <ul class="flex flex-col gap-1">
         <!-- Home -->
-        <li v-if="authStore.role !== 'Specialist'" role="button" @click="$router.push('/home')" :class="[
+        <li class="holder" aria-label="Check your info in he main dashboard" v-if="authStore.role !== 'Specialist'" role="button" @click="$router.push('/home')" :class="[
           'cursor-pointer flex items-center justify-center bg-gray-300/50 w-14 h-14 rounded-md group transition-all duration-300 ease-in-out',
           isActive('/home') ? 'bg-slate-700' : '',
         ]">
           <i class="pi pi-home text-[20px]"
             :class="isActive('/home') ? 'text-slate-50' : 'text-gray-500 group-hover:text-slate-50'"></i>
         </li>
+        <!-- Plants -->
+        <li class="holder" aria-label="Check your plants or plantation info" v-if="authStore.role !== 'Specialist'" role="button" @click="$router.push('/info-panel')" :class="[
+          'cursor-pointer flex items-center justify-center bg-gray-300/50 w-14 h-14 rounded-md group transition-all duration-300 ease-in-out',
+          isActive('/info-panel') ? 'bg-slate-700' : '',
+        ]">
+          <i class="fa-solid fa-seedling text-[16px]"
+            :class="isActive('/info-panel') ? 'text-slate-50' : 'text-gray-500 group-hover:text-slate-50'"></i>
+        </li>
         <!-- Consulting (Chat) -->
-        <li role="button" @click="$router.push('/consulting')" :class="[
+        <li aria-label="ask your questions in consulting" class="holder" role="button" @click="$router.push('/consulting')" :class="[
           'cursor-pointer flex items-center justify-center bg-gray-300/50 w-14 h-14 rounded-md group transition-all duration-300 ease-in-out',
           isActive('/consulting') ? 'bg-slate-700' : '',
         ]">
@@ -22,7 +30,7 @@
             :class="isActive('/consulting') ? 'text-slate-50' : 'text-gray-500 group-hover:text-slate-50'"></i>
         </li>
         <!-- Profile (Person) -->
-        <li role="button" @click="$router.push('/profile')" :class="[
+        <li class="holder" aria-label="See your profile" role="button" @click="$router.push('/profile')" :class="[
           'cursor-pointer flex items-center justify-center bg-gray-300/50 w-14 h-14 rounded-md group transition-all duration-300 ease-in-out',
           isActive('/profile') ? 'bg-slate-700' : '',
         ]">
@@ -30,9 +38,9 @@
             :class="isActive('/profile') ? 'text-slate-50' : 'text-gray-500 group-hover:text-slate-50'"></i>
         </li>
       </ul>
-      <figure class="cursor-pointer w-13 h-13 mx-auto rounded-full overflow-hidden" @click="authStore.logout()">
-        <img src="https://avatars.githubusercontent.com/u/129230632?v=4" alt="hotman_photo" class="size-full" />
-      </figure>
+      <button aria-label="Logout"  class='logout holder cursor-pointer flex items-center justify-center w-12 h-12 bg-slate-700 rounded-md group transition-all duration-300 ease-in-out' @click="authStore.logout()">
+            <i class="pi pi-sign-out text-slate-50"></i>
+      </button>
     </div>
   </aside>
 </template>
@@ -48,3 +56,18 @@ function isActive(path: string) {
   return route.path === path;
 }
 </script>
+
+<style scoped>
+
+
+
+.holder:hover{
+  scale: 1.03;
+}
+
+.logout:hover{
+  background-color: #fa4949;
+  color: white;
+}
+
+</style>

@@ -10,8 +10,16 @@ const paymentAssembler = new PaymentAssembler();
 export const usePaymentStore = defineStore("payment", {
   state: () => ({
     payments: [] as PaymentResponse[],
+    paymentRequest: {} as PaymentRequest,
+    temporalPaymentId: null as number | null,
   }),
+  getters: {
 
+    getPaymentRequest: (state) => {
+      return state.paymentRequest;
+    }
+
+  },
   actions: {
     async createPaymentIntent(data: IPaymentIntent): Promise<any> {
       try {
@@ -21,6 +29,12 @@ export const usePaymentStore = defineStore("payment", {
         console.error("Error creating payment intent:", error);
         throw error;
       }
+    },
+
+    // pa q sera esta wea xd
+    setPaymentFinancialData(amount: number,currency: string = "usd") {
+      this.paymentRequest.amount = amount;
+      this.paymentRequest.currency = currency;
     },
 
     async createPayment(req: PaymentRequest) {
@@ -64,6 +78,23 @@ export const usePaymentStore = defineStore("payment", {
         console.error("Error fetching payment by user ID:", error);
         throw error;
       }
+    },
+
+    async updatePayment(paymentId: number, req: any) {
+      try {
+        await paymentService.updatePayment(paymentId, req);
+      } catch (error) {
+        console.error("Error updating payment:", error);
+        throw error;
+      }
+    },
+
+    setTemporalPaymentId(id: number) {
+      this.temporalPaymentId = id;
+    },
+
+    clearTemporalPaymentId() {
+      this.temporalPaymentId = null;
     },
   },
 });

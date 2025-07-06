@@ -4,7 +4,7 @@ import type { IPaymentIntent } from "../../../public/utils/interfaces/payment-in
 export class PaymentService extends HttpService {
   public async createPaymentIntent(data: IPaymentIntent): Promise<string> {
     try {
-      const response = await this.http.post("payment/payment-intent", data);
+      const response = await this.http.post("payments/payment-intent", data);
 
       return response.data;
     } catch (error) {
@@ -15,7 +15,7 @@ export class PaymentService extends HttpService {
 
   public async createPayment(req: any): Promise<string> {
     try {
-      const response = await this.http.post("payment", req);
+      const response = await this.http.post("payments", req);
 
       return response.data;
     } catch (error) {
@@ -26,7 +26,7 @@ export class PaymentService extends HttpService {
 
   public async confirmPaymentIntent(paymentIntentId: string): Promise<string> {
     try {
-      const response = await this.http.post("payment/confirm-payment-intent", {
+      const response = await this.http.post("payments/confirm-payment-intent", {
         paymentIntentId,
       });
 
@@ -39,7 +39,7 @@ export class PaymentService extends HttpService {
 
   public async getAllPayments(): Promise<any> {
     try {
-      return await this.http.get("payment/all");1
+      return await this.http.get("payments/all");1
     } catch (error) {
       console.error("Error fetching payments:", error);
       throw error;
@@ -48,9 +48,19 @@ export class PaymentService extends HttpService {
 
   public async getPaymentByUserId(userId: string): Promise<any> {
     try {
-      return await this.http.get(`payment/${userId}`);
+      return await this.http.get(`payments/${userId}`);
     } catch (error) {
       console.error("Error fetching payment by user ID:", error);
+      throw error;
+    }
+  }
+
+  public async updatePayment(paymentId: number, req: any): Promise<any> {
+    try {
+      const response = await this.http.put(`payments/${paymentId}`, req);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating payment:", error);
       throw error;
     }
   }

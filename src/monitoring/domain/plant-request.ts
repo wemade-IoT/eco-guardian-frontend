@@ -8,6 +8,7 @@ export class PlantRequest{
     temperatureThreshold:number;
     lightThreshold:number;
     wellnessStateId:number;
+    imageUrl:string;
 
     constructor(
         name:string,
@@ -18,7 +19,8 @@ export class PlantRequest{
         waterThreshold:number,
         temperatureThreshold:number,
         lightThreshold:number,
-        wellnessStateId:number
+        wellnessStateId:number,
+        imageUrl:string
     ){
         this.name = name;
         this.type = type;
@@ -29,5 +31,6 @@ export class PlantRequest{
         this.temperatureThreshold = temperatureThreshold;
         this.lightThreshold = lightThreshold;
         this.wellnessStateId = wellnessStateId;
+        this.imageUrl = imageUrl;
     }
 }

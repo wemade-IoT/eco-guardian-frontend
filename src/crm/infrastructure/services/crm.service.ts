@@ -1,27 +1,30 @@
 
 import { HttpService } from "../../../shared/services/http-common";
-import { QuestionAssemblerService } from "./question-assembler.service";
+import { QuestionAssemblerService, type CreateQuestionFormRequest } from "./question-assembler.service";
 
 export class CrmService extends HttpService {
 
-  public async postQuestion(question: any): Promise<any> {
+  //In this endpoint we need to send FormData
+  public async postQuestion(question: CreateQuestionFormRequest): Promise<any> {
    
-    const questionRequest = QuestionAssemblerService.toApiRequest(question);
-    console.log("Transformed question request:", questionRequest);
+    
+    // Use the FormData method for proper multipart/form-data upload
+    const formData = QuestionAssemblerService.toFormDataRequest(question);
     
     try {
-      const response = await this.http.post('question', questionRequest);
-      console.log("Success! Response from consulting service:", response.data);
+      const response = await this.http.post('questions', formData,{
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
 
       const transformedQuestion = QuestionAssemblerService.toDomainModel(response.data);
 
       return {
         success: true,
-
         data: transformedQuestion
       };
     } catch (error: any) {
-      console.error("Error creating question in service:", error);
       
       if (error.response) {
         console.error("Response error:", error.response.status, error.response.data);
@@ -43,10 +46,11 @@ export class CrmService extends HttpService {
     }
   }
 
+  //Gets all questions from the CRM
   public async getConsulting(): Promise<any> {
     try {
       // Realizar la solicitud GET a la API
-      const response = await this.http.get(`question`);
+      const response = await this.http.get(`questions`);
 
       // Usar el assembler para transformar los datos en objeto Question
       const questions = QuestionAssemblerService.toDomainModelArray(response.data);
@@ -57,28 +61,27 @@ export class CrmService extends HttpService {
       throw error;
     }
   }
-
+  //Gets one specific question by its ID
   public async getAnswersByQuestionId(questionId: number): Promise<any> {
    try {
-    const answer = await this.http.get(`question/${questionId}/answers`);
+    const answer = await this.http.get(`questions/${questionId}/answers`);
     console.log("Response from getAnswersByQuestionId:", answer.data);
 
     return answer.data[0];
    }
     catch (error) {
-        console.error("Error fetching answers by question ID:", error);
-        throw error;
+        console.error("Error fetching answers by question ID:", error);//Probably that there is no answer yet
       }
   };
 
-
+//Posts an answer to a specific question by its ID
   public async postAnswer(answer: any, questionId: number): Promise<any> {
    
     const postAnswer = answer;
     console.log("Transformed question request:", postAnswer);
     
     try {
-      const response = await this.http.post(`question/${questionId}/answers`, postAnswer);
+      const response = await this.http.post(`questions/${questionId}/answers`, postAnswer);
       console.log("Success! Response from consulting service:", response.data);
       return {
         success: true,
@@ -107,4 +110,29 @@ export class CrmService extends HttpService {
       };
     }
   }
+
+  //Gets questions by plant ID GET
+  public async getQuestionsByPlantId(plantId: number): Promise<any> {
+    try {
+      const response = await this.http.get(`questions/plant/${plantId}`);
+      console.log("Questions fetched:", response.data);
+      return QuestionAssemblerService.toDomainModelArray(response.data);
+    } catch (error) {
+      console.error("Error fetching questions by plant ID:", error);
+      throw error;
+    }
+  }
+
+  //Gets questions by user ID GET
+  public async getQuestionsByUserId(userId: number): Promise<any> {
+    try {
+      const response = await this.http.get(`questions/user/${userId}`);
+      console.log("Questions fetched:", response.data);
+      return QuestionAssemblerService.toDomainModelArray(response.data);
+    } catch (error) {
+      console.error("Error fetching questions by user ID:", error);
+      throw error;
+    }
+  }
+
 }

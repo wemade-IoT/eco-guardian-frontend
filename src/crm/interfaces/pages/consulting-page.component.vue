@@ -2,30 +2,48 @@
     <div class="consulting-page">
         <!-- Page title -->
         <div class="page-header">
-            <h2 v-if="isEnterprise">Ask Questions About Your Plantations</h2>
-            <h2 v-else-if="isSpecialist">Share your knowledge! Help our users solve their questions</h2>
-            <h2 v-else>Ask Questions About Your Plants</h2>
+            <h2>{{mainText.Title}}</h2>
             <p class="page-description">
-                Get expert help with your plant questions and track their status.
+                {{mainText.subtitle}}
             </p>
         </div>
 
         <!-- Main content area -->
         <div class="main-content">            
             <!-- Question creation form -->
-            <div v-if="!isSpecialist" class="creation-section">
+            <div v-if="!authStore.isSpecialist" class="creation-section">
                 <QuestionCreationDialogueComponent 
                     @question-created="handleQuestionCreated"
                 />
-            </div>    
+            </div>
+            <!-- Shows the answers done by this specialist -->
+                
+                <div v-if="authStore.isSpecialist" class="question-info-container">
+                    <QuestionInfoComponent
+                    :question="questionSelected"
+                    @plant-title="handlePlantData"
+                    ></QuestionInfoComponent>
+                </div>
+                <div v-if="authStore.isSpecialist" class="answer-specialist-section">
+                <!-- Shows the questions that this specialist is answering -->
+                    <specialistAnsweringComponent
+                    :question="questionSelected"
+                    @expert-response="handleResponse"
+
+                    />
+                <!-- Shows additional help if needed -->
+                    <specialistAdditionalHelpComponent 
+                    :plant-name="plantName"
+                    :plant-selected="isPlantSeleced"/> 
+                </div>
+
             <!-- Questions list -->
             <div class="questions-section">
                 <QuestionList
-                    :questions="userQuestions"
+                    :questions="questionStore.questions"
                     :title="questionsTitle"
-                    :is-specialist="isSpecialist"
+                    :is-specialist="authStore.isSpecialist"
                     @questionClick="handleQuestionClick"
-                    @expert-response="handleResponse"
                 />
             </div>       
         </div>
@@ -39,22 +57,20 @@ import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import QuestionCreationDialogueComponent from '../components/question-creation-dialogue.component.vue';
 import QuestionList from '../components/question-list.component.vue';
 import type { Question } from '../../../crm/domain/model/question.entity';
-import { CrmService } from '../../infrastructure/services/crm.service';
+import { useQuestionStore } from '../stores/question-store';
+import specialistAdditionalHelpComponent from '../components/specialist-additional-help.component.vue';
+import specialistAnsweringComponent from '../components/specialist-answering.component.vue';
+import { onMounted } from 'vue';
+import QuestionInfoComponent from '../components/question-info.component.vue';
 const authStore = useAuthStore();
-const consultingService = new CrmService();
+const questionStore = useQuestionStore();
 // Sample question data using the proper Question interface
-let userQuestions = ref<Question[]>([]);
-let isEnterprise = false;
-let isSpecialist = false;
-if (authStore.role == 'ENTERPRISE' || authStore.role == 'Enterprise') {
-    isEnterprise = true;
-} else if (authStore.role == 'Specialist' || authStore.role == 'SPECIALIST' || authStore.role == 'Admin' || authStore.role == 'ADMIN') {
-    isSpecialist = true;
-}
-console.log('Consulting-page: User role is', authStore.role, isSpecialist);
 
 // Initialize sample data with proper Question structure
-import { onMounted } from 'vue';
+
+let plantName = ref(''); // Plant name for additional help
+const isPlantSeleced = ref(false); // Flag to indicate if a plant is selected
+let questionSelected = ref<Question | undefined>(undefined); // Selected question for answering
 
 onMounted(async () => {
     await loadQuestions();
@@ -62,52 +78,63 @@ onMounted(async () => {
 
 const loadQuestions = async () => {
     try {
-        const response = await consultingService.getConsulting();
-        console.log('Consulting-page: Questions loaded successfully', response);
-        userQuestions.value = response;
+        // Use the question store to load questions
+        await questionStore.loadQuestions();
+        console.log('Consulting-page: Questions loaded successfully', questionStore.questions.length);
     } catch (error) {
         console.error('Consulting-page: Error loading questions', error);
     }
 };
 
 // Funciones para manejar eventos de las questions
-const handleQuestionCreated = (newQuestion: Question) => {
-    console.log('Consulting-page: New question created', newQuestion);
-    userQuestions.value.push(newQuestion);
+const handleQuestionCreated = () => {
+    console.log('Consulting-page: New question created, refreshing list');
+    // The question store already handles adding the new question
+    // We just need to refresh if needed
 };
 
-const handleResponse = async (id: number, answer: string) => {
-    console.log('Answer for question ', id , ": ", answer);
+const handlePlantData = (namePlant: string) => {
+    console.log('Consulting-page: Plant data received', namePlant);
+    plantName.value = namePlant;
+};
+
+const handleResponse = async (response: { questionId: number, answer: string }) => {
+    console.log('Answer for question ', response.questionId , ": ", response.answer);
 
     let postAnswer = {
         specialistId: parseInt(authStore.id),
-        answerText: answer
+        answerText: response.answer
     };
 
-    await consultingService.postAnswer(postAnswer, id)
-        .then(response => {
-            console.log('Consulting-page: Expert response posted successfully', response);
-        })
-        .catch(error => {
-            console.error('Consulting-page: Error posting expert response', error);
-            
-        });
-    await loadQuestions(); 
+    const success = await questionStore.postAnswer(postAnswer, response.questionId);
+    if (success) {
+        console.log('Consulting-page: Expert response posted successfully');
+    } else {
+        console.error('Consulting-page: Error posting expert response', questionStore.error);
+    }
 };
 
 const handleQuestionClick = (question: Question) => {
     console.log('Consulting-page: Question clicked from list', question.id, question.title);
     console.log('Question details:', question);
+    questionStore.selectQuestion(question);
+    questionSelected.value = question;
+    isPlantSeleced.value = question.plant_id !== null && question.plant_id !== undefined;
 };
 
 //Revisar y refactorizar esta función y logica de componentes luego, ya se sobre complico el tema...
 
 // Computed properties for UI text
-const questionsTitle = ref(isSpecialist ? isEnterprise ?  'Plantation Questions': 'Questions from Users' : 'Your Plant Questions');
+const questionsTitle = ref(authStore.isSpecialist ? authStore.isEnterprise ?  ' Your Plant Questions': 'Questions from Users' : ' Plantation Questions');
+
+const mainText = {
+    Title:  ref(authStore.isSpecialist ? authStore.isEnterprise ?  ' Ask Questions About Your Plants': 'Share your knowledge!' : 'Ask Questions About Your Plantations'),
+    subtitle: ref(authStore.isSpecialist ? authStore.isEnterprise ?  'Help our users solve their questions.': 'Help our users solve their questions' : 'Get expert help with your plantation questions and track their status.')
+}
 
 </script>
 
-<style scoped>
+<style>
 .consulting-page {
     background-color: transparent;
     width: 100%;
@@ -135,6 +162,17 @@ const questionsTitle = ref(isSpecialist ? isEnterprise ?  'Plantation Questions'
     margin: 0;
 }
 
+.specialist-content{
+    display: flex;
+    flex-direction: row;
+    width: 60%;
+}
+
+.question-info-container {
+    flex: 2;
+    width: 30%;
+}
+
 /* Main content layout */
 .main-content {
     display: flex;
@@ -150,9 +188,17 @@ const questionsTitle = ref(isSpecialist ? isEnterprise ?  'Plantation Questions'
 }
 
 .questions-section {
-    flex: 1;
-    min-width: 0;
+    flex: 2;
+    width: 40%;
     overflow: hidden;
+}
+
+.answer-specialist-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 30%;
 }
 
 /* Responsive design */
@@ -168,7 +214,7 @@ const questionsTitle = ref(isSpecialist ? isEnterprise ?  'Plantation Questions'
     
     .questions-section {
         flex: 1;
-        min-height: 400px;
+        width: 100%;
     }
 }
 
@@ -184,25 +230,6 @@ const questionsTitle = ref(isSpecialist ? isEnterprise ?  'Plantation Questions'
     
     .main-content {
         gap: 20px;
-    }
-}
-
-@media (max-width: 640px) {
-    .consulting-page {
-        padding: 12px;
-        gap: 16px;
-    }
-    
-    .page-header h1 {
-        font-size: 1.5rem;
-    }
-    
-    .page-description {
-        font-size: 0.9rem;
-    }
-    
-    .main-content {
-        gap: 16px;
     }
 }
 </style>

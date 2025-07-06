@@ -18,7 +18,8 @@ export const useAuthStore = defineStore("auth", {
     })(),
     role: getClaimType("role", localStorage.getItem("token") || "") || "GUEST",
     id: getClaimType("sid",localStorage.getItem("token") || "") || "",
-    isEnterprise: getClaimType("role",localStorage.getItem("token") || "") === "Enterprise" || false,
+    isEnterprise: getClaimType("role",localStorage.getItem("token") || "") === "Business" || false,
+    isSpecialist: getClaimType("role",localStorage.getItem("token") || "") === "Specialist" || false,
     isAdmin : getClaimType("role",localStorage.getItem("token") || "") === "Admin" || false,
     userData: {} as UserData,
   }),
@@ -35,9 +36,11 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
+    //Evitar que se registre si el proceso de registro de perfil falla
     async register({ email, password, roleId }: { email: string; password: string; roleId: number }): Promise<any> {
       try {
         const response = await authService.signUp(email, password, roleId);
+        await this.login(email, password);
         return response.data;
       } catch (error) {
         console.error("Error during signup:", error);

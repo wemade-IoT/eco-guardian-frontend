@@ -5,10 +5,10 @@ export class HttpService {
 
     constructor() {
         this.http = axios.create({
-            baseURL: "https://ecoguardian-cgenhdd6dadrgbfz.brazilsouth-01.azurewebsites.net/api/v1",
+            baseURL: "http://localhost:9080/api/v1",
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "application/json",
+                "Accept": "*/*",
             },
         });
         this.http.interceptors.request.use(

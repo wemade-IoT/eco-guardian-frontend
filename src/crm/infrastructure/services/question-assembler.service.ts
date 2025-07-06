@@ -1,5 +1,4 @@
 // src/crm/domain/services/question-assembler.service.ts
-import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import type { Question } from '../../domain/model/question.entity';
 
 // 🔧 DTO basado en la estructura REAL de tu API
@@ -15,33 +14,49 @@ export interface QuestionApiDTO {
   imageUrls: string[];
 }
 
-// 🔧 Request para crear pregunta
-export interface CreateQuestionRequest {
+
+export interface CreateQuestionFormRequest {
   title: string;
   content: string;
   plantId: number;
   userId: number;
-  imageUrls?: string[];
+  images?: File[];
 }
 
 export class QuestionAssemblerService {
-  
-  // 🔧 FROM FORM TO API REQUEST
-  static toApiRequest(formData: {
-    title: string;
-    content: string;
-    plant_id: number;
-    user_id: number;
-    diagnostic_images?: File[];
-  }): CreateQuestionRequest {
-    return {
-      title: formData.title,
-      content: formData.content,
-      plantId:formData.plant_id,
-      userId: parseInt(useAuthStore().id), // Obtener el ID del usuario desde el store
-      // Convertir imágenes a URLs simuladas (o manejar subida real)
-      imageUrls: formData.diagnostic_images?.map((_, i) => `image-${i}.jpg`) || []
-    };
+  static toFormDataRequest(request: CreateQuestionFormRequest): FormData {
+
+    console.log('Creating FormData from request:', request);
+
+    const formData = new FormData();
+    
+    // Agregar campos básicos con nombres en PascalCase para el backend
+    formData.append("Title", request.title);
+    formData.append("Content", request.content);
+    formData.append("UserId", request.userId.toString());
+    formData.append("PlantId", request.plantId.toString());
+    
+    // Agregar imágenes si existen
+    if (request.images && request.images.length > 0) {
+      request.images.forEach((image) => {
+        //ImagesUrl is a list of images file so we append each image with the same key
+        if (image instanceof File) {
+          formData.append(`ImageUrls`, image, image.name);
+        } else {
+        }
+      });
+    } else {
+    }
+    
+    for (let [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`${key}: File(${value.name}, ${value.size} bytes, ${value.type})`);
+      } else {
+        console.log(`${key}: ${value}`);
+      }
+    }
+    
+    return formData;
   }
 
   // 🔧 FROM API RESPONSE TO DOMAIN MODEL
@@ -62,7 +77,6 @@ export class QuestionAssemblerService {
   // 🔧 FROM API ARRAY TO DOMAIN ARRAY
   static toDomainModelArray(dtos: QuestionApiDTO[]): Question[] {
     if (!Array.isArray(dtos)) {
-      console.warn('Expected array but received:', typeof dtos);
       return [];
     }
     

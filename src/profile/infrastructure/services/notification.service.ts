@@ -1,11 +1,11 @@
-import { notifications } from "../../../assets/data/notifications";
+import type {NotificationResponse} from "../../domain/notification-response.ts";
+import {HttpService} from "../../../shared/services/http-common.ts";
 
-export class NotificationService {
+export class NotificationService extends HttpService {
 
-  // TODO: POR AHORA CON FAKE DATA, LUEGO SE DEBE CONECTAR A LA API
-  public async getNotifications(): Promise<any> {
+  public async getNotifications(profileId:number): Promise<any> {
     try {
-      return notifications;
+      return await this.http.get<NotificationResponse[]>(`/notifications?profileId=${profileId}`);
     } catch (error) {
       console.error("Error fetching notifications:", error);
       throw error;

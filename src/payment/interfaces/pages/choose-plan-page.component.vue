@@ -11,7 +11,11 @@
         @select="planSelected = $event" @price="selectedPrice = $event"></plan-card>
     </div>
     <billing-form :amount="selectedPrice" :is-plan-selected="isPlanSelected"
-      :plan-selected="planSelected"></billing-form>
+      :plan-selected="planSelected" 
+      :email="auth.userData.email" 
+      :first-name="auth.userData.name" 
+      :last-name="auth.userData.lastName" 
+      :password="auth.userData.password"></billing-form>
   </div>
   <!-- <confirm-payment-modal></confirm-payment-modal> -->
 </template>
@@ -24,14 +28,35 @@ import PlanCard from '../components/plan-card.component.vue';
 import BillingForm from '../components/billing-form.component.vue';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 
+
+
 const auth = useAuthStore();
 
-console.log('userData', auth.userData);
+
+console.log('userData after filling sign in', auth.userData);
+
 
 const planSelected = ref<PlanType | null>(null);
 const selectedPrice = ref<number>(0);
 
+const mapPlanToTypeId = (plan: PlanType): number => {
+  switch (plan) {
+    case 'DOMESTIC':
+      return 1;
+    case 'PRO':
+      return 2;
+    case 'ENTERPRISE':
+      return 3;
+    default:
+      return 0; // Default case if no match
+  }
+};
+
 const isPlanSelected = computed(() => {
+  if (auth.userData && planSelected.value) {
+  auth.userData.subscriptionId = mapPlanToTypeId(planSelected.value); // Ensure planId is initialized
+  console.log('userData with planId', auth.userData);
+}
   return planSelected.value !== null;
 });
 </script>
