@@ -131,6 +131,7 @@ const getCurrencyByCountry = (country: string): string => {
 }
 
 const viewDetails = (payment: Payment): void => {
+  
   emit('viewDetails', payment)
 }
 

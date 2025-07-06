@@ -9,10 +9,10 @@
             {{ data.completedAt ? formatDate(data.completedAt) : 'N/A' }}
           </template>
         </Column>
-        <Column field="stateId" header="State ID" class="min-w-[100px]">
+        <Column field="stateId" header="State" class="min-w-[100px]">
           <template #body="{ data }">
-            <span :class="getStateClass(data.stateId)" class="px-2 py-1 rounded-full text-xs font-medium">
-              {{ getStateText(data.stateId) }}
+            <span :class="getStateClass(data.stateId, data.specialistId)" class="px-2 py-1 rounded-full text-xs font-medium">
+              {{ getStateText(data.stateId, data.specialistId) }}
             </span>
           </template>
         </Column>
@@ -84,7 +84,12 @@ const formatDate = (dateString: string): string => {
   })
 }
 
-const getStateClass = (stateId: number): string => {
+const getStateClass = (stateId: number, specialistId: number): string => {
+  
+  if(stateId == 3 && specialistId == 0 ) {
+      return 'bg-orange-100 text-orange-800'
+  }
+
   switch (stateId) {
     case 1:
       return 'bg-yellow-100 text-yellow-800'
@@ -97,7 +102,14 @@ const getStateClass = (stateId: number): string => {
   }
 }
 
-const getStateText = (stateId: number): string => {
+const getStateText = (stateId: number, specialistId: number): string => {
+
+    if(stateId == 3 && specialistId == 0 ) {
+      return 'Processing'
+  }
+
+
+
   switch (stateId) {
     case 1:
       return 'Pending'
@@ -115,6 +127,7 @@ const getAssignedClass = (specialistId: number | null): string => {
 }
 
 const viewDetails = (order: Order): void => {
+  console.log('Viewing details for order:', order)
   emit('viewDetails', order)
 }
 </script>

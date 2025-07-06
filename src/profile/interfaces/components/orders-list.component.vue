@@ -65,6 +65,12 @@
               <i class="pi pi-check"></i>
               Take Order
             </button>
+            <!-- New button for assigned specialist -->
+            <button v-if="order.specialistId && order.specialistId === useAuthStore().id" @click="specialistAction(order)"
+              class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors duration-200 text-sm font-medium">
+              <i class="pi pi-comment"></i>
+              Complete Installation
+            </button>
           </div>
         </div>
       </div>
@@ -196,12 +202,9 @@ const formatDate = (dateString: string): string => {
 
 const getStatusText = (stateId: number, specialistId: number): string => {
   
-  
   if(stateId == 3 && specialistId == 0 ) {
-          return 'Awaiting Installation'
-          }
-  
-
+      return 'Requires Installation'
+  }
   switch (stateId) {
     case 1: return 'Pending'
     case 2: return 'In Progress'
@@ -224,6 +227,8 @@ const calculateTotal = (details: OrderDetail[]): number => {
 }
 
 const viewDetails = (order: Order): void => {
+  console.log('Viewing details for order:', order)
+  console.log('Order Details:', order.details)
   selectedOrder.value = order
   showDetailsModal.value = true
 }
@@ -239,6 +244,15 @@ const takeOrder = (order: Order): void => {
   order.stateId = 2 // Set to "In Progress"
   useOrderStore().editOrder(order.id, order)
   emit('takeOrder', order)
+}
+
+const specialistAction = (order: Order): void => {
+  console.log('Specialist action for order:', order.id);
+  useOrderStore().editOrder(order.id, {
+    ...order,
+    stateId: 3, // Set to "Completed"
+    completedAt: new Date().toISOString() // Set completed date to now
+  });
 }
 </script>
 

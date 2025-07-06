@@ -89,7 +89,7 @@
           </div>
         </div>
         <!-- Notifications Widget (only if not Domestic) -->
-        <div v-if="authStore.isSpecialist"
+        <div v-if="!authStore.isSpecialist"
           class="bg-white rounded-2xl shadow border border-gray-200 p-5 flex flex-col gap-3 max-h-72 overflow-y-auto min-h-[120px]">
           <div class="flex items-center gap-2 mb-2">
             <i class="pi pi-bell text-emerald-600 text-lg"></i>
@@ -112,7 +112,7 @@
           <div class="flex items-center justify-between mb-6">
             <h3 v-if="!authStore.isSpecialist" class="text-xl font-bold text-gray-800">{{t('paymentHistory')}}</h3>
             <h3 v-else class="text-xl font-bold text-gray-800">{{t('ordersHistory')}}</h3>
-            <div class="relative">
+            <div v-if="!authStore.isSpecialist" class="relative">
               <button @click="showDropdown = !showDropdown"
                 class="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 transition-colors">
                 {{ t(selectedFilter) }}
@@ -149,24 +149,7 @@
               <payments-table v-if="selectedFilter === 'Payments'" :payments="payments" />
               <orders-table v-else :orders="orders" />
             </div>
-          </div>
-          <!-- Notifications Widget (if Domestic, show here below table) -->
-          <div v-if="planName === 'Domestic'"
-            class="mt-8 bg-white rounded-2xl shadow border border-gray-200 p-5 flex flex-col gap-3 max-h-72 overflow-y-auto min-h-[120px]">
-            <div class="flex items-center gap-2 mb-2">
-              <i class="pi pi-bell text-emerald-600 text-lg"></i>
-              <h4 class="text-base font-semibold text-gray-800">{{ t('notifications') }}</h4>
-            </div>
-            <div v-if="notifications.length === 0" class="text-gray-400 text-sm text-center py-4">{{ t('noNotifications') }}</div>
-            <div v-else class="flex flex-col gap-2">
-              <div v-for="n in notifications" :key="n.id"
-                class="border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 flex flex-col">
-                <span class="font-medium text-gray-700 text-sm truncate">{{ n.title }}</span>
-                <span class="text-xs text-gray-500 truncate">{{ n.subject }}</span>
-                <span class="text-[10px] text-gray-400 mt-1">{{ formatDate(n.createdAt) }}</span>
-              </div>
-            </div>
-          </div>
+          </div>        
         </div>
       </div>
     </div>
