@@ -54,4 +54,14 @@ export class PaymentService extends HttpService {
       throw error;
     }
   }
+
+  public async updatePayment(paymentId: number, req: any): Promise<any> {
+    try {
+      const response = await this.http.put(`payments/${paymentId}`, req);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating payment:", error);
+      throw error;
+    }
+  }
 }

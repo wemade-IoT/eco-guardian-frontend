@@ -66,11 +66,12 @@
 </template>
 
 <script setup lang="ts">
-import { inject, onBeforeMount, onMounted, ref, toRaw } from 'vue';
+import { inject, onBeforeMount, onMounted, ref } from 'vue';
 import { StripeElements, StripeElement } from "vue-stripe-js";
 import { loadStripe, type StripeElementsOptionsMode, type StripePaymentElementOptions, } from "@stripe/stripe-js"
 import Button from 'primevue/button';
 import { convertAmountByCountry, getCountryCodeByName, getCurrencySymbolByCountry } from '../../../public/utils/helpers/currency';
+import { getReturnUrl } from '../../../public/utils/helpers/order';
 
 
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
@@ -144,11 +145,12 @@ async function handleSubmit() {
     return;
   }
   await elements.submit();
+
   const { error } = await stripeInstance.confirmPayment({
     elements,
     clientSecret: dialogData.clientSecret,
     confirmParams: {
-      return_url: `${import.meta.env.VITE_BASE_URL}payment-succeded`,
+      return_url: getReturnUrl(dialogData.referenceType),
       payment_method_data: {
         billing_details: {
           name: dialogData?.name || 'GUEST', 

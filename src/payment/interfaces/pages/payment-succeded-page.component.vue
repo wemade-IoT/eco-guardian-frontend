@@ -155,7 +155,9 @@ async function registerUser() {
     amount: paymentData.amount || 0,
     paymentStatus: 'completed', // Cambiado a completed ya que el pago fue validado
     userId: user.userId || 0,
-    referenceId: 1, // We know its a subscription
+    referenceId: 0, // aqui deberia estar el id de la subscription, pero como no lo tenemos aun, lo dejamos en 0
+    // que dolor de webos yesi esto era para el id del orden o subscription DX
+    referenceType: 'subscription',
   });
   console.log("Creating payment record:", paymentRequest);
   await paymentStore.createPayment(paymentRequest);
