@@ -202,12 +202,8 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
-// Unused imports removed
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import { usePaymentStore } from '../../../payment/interfaces/store/payment-store';
-// PaymentAssembler removed - not needed for dialog approach
-// ProfileStore import removed - not needed
-// Stripe Elements removed - using PaymentCardForm dialog instead
 import { convertAmountByCountry, getCurrencyByCountry } from '../../../public/utils/helpers/currency';
 import type { CountryName } from '../../../public/utils/interfaces/country';
 import PaymentCardFormComponent from '../../../payment/interfaces/components/payment-card-form.component.vue';
@@ -350,7 +346,7 @@ async function handleSubmit() {
       currency: getCurrencyByCountry(countryName),
       referenceId: orderStore.newOrder?.id || 0, // ID de la orden
       referenceType: 'order',
-    }));;
+    }));
 
     const orderUpdateRequest = orderAssembler.toUpdateRequest({
       action: "Order Completed",

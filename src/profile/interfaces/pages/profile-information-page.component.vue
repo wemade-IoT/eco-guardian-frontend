@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen pt-5">
     <h2 class="text-xl font-semibold mb-4 text-gray-800">Your Account Details</h2>
-    <div
-      class="profile-grid grid grid-cols-1 lg:grid-cols-[minmax(0,500px)_1fr] gap-6 mx-auto flex-wrap lg:flex-nowrap">
+    <div class="profile-grid grid grid-cols-1 lg:grid-cols-[minmax(0,500px)_1fr] gap-6 mx-auto flex-wrap lg:flex-nowrap">
+      <!-- Profile & Subscription Column -->
       <div class="flex flex-col gap-6 w-full max-w-[500px] flex-shrink-0">
         <div class="bg-white rounded-2xl shadow border border-gray-200 p-7 flex flex-col gap-6">
           <div class="flex items-center gap-6">
@@ -16,18 +16,17 @@
               </div>
               <h3 class="text-xl font-bold text-gray-800 mb-2">{{ profile?.name }} {{ profile?.userName }}</h3>
               <div class="flex flex-col gap-1.5 text-gray-700 text-sm">
-                <span><span class="font-medium">Email:</span> {{ profile?.email }}</span>
-                <span><span class="font-medium">Address:</span> {{ profile?.address }}</span>
+                <span><span class="font-medium">{{ t('email') }}</span> {{ profile?.email }}</span>
+                <span><span class="font-medium">{{ t('address') }}</span> {{ profile?.address }}</span>
               </div>
             </div>
           </div>
           <div class="flex gap-2 mt-2">
             <button
-              class="bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-emerald-800 transition">Manage
-              Subscription</button>
+              class="bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-emerald-800 transition">{{ t('manageSubscription') }}</button>
             <button
               class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-xs font-semibold border border-gray-300 hover:bg-gray-200 transition"
-              @click="handleEditProfile">Edit Profile</button>
+              @click="handleEditProfile">{{ t('editProfile') }}</button>
           </div>
         </div>
         <!-- Subscription Card -->
@@ -40,22 +39,22 @@
                 d="M12 8c-1.657 0-3 1.343-3 3v1a3 3 0 1 0 6 0v-1c0-1.657-1.343-3-3-3z" />
               <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
             </svg>
-            <h3 class="text-lg font-bold text-gray-800">Current Subscription</h3>
+            <h3 class="text-lg font-bold text-gray-800">{{ t('currentSubscription') }}</h3>
           </div>
           <div class="flex flex-col gap-2 text-gray-700 text-sm leading-relaxed">
             <div>
-              <span class="font-medium">Plan:</span> {{ planName }}
+              <span class="font-medium">{{ t('plan') }}:</span> {{ planName }}
             </div>
             <div>
-              <span class="font-medium">Name:</span> {{ profile?.name }}
+              <span class="font-medium">{{ t('name') }}:</span> {{ profile?.name }}
             </div>
             <div>
-              <span class="font-medium">Last Name:</span> {{ profile?.lastName }}
+              <span class="font-medium">{{ t('lastName') }}:</span> {{ profile?.lastName }}
             </div>
             <div>
-              <span class="font-medium">Status:</span>
+              <span class="font-medium">{{ t('status') }}:</span>
               <span
-                class="inline-block ml-1 px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-semibold text-xs">Active</span>
+                class="inline-block ml-1 px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-semibold text-xs">{{ t('active') }}</span>
             </div>
           </div>
           <div v-if="planName === 'Domestic'"
@@ -64,16 +63,15 @@
               <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 12H9v-2h2v2zm0-4H9V6h2v4z" />
               </svg>
-              <span class="font-bold text-amber-700">Upgrade to Domestic Pro</span>
+              <span class="font-bold text-amber-700">{{ t('upgradeToDomesticPro') }}</span>
             </div>
             <ul class="list-disc list-inside text-gray-700 text-sm mb-2 space-y-1">
-              <li>All features from your current plan</li>
-              <li>Up to 8 Plants</li>
-              <li>5 extra tips from our specialists</li>
+              <li>{{ t('allFeaturesFromCurrentPlan') }}</li>
+              <li>{{ t('upTo8Plants') }}</li>
+              <li>{{ t('extraTipsFromSpecialists') }}</li>
             </ul>
             <button
-              class="bg-amber-500 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-amber-600 transition w-fit">Upgrade
-              now</button>
+              class="bg-amber-500 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-amber-600 transition w-fit">{{ t('upgradeNow') }}</button>
           </div>
         </div>
         <!-- Notifications Widget (only if not Domestic) -->
@@ -81,14 +79,14 @@
           class="bg-white rounded-2xl shadow border border-gray-200 p-5 flex flex-col gap-3 max-h-72 overflow-y-auto min-h-[120px]">
           <div class="flex items-center gap-2 mb-2">
             <i class="pi pi-bell text-emerald-600 text-lg"></i>
-            <h4 class="text-base font-semibold text-gray-800">Notifications</h4>
+            <h4 class="text-base font-semibold text-gray-800">{{ t('notifications') }}</h4>
           </div>
-          <div v-if="notifications.length === 0" class="text-gray-400 text-sm text-center py-4">No notifications</div>
+          <div v-if="notifications.length === 0" class="text-gray-400 text-sm text-center py-4">{{ t('noNotifications') }}</div>
           <div v-else class="flex flex-col gap-2">
             <div v-for="n in notifications" :key="n.id"
               class="border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 flex flex-col">
               <span class="font-medium text-gray-700 text-sm truncate">{{ n.title }}</span>
-              <span class="text-xs text-gray-500 truncate">{{ n.subject }}</span>
+              <span class="text-xs text-gray-500 truncate">{{ n.subject }} {{ profile?.name }}</span>
               <span class="text-[10px] text-gray-400 mt-1">{{ formatDate(n.createdAt) }}</span>
             </div>
           </div>
@@ -172,9 +170,9 @@
             class="mt-8 bg-white rounded-2xl shadow border border-gray-200 p-5 flex flex-col gap-3 max-h-72 overflow-y-auto min-h-[120px]">
             <div class="flex items-center gap-2 mb-2">
               <i class="pi pi-bell text-emerald-600 text-lg"></i>
-              <h4 class="text-base font-semibold text-gray-800">Notifications</h4>
+              <h4 class="text-base font-semibold text-gray-800">{{ t('notifications') }}</h4>
             </div>
-            <div v-if="notifications.length === 0" class="text-gray-400 text-sm text-center py-4">No notifications</div>
+            <div v-if="notifications.length === 0" class="text-gray-400 text-sm text-center py-4">{{ t('noNotifications') }}</div>
             <div v-else class="flex flex-col gap-2">
               <div v-for="n in notifications" :key="n.id"
                 class="border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 flex flex-col">
@@ -196,10 +194,8 @@
 import { ref, onMounted, computed, h, watch } from 'vue';
 import { useAuthStore } from '../../../iam/interfaces/store/auth-store';
 import { ProfileStore } from '../store/profile-store';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
 import EditProfileDialog from '../components/edit-profile-dialog.component.vue';
-import { NotificationResponse } from '../../domain/notification-response';
+import { useNotificationStore } from '../../interfaces/store/notification-store';
 import axios from 'axios';
 import PaymentsTable from '../components/payments-table.component.vue';
 import OrdersTable from '../components/orders-table.component.vue';
@@ -227,37 +223,26 @@ const planNames = {
   5: 'Admin',
 };
 
-
 const profile = computed(() => profileStore.profile);
 const planName = computed(() => planNames[profile.value?.subscriptionId] || 'Unknown');
+const notifications = computed(() => notificationStore.notifications);
 
 // Remove TS generic from ref for Vue SFC compatibility
 const notifications = ref([]);
 
-async function fetchNotifications() {
-  if (!profile.value?.id) return;
+async function fetchPayments() {
+  if (!profile.value?.userId) return;
   try {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/notifications`, {
-      params: { profileId: profile.value.id }
-    });
-    notifications.value = res.data.map(function (n) {
-      return {
-        id: n.id,
-        title: n.title,
-        subject: n.subject,
-        createdAt: n.createdAt,
-        profileId: n.profileId
-      };
-    });
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/payments/${profile.value.userId}`);
+    payments.value = res.data || [];
   } catch (e) {
-    notifications.value = [];
+    payments.value = [];
   }
 }
 
 onMounted(async () => {
   if (authStore.user && authStore.user.email) {
     await profileStore.getProfileByEmail(authStore.user.email);
-    await fetchNotifications();
     payments.value = await paymentStore.fetchPaymentByUserId(authStore.user.id);
     orders.value = await orderStore.getOrdersByUserId(authStore.user.id);
     allOrders.value = await orderStore.getAllOrders();
@@ -268,7 +253,10 @@ onMounted(async () => {
 });
 
 watch(profile, async (val) => {
-  if (val?.id) await fetchNotifications();
+  if (val?.id) {
+    await notificationStore.getNotifications(val.id);
+    await fetchPayments();
+  }
 });
 
 const showEditDialog = ref(false);
@@ -293,6 +281,18 @@ function formatDate(dateString) {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return '';
   return date.toLocaleString();
+}
+
+function formatDateOnly(dateString) {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '';
+  return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+}
+
+function formatHourOnly(dateString) {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '';
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 }
 
 function amountTemplate(row) {
@@ -361,6 +361,106 @@ function actionTemplate(row) {
     ]
   )
 }
+
+function amountWithCurrencyTemplate(row) {
+  const symbols = { usd: '$', eur: '€', pen: 'S/' };
+  const symbol = symbols[(row.currency || '').toLowerCase()] || (row.currency ? row.currency.toUpperCase() : '');
+  return `${symbol}${(row.amount / 100).toFixed(2)}`;
+}
+
+function statusTextTemplate(row) {
+  // Capitalize first letter
+  if (!row.paymentStatus) return '';
+  return row.paymentStatus.charAt(0).toUpperCase() + row.paymentStatus.slice(1);
+}
+
+function dateOnlyTemplate(row) {
+  if (!row.createdAt) return '';
+  const date = new Date(row.createdAt);
+  if (isNaN(date.getTime())) return '';
+  return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+}
+
+function hourOnlyTemplate(row) {
+  if (!row.createdAt) return '';
+  const date = new Date(row.createdAt);
+  if (isNaN(date.getTime())) return '';
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+}
+
+// i18n translations object
+const translations = {
+  en: {
+    yourAccountDetails: 'Your Account Details',
+    userProfile: 'User Profile',
+    manageSubscription: 'Manage Subscription',
+    editProfile: 'Edit Profile',
+    currentSubscription: 'Current Subscription',
+    plan: 'Plan',
+    name: 'Name',
+    lastName: 'Last Name',
+    status: 'Status',
+    active: 'Active',
+    upgradeToDomesticPro: 'Upgrade to Domestic Pro',
+    allFeaturesFromCurrentPlan: 'All features from your current plan',
+    upTo8Plants: 'Up to 8 Plants',
+    extraTipsFromSpecialists: '5 extra tips from our specialists',
+    upgradeNow: 'Upgrade now',
+    notifications: 'Notifications',
+    noNotifications: 'No notifications',
+    paymentHistory: 'Payment History',
+    amount: 'Amount',
+    previous: 'Previous',
+    next: 'Next',
+    page: 'Page',
+    of: 'of',
+    email: 'Email:',
+    address: 'Address:',
+    date: 'Date',
+    hour: 'Hour',
+    cancel: 'Cancel',
+    save: 'Save',
+    uploadPhoto: 'Upload a new profile photo',
+  },
+  es: {
+    yourAccountDetails: 'Detalles de tu cuenta',
+    userProfile: 'Perfil de usuario',
+    manageSubscription: 'Gestionar suscripción',
+    editProfile: 'Editar perfil',
+    currentSubscription: 'Suscripción actual',
+    plan: 'Plan',
+    name: 'Nombre',
+    lastName: 'Apellido',
+    status: 'Estado',
+    active: 'Activo',
+    upgradeToDomesticPro: 'Mejorar a Domestic Pro',
+    allFeaturesFromCurrentPlan: 'Todas las funciones de tu plan actual',
+    upTo8Plants: 'Hasta 8 plantas',
+    extraTipsFromSpecialists: '5 consejos extra de nuestros especialistas',
+    upgradeNow: 'Mejorar ahora',
+    notifications: 'Notificaciones',
+    noNotifications: 'Sin notificaciones',
+    paymentHistory: 'Historial de pagos',
+    amount: 'Monto',
+    previous: 'Anterior',
+    next: 'Siguiente',
+    page: 'Página',
+    of: 'de',
+    email: 'Correo:',
+    address: 'Dirección:',
+    date: 'Fecha',
+    hour: 'Hora',
+    cancel: 'Cancelar',
+    save: 'Guardar',
+    uploadPhoto: 'Sube una nueva foto de perfil',
+  }
+};
+
+const currentLocale = ref('en');
+function toggleLanguage() {
+  currentLocale.value = currentLocale.value === 'en' ? 'es' : 'en';
+}
+const t = (key) => translations[currentLocale.value][key];
 </script>
 
 <style scoped>

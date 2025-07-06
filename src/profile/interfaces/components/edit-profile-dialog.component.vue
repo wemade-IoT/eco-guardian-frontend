@@ -1,5 +1,5 @@
 <template>
-  <Dialog :visible="visible" @update:visible="val => emit('update:visible', val)" modal header="Edit Profile"
+  <Dialog :visible="visible" @update:visible="val => emit('update:visible', val)" modal :header="t('editProfile')"
     :style="{ width: '420px', maxWidth: '95vw', padding: 0 }" @hide="onClose" class="custom-profile-dialog">
     <form @submit.prevent="onSubmit" class="flex flex-col gap-5 p-6">
       <div class="flex flex-col items-center gap-2">
@@ -12,26 +12,26 @@
             <input type="file" accept="image/*" @change="onFileChange" class="hidden" />
           </label>
         </div>
-        <span class="text-xs text-gray-500">Upload a new profile photo</span>
+        <span class="text-xs text-gray-500">{{ t('uploadPhoto') }}</span>
       </div>
       <div class="flex flex-col gap-3">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('name') }}</label>
           <InputText v-model="form.name" class="w-full" required />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('lastName') }}</label>
           <InputText v-model="form.lastName" class="w-full" required />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('address') }}</label>
           <InputText v-model="form.address" class="w-full" required />
         </div>
       </div>
       <div v-if="errorMessage" class="text-red-600 text-sm mb-2 text-center">{{ errorMessage }}</div>
       <div class="flex justify-end gap-2 mt-4">
-        <Button label="Cancel" type="button" severity="secondary" @click="onClose" outlined />
-        <Button label="Save" type="submit" :loading="loading" />
+        <Button :label="t('cancel')" type="button" severity="secondary" @click="onClose" outlined />
+        <Button :label="t('save')" type="submit" :loading="loading" />
       </div>
     </form>
   </Dialog>
@@ -46,7 +46,9 @@ import { ProfileStore } from '../store/profile-store';
 
 const props = defineProps({
   visible: Boolean,
-  profile: Object
+  profile: Object,
+  currentLocale: Object,
+  t: Function
 });
 const emit = defineEmits(['update:visible', 'updated']);
 
