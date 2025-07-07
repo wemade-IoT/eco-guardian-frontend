@@ -160,10 +160,13 @@ const onSubmitBillingForm = handleSubmit(async (values) => {
   //Convert plant Selected to a number for the subscriptionTypeId
 
   const planSelectedId = props.planSelected ? props.planSelected : 'DOMESTIC';
-  const planSelectedTypeId = planSelectedId === 'DOMESTIC' ? 1
-    : planSelectedId === 'PRO' ? 2
-    : planSelectedId === 'ENTERPRISE' ? 3
+  const planSelectedTypeId = planSelectedId === 'DOMESTIC' ? 2
+    : planSelectedId === 'PRO' ? 3
+    : planSelectedId === 'ENTERPRISE' ? 4
     : 0; // Default case if no match
+
+
+  console.log('Plan Selected Type ID:', planSelectedTypeId);
 
   // Guardar datos en localStorage antes del pago para recovery en payment-succeded
   localStorage.setItem('paymentData', JSON.stringify({
