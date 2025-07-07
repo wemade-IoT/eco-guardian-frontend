@@ -161,8 +161,8 @@ const onSubmitBillingForm = handleSubmit(async (values) => {
 
   const planSelectedId = props.planSelected ? props.planSelected : 'DOMESTIC';
   const planSelectedTypeId = planSelectedId === 'DOMESTIC' ? 2
-    : planSelectedId === 'PRO' ? 3
-    : planSelectedId === 'ENTERPRISE' ? 4
+    : planSelectedId === 'PRO' ? 2
+    : planSelectedId === 'ENTERPRISE' ? 3
     : 0; // Default case if no match
 
 
